@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+
+
+# writing one data word
+echo trbcmd w $TDC 0xd400 0x0000
+trbcmd w $TDC 0xd400 0x0000
+
+echo select cs, reset
+trbcmd w $TDC 0xd410 0x10
+
+echo write 1 to length register
+trbcmd w $TDC 0xd411 0x0001
+

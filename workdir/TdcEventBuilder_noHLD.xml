@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+
+<!-- 
+This is example file how HADAQ event building should be configured in DABC.
+Event building process implemented in Combiner module of hadaq::CombinerModule class.
+Module can have several inputs, each with separate port number for receiving data 
+from TRB boards. For every input one could configure only UDP port number - host name is ignored.
+First output of combiner module reserved for the connection to the MBS transmitter module. 
+Second output can be use to store data in hld files. 
+To enable HLD file storage one should specify NumOutputs for Combiner module
+and provide hld file name for Output1 port   
+
+     <NumOutputs value="2"/>
+     <OutputPort name="Output1" url="hld://dabc.hld?maxsize=2000"/>
+     
+File name fill be extended according to HADAQ naming convetion.       
+
+Optionally one can enable MBS transmitter module, which converts HLD to LMD format.
+To enable transmitter, one should specify auto="true" in configuration which says DABC
+to automatically create module when starting application. 
+First output of the module reserved for stream server, second output can be used to
+store data in lmd files. 
+
+By default, HTTP server is enabled. Do disable it, remove <HttpServer> section or
+put <HttpServer name="http" auto="false">. One could change http port number. 
+When dabc runs, in any browser address like
+http://your_dabc_host_name:8090 can be opened. At the moment http server provides: 
+  - ratemeters from EventBuilder and Transmitter
+  - log fields 
+  - commands to start/stop hld and lmd files from browser
+
+It is also possible to attach go4 analysis to that server, that also histograms
+from online analysis will appear. For that one should specify 
+"-dabc your_dabc_host_name" argument when starting analysis. Like:
+   [shell] go4analysis -stream dabc_node -dabc dabc_node
+When launching analysis from the gui, extra arguments "-dabc your_dabc_host_name" 
+should be specified.
+
+There is well-known problem with using VNC viewer and mbs stream server. 
+Both by default are using port 6002. One could change port number for stream server.
+Just set other number in configuration of output port of transmitter module, for instance
+       <OutputPort name="Output0" url="mbs://Stream:6789"/>
+In this case one should specify that port number when starting go4 analysis like:
+   [shell] go4analysis -stream dabc_node:6789 -dabc dabc_node:4444 
+When starting analysis from the go4 gui, one should specify stream server with port number too.
+
+-->
+
+<dabc version="2">
+  <Context host="localhost" name="EventBuilder">
+    <Run>
+      <lib value="libDabcMbs.so"/>
+      <lib value="libDabcHadaq.so"/>  
+      <lib value="libDabcHttp.so"/>  
+      <lib value="libDabcStream.so"/>  
+      <logfile value="hadaqevtbuild.log"/>
+      <loglevel value="-1"/>
+      <loglimit value="1000"/>
+      <control value="true"/>
+      <threads_layout value="balanced"/>
+    </Run>
+    
+    <HttpServer name="http" port="8091"/>
+    
+    <!-- If uncommented, all internal manager structures will be published in the web server -->
+    <!-- Publisher name="publ" manager="true"/ -->
+    
+    <!-- If uncommented, profiling will be enabled for all threads -->
+    <!-- Thread name="*" publ="true" prof="true"/ -->
+    
+    <MemoryPool name="Pool">
+       <BufferSize value="200000"/>
+       <NumBuffers value="1000"/>
+    </MemoryPool>
+    
+    <!-- these are default parameters for TDC calibration modules -->
+    <Module name="Input*TdcCal">    
+       <InputPort name="Input*" queue="30"/>
+
+       <FineMin value="31"/>
+       <FineMax value="515"/>
+       <NumChannels value="33"/>
+       <EdgeMask value="2"/> <!-- 1: only leading edge 2:leading/trailing individual 3:statistics from leading used 4:statistics merged -->
+       <HistFilling value="4"/>
+       <CalibrFile value="/workdir/tdc_calib"/> <!-- local/-->
+       <!--DisableCalibrationFor value="0"/-->  
+       <Auto value="100000"/>
+       
+       <!-- TRB value="0x8010"/-->
+       <!-- HUB value="0x9000"/-->
+       <!-- TDC value="[0x8a00,0x8a01,0x8a02,0x8a03]"/-->
+       <Dummy value="true"/>
+    </Module>
+    
+
+    <Module name="Combiner" class="hadaq::CombinerModule">    
+        <!-- these parameters will force to create inputs/outputs of module -->
+       <NumInputs value="1"/>
+       <NumOutputs value="2"/>
+
+       <InputPort name="Input0" url="hadaq://host:50002" urlopt1=""/>
+<!--       <InputPort name="Input0" url="hadaq://host:50061" urlopt1=""/> -->
+ <!--       <InputPort name="Input1" url="hadaq://host:50008" urlopt1=""/> -->
+ <!--       <InputPort name="Input2" url="hadaq://host:50084" urlopt1=""/> -->
+ <!--       <InputPort name="Input3" url="hadaq://host:50158" urlopt1=""/> -->
+
+
+      <!--  <InputPort name="Input4" url="hadaq://host:10104" urlopt1="trb=0x8030&tdc=[0x3030,0x3031,0x3032,0x3033]&dummy"/> -->
+      <!--  <InputPort name="Input5" url="hadaq://host:10105" urlopt1="trb=0x8040&tdc=[0x3040,0x3041,0x3042,0x3043]&dummy"/> -->
+
+       <!-- <InputPort name="Input0" url="hadaq://host:50021" urlopt1="trb=0x8000&hub=0x8100&tdc=[0xC000,0xC001,0xC003]&dummy"/> -->
+       <!-- <InputPort name="Input1" url="hadaq://host:50094" urlopt1="trb=0x8003&tdc=[0xC00C,0xC00D,0xC00E,0xC00F]&dummy"/> -->
+       <!-- <InputPort name="Input2" url="hadaq://host:50096" urlopt1="trb=0x8002&tdc=[0xC008,0xC009,0xC00A,0xC00B]&dummy"/> -->
+       <!-- <InputPort name="Input3" url="hadaq://host:10104" urlopt1="trb=0x8030&tdc=[0x3030,0x3031,0x3032,0x3033]&dummy"/> -->
+       <!-- <InputPort name="Input4" url="hadaq://host:10105" urlopt1="trb=0x8040&tdc=[0x3040,0x3041,0x3042,0x3043]&dummy"/> -->
+
+   <!--    <InputPort name="Input*" queue="30"
+	urlopt="udpbuf=20000&mtu=64512&flush=3.0&observer=false&debug&resort"/>
+   -->
+   
+       <InputPort name="Input*" queue="30" urlopt="udpbuf=400000&mtu=64512&flush=1&observer=false&debug"/>
+
+       <ExtraDebug value="false"/>
+
+       <!--  this is stream server for online monitoring, normally always on -->
+       <OutputPort name="Output0" url="mbs://Stream:6789?iter=hadaq_iter&subid=0x1f"/>
+       <OutputPort name="Output1" url="mbs://Stream:6790?iter=hadaq_iter&subid=0x1f"/>
+
+       <!--  this is example of HLD file storage - local and RFIO -->
+       <!--OutputPort name="Output1" url="hld:///tmp/TDC_data.hld?maxsize=2000"/>
+       <!--OutputPort name="Output1" url="hld:///linev/path/dabc.hld?maxsize=1900&rfio"/-->
+
+       <DoShmControl value="false"/>  
+       <FlushTimeout value="1.0"/>   
+       <BuildDropTimeout value="1000"/> 
+
+       <!-- take event sequence number from vulom/roc sync message at cts -->
+       <UseSyncSequenceNumber value="false"/>
+       <SyncSubeventId value="0x8000"/>
+       <SyncTriggerMask value="0x01"/>
+       <PrintSync value="false"/>
+       <FlushBySync value="false"/>
+       
+       <!--TriggerNumRange: defines when trigger sequence number wraps. only 16 bit for HADES EBs, 24 bit for trb3!  -->
+       <TriggerNumRange value="0x10000"/>
+       
+       <!--AccountLostEventDiff: if true, missing trigger sequence number are added as lost events to stats. Disabled for multiple event builder mode!  -->
+       <AccountLostEventDiff value="true"/>
+       
+       <!-- rate meters configuration -->
+       <HadaqData width="4" prec="2" low="0" up="10" debug="1"/>
+       <HadaqEvents width="5" prec="1" low="0" up="1000" debug="1"/>
+       <HadaqDroppedData width="5" prec="3" low="0" up="1" debug="1"/>
+       <HadaqLostEvents width="4" prec="2" low="0" up="100" debug="1"/>
+     </Module>
+     
+     <!--  Uncomment to see terminal output like old event builder -->
+     <Module name="Term" class="hadaq::TerminalModule" period="0.3" clear="false"/>
+
+  </Context>
+
+</dabc>

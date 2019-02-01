@@ -1,0 +1,23 @@
+{
+  "name": "DLAB", 
+  "hub": [
+    {
+      "tdc": [
+        {
+          "addr": "0351", 
+          "board": [
+            {
+              "active": 1, 
+              "calib_file": "./boards/board_0021.json", 
+              "tdc_connector": 1, 
+              "name": "0021"
+            }
+          ], 
+          "name": "0351"
+        }
+      ], 
+      "name": "c035", 
+      "addr": "c035"
+    }
+  ]
+}

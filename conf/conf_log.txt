@@ -1,0 +1,25 @@
+...
+DAQOPSERVER=localhost:35
+
+...
+dhcp server started
+using config file /conf/dhcpd.conf
+
+...
+started trbnetd
+TRB3_SERVER=192.168.4.240
+port 35
+
+...
+started cts_gui with following parameters:
+--endpoint 0xc035
+--port 1148
+
+...
+started vnc server (e.g. for Go4 window)
+port=5902
+DISPLAY=:2
+password=
+
+connect with: vncviewer localhost:5902
+

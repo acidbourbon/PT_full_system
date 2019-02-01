@@ -1,0 +1,22 @@
+dabc_exe TdcEventBuilder.xml
+CALMODE=100000 CALTRIG=13 go4analysis -stream localhost:6789 -http localhost:8080
+CALMODE=-1 CALTRIG=13 go4analysis -number 100000 -stream localhost:6789
+
+## tot calibration (run twice!)
+rm /tmp/*.hld
+dabc_exe TdcEventBuilder.xml
+# -- break after 100k events
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";  rm -f *.root
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";  rm -f *.root
+
+
+
+CALMODE=10000 CALTRIG=13 go4analysis -stream localhost:6789
+rm *.root; go4 my_hotstart.hotstart
+dabc_exe TdcEventBuilder_noHLD.xml
+
+## record 100 events
+rm *.root; go4analysis -number 100 -stream localhost:6790
+
+## debug raw data ##
+hldprint localhost:6790  -hub 0xc035 -onlytdc 0x0350  -num 10

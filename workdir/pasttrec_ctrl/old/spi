@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+
+while read line; do
+
+# writing one data word
+echo trbcmd w $TDC 0xd400 ${line}0
+trbcmd w $TDC 0xd400 $line
+
+echo suppress chip select actions
+trbcmd w $TDC 0xd410 0x0
+
+echo write 1 to length register
+trbcmd w $TDC 0xd411 0x0001
+
+done < $1

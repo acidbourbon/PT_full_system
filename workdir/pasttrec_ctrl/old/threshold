@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#$1 defines chip on board
+#$2 defines threshold
+
+
+chip=$1
+thresh=$2
+
+
+if [ $chip == "0" ]; then
+trbcmd w $TDC 0xd400 "0x523"$(printf "%02x" $thresh)0
+trbcmd w $TDC 0xd411 0x0001
+elif [ $chip == "1" ]; then
+trbcmd w $TDC 0xd400 "0x543"$(printf "%02x" $thresh)0
+trbcmd w $TDC 0xd411 0x0001
+elif [ $chip == "2" ]; then
+trbcmd w 0x0351 0xa000 "0xd23"$(printf "%02x" $thresh)
+elif [ $chip == "3" ]; then
+trbcmd w 0x0351 0xa000 "0xd43"$(printf "%02x" $thresh)
+else
+echo "invalid chip number, usage: ./threshold <chip> <thresh>"
+echo " chip = 0|1, thresh = 0-127"
+fi
