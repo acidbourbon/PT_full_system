@@ -20,3 +20,7 @@ rm *.root; go4analysis -number 100 -stream localhost:6790
 
 ## debug raw data ##
 hldprint localhost:6790  -hub 0xc035 -onlytdc 0x0350  -num 10
+
+## record from stream, display data from joint_tree
+
+rm *.root; go4analysis -number 1000 -stream localhost:6790; root -l unify.C
