@@ -23,4 +23,7 @@ hldprint localhost:6790  -hub 0xc035 -onlytdc 0x0350  -num 10
 
 ## record from stream, display data from joint_tree
 
-rm *.root; go4analysis -number 1000 -stream localhost:6790; root -l unify.C
+## if you want to work with the recorded data, use tree_out=true
+## without this env flag, also go4 will not trash your RAM anymore
+rm *.root; tree_out=false go4analysis -number 1000 -stream localhost:6790
+rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -l unify.C

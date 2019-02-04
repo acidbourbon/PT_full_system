@@ -17,7 +17,7 @@
 #include "base/Event.h"
 #include "hadaq/TdcSubEvent.h"
 
-#define CHANNELS 49
+#define CHANNELS 33
 #define REFCHAN 0
 // #define REFCHAN_B 0
 
@@ -93,6 +93,7 @@
 // TFile* tree_out;
 std::map<std::string,int> trig_no;
 std::map<std::string,TTree*> data_tree;
+Bool_t write_tree = false;
 
 
 
@@ -168,6 +169,11 @@ class SecondProc : public base::EventProc {
 //          totCh1 = MakeH1("totCh1","totCh1", 20000, -200, 200, "ns");
 //          totCh2 = MakeH1("totCh2","totCh2", 20000, -200, 200, "ns");
          
+         
+       if(from_env("tree_out","false") == "true"){
+         write_tree = true;
+       }
+         
        trig_no[fTdcId] = 0;  
        data_tree[fTdcId] = new TTree((TString) fTdcId,"data recorded");
        data_tree[fTdcId]->Branch("trig_no",&trig_no[fTdcId]);
@@ -221,19 +227,24 @@ class SecondProc : public base::EventProc {
         
         cout << "--- User Post Loop " << fTdcId << endl;
 //         TFile* tree_out = new TFile( Form("tree_out_%s.root",fTdcId.c_str())  ,"RECREATE");
-        TFile* tree_out;
         
-        
-        if(was_called_before){
-          tree_out = new TFile("tree_out.root","UPDATE");
-        } else {
-          tree_out = new TFile("tree_out.root","RECREATE");
+        if(from_env("tree_out","false") == "true"){
+          
+          cout << "write tree_out.root" << endl;
+          TFile* tree_out;
+          
+          
+          if(was_called_before){
+            tree_out = new TFile("tree_out.root","UPDATE");
+          } else {
+            tree_out = new TFile("tree_out.root","RECREATE");
+          }
+          tree_out->cd();
+          data_tree[fTdcId]->Write();
+          tree_out->Write();
+          tree_out->Close();
+          delete tree_out;
         }
-        tree_out->cd();
-        data_tree[fTdcId]->Write();
-        tree_out->Write();
-        tree_out->Close();
-        delete tree_out;
         was_called_before ++;
       }
 
@@ -383,7 +394,9 @@ class SecondProc : public base::EventProc {
                     entry_chan = i;
                     entry_t1 = t1_vs_ref;
                     entry_tot = tot[i]*1e9;
-                    data_tree[fTdcId]->Fill();
+                    if(write_tree){
+                      data_tree[fTdcId]->Fill();
+                    }
                   }
                   
                   // efficiency estimation ... this cell, cell #i, is a reference detector
