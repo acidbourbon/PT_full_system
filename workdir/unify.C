@@ -173,9 +173,9 @@ void unify(void){
 //   joint_tree->Draw("hits.t1","hits.chan == 350005");
 //   joint_tree->Draw("hits.t1","hits.chan > 350*1000 && hits.chan < 350*1001");
   new TCanvas();
-  joint_tree->Draw("hits.chan : hits.t1>>t1_meta(1000,200,250,16,350001,350016)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
+  joint_tree->Draw("hits.chan : hits.t1>>t1_meta(1000,200,250,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
   new TCanvas();
-  joint_tree->Draw("hits.chan : hits.tot>>tot_meta(1000,0,400,16,350001,350016)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
+  joint_tree->Draw("hits.chan : hits.tot>>tot_meta(1000,0,400,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
 
   
   

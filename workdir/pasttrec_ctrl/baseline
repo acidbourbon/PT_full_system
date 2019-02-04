@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+chip=$1
+chan=$2 #zero based
+val=$3
+
+val=$[ $val + 15 ]
+
+chan=$[ $chan + 4 ]
+
+file=$(mktemp)
+
+if [ $chip == "0" ]; then
+echo "0x52"$(printf "%01x%02x" $chan $val) > $file
+elif [ $chip == "1" ]; then
+echo "0x54"$(printf "%01x%02x" $chan $val) > $file
+else
+echo "wrong input"
+fi
+
+./spi $file
+
+rm $file
+

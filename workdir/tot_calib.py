@@ -17,9 +17,10 @@ def get_tot( file, TDC, channels, no_events):
   os.system("go4analysis -number {:d} -stream localhost:6790".format(no_events))
   
   f = TFile(file)
-  tot_means = np.zeros(channels)
-
-  for i in range(0,channels):
+  tot_means = np.zeros(len(channels))
+  
+  index=0
+  for i in channels:
     chan = "{:02d}".format(i+1)
     hist = f.Get("Histograms/Sec_"+TDC+"/Sec_"+TDC+"_Ch"+chan+"_tot")
     tot_mean = hist.GetMean()
@@ -27,7 +28,8 @@ def get_tot( file, TDC, channels, no_events):
       hist.Fit("gaus","WWq")
       tot_mean = hist.GetFunction("gaus").GetParameter(1)
     
-    tot_means[i] = tot_mean
+    tot_means[index] = tot_mean
+    index+=1
     #print("chan "+chan+"  tot mean: "+str(tot_mean))
     
 
@@ -35,17 +37,25 @@ def get_tot( file, TDC, channels, no_events):
   return tot_means
 
 
-def set_baseline( TDC, chip, channel,val):
+def set_baseline( TDC, channel,val):
+  
+  conn=int(channel/16)+1
+  chip=int((channel%16)/8)
+  chip_chan=channel%8
 
-  os.system("TDC=0x"+TDC+" ./pasttrec_ctrl/baseline {:d} {:d} {:d}".format(chip+int(channel/8), channel%8 ,val))
+  os.system("cd pasttrec_ctrl; TDC=0x"+TDC+" CONN={:d} ./baseline {:d} {:d} {:d}".format(conn,chip, chip_chan ,val))
 
   return
 
-def set_all_baselines( TDC, chip, values):
-  print("set baselines of chip {:d} to following values: ".format(chip))
+def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
+  print("set baselines of the following channels")
+  print channels
+  print("to the following values")
   print values
-  for i in range(0,values.size):
-    set_baseline(TDC,chip,i,int(values[i]))
+  index=0
+  for i in channels:
+    set_baseline(TDC,i,int(values[index]))
+    index+=1
     
   return
 
@@ -53,14 +63,14 @@ def set_all_baselines( TDC, chip, values):
 
 TDC="0350"
 file="Go4AutoSave.root"
-channels=16
+channels=range(16,32) # zero based 
 no_events=1000
 chip=0
 
 
-baselines = np.zeros(16)
+baselines = np.zeros(len(channels))
 
-set_all_baselines(TDC,chip,baselines)
+set_all_baselines(TDC,channels,baselines)
 
 #for i in range(0,16):
   #print("set zero baseline channel {:d}".format(i))
@@ -87,15 +97,15 @@ print("start auto correction procedure")
 for step_width in [8,4,4,3,2,1,1,0.5,0.5,0.5,0.5,0.5]:
   print("step width: {:02f}".format(step_width))
   
-  for ch in range(0,channels):
-    if (tot_means[ch] < target_tot):
-      baselines[ch]+=step_width
+  for index in range(0,len(channels)):
+    if (tot_means[index] < target_tot):
+      baselines[index]+=step_width
     else:
-      baselines[ch]-=step_width
-    baselines[ch]=np.max([baselines[ch],-15])
-    baselines[ch]=np.min([baselines[ch],15])
+      baselines[index]-=step_width
+    baselines[index]=np.max([baselines[index],-15])
+    baselines[index]=np.min([baselines[index],15])
       
-  set_all_baselines(TDC,chip,baselines)
+  set_all_baselines(TDC,channels,baselines)
   
   print "get new tot values"
   tot_means = get_tot(file,TDC,channels,no_events)
