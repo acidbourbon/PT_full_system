@@ -1,6 +1,57 @@
 #!/bin/bash
 
-trbcmd w $TDC 0xd417 0xFFFFFFFF # disable all CS lines, invert all CS lines to get a zero on all lines
-sleep 0.2
-trbcmd w $TDC 0xd417 0x0000FFFF # disable all CS lines, invert all CS lines to get a one on all lines, reset complete
+function usage {
+  echo 'usage:     TDC=<TDC> CONN=<CONN> ./reset'
+  echo "            CONN can be 1..16"
+  echo 
+  echo 'example:   TDC=0x0351 CONN=1 ./reset'
+  exit
+}
+
+
+if [ -z $CONN ]; then
+  echo 'error: $CONN not set'
+  usage
+fi
+
+if [ -z $TDC ]; then
+  echo 'error: $TDC not set'
+  usage
+fi
+
+
+
+
+# bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+# ergo enable CS, because we need it for the reset
+trbcmd w $TDC 0xd417 0x00000000
+
+
+# (chip-)select output $CONN 
+trbcmd w $TDC 0xd410 $(perl -e "printf(\"0x%X\", 0xFFFF & (1<<($CONN-1)))")
+
+# override: (chip-) select all ports!!
+#trbcmd w $TDC 0xd410 0xFFFF
+
+# override: (chip-) select nothing !!
+#trbcmd w $TDC 0xd410 0x0000
+
+
+# disable all SDO outputs but output $CONN
+#trbcmd w $TDC 0xd415 $(perl -e "printf(\"0x%X\", 0xFFFF & ~(1<<($CONN-1)))")
+
+# disable all SCK outputs but output $CONN
+#trbcmd w $TDC 0xd416 $(perl -e "printf(\"0x%X\", 0xFFFF & ~(1<<($CONN-1)))")
+
+# override: disable all SDO and SCK lines
+#trbcmd w $TDC 0xd415 0xFFFF
+#trbcmd w $TDC 0xd416 0xFFFF
+
+
+
+# writing one data word,
+trbcmd w $TDC 0xd400 0 ## data word is empty
+
+# write 1 to length register to trigger sending
+trbcmd w $TDC 0xd411 0x0001
 

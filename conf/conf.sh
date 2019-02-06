@@ -92,6 +92,9 @@ fi
 
 /daqtools/tools/loadregisterdb.pl register_configgbe.db
 /daqtools/tools/loadregisterdb.pl register_configgbe_ip.db
+sleep 1
+./conf_cts.sh
+./conf_tdcs.sh
 
 
 echo "done"

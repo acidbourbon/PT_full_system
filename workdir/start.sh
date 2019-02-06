@@ -19,7 +19,7 @@ tmux link-window -s vnc:vnc -t main
 tmux new-window -t main -n "dabc" "dabc_exe TdcEventBuilder_noHLD.xml;/bin/bash"
 
 
-tmux new-window -t main -n "go4" "rm Go4AutoSave.root;  go4 my_hotstart.hotstart;/bin/bash"
+tmux new-window -t main -n "go4" "rm *.root;  go4 0350_meta.hotstart;/bin/bash"
 
 # tmux new-window -t main -n "htop" "htop;/bin/bash"
 tmux new-window -t main -n "info" "cat /conf/conf_log.txt; cat info.txt; /bin/bash"
