@@ -3,9 +3,9 @@
 val=$1
 
 for i in $(seq 0 7); do
-./baseline 0 $i $val
+CHIP=0 ./baseline $i $val
 done
 
 for i in $(seq 0 7); do
-./baseline 1 $i $val
+CHIP=1 ./baseline $i $val
 done

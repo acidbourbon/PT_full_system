@@ -69,7 +69,7 @@ When starting analysis from the go4 gui, one should specify stream server with p
     <!-- Thread name="*" publ="true" prof="true"/ -->
     
     <MemoryPool name="Pool">
-       <BufferSize value="200000"/>
+       <BufferSize value="2000000"/>
        <NumBuffers value="1000"/>
     </MemoryPool>
     

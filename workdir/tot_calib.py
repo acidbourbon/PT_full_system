@@ -43,7 +43,7 @@ def set_baseline( TDC, channel,val):
   chip=int((channel%16)/8)
   chip_chan=channel%8
 
-  os.system("cd pasttrec_ctrl; TDC=0x"+TDC+" CONN={:d} ./baseline {:d} {:d} {:d}".format(conn,chip, chip_chan ,val))
+  os.system("cd pasttrec_ctrl; TDC=0x"+TDC+" CONN={:d} CHIP={:d} ./baseline {:d} {:d}".format(conn,chip, chip_chan ,val))
 
   return
 
@@ -63,7 +63,8 @@ def set_all_baselines( TDC, channels, values): # channels and values have to hav
 
 TDC="0350"
 file="Go4AutoSave.root"
-channels=range(16,32) # zero based 
+#channels=range(16,32) # zero based 
+channels=range(0,16) # zero based 
 no_events=1000
 chip=0
 

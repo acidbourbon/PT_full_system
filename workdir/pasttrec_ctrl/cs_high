@@ -1,0 +1,4 @@
+#!/bin/bash
+
+trbcmd w $TDC 0xd417 0x0000FFFF # disable all CS lines, invert all CS lines to get a one on all lines, reset complete
+

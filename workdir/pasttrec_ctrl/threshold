@@ -1,23 +1,8 @@
 #!/bin/bash
 
-#$1 defines chip on board
-#$2 defines threshold
+
+thresh=$1
 
 
-chip=$1
-thresh=$2
+./spi <(echo "3"$(printf "%02x" $thresh) )
 
-file=$(mktemp)
-
-if [ $chip == "0" ]; then
-echo "0x523"$(printf "%02x" $thresh) > $file
-elif [ $chip == "1" ]; then
-echo "0x543"$(printf "%02x" $thresh) > $file
-else
-echo "invalid chip number, usage: ./threshold <chip> <thresh>"
-echo " chip = 0|1, thresh = 0-127"
-fi
-
-./spi $file
-
-rm $file

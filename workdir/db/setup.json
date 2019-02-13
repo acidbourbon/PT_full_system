@@ -4,16 +4,45 @@
     {
       "tdc": [
         {
+          "addr": "0350", 
+          "board": [
+            {
+              "active": 1, 
+              "calib_file": "./boards/board_0026.json", 
+              "tdc_connector": 1, 
+              "name": "0026"
+            }, 
+            {
+              "active": 1, 
+              "calib_file": "./boards/board_0021.json", 
+              "tdc_connector": 2, 
+              "name": "0021"
+            }
+          ], 
+          "name": "0350"
+        }, 
+        {
           "addr": "0351", 
           "board": [
             {
               "active": 1, 
-              "calib_file": "./boards/board_0021.json", 
+              "calib_file": "./boards/board_0027.json", 
               "tdc_connector": 1, 
-              "name": "0021"
+              "name": "0027"
+            }, 
+            {
+              "active": 1, 
+              "calib_file": "./boards/board_0018.json", 
+              "tdc_connector": 2, 
+              "name": "0018"
             }
           ], 
           "name": "0351"
+        }, 
+        {
+          "addr": "0352", 
+          "board": [], 
+          "name": "0352"
         }
       ], 
       "name": "c035", 

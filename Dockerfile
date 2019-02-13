@@ -102,5 +102,9 @@ RUN . /trb3/trb3login
 
 RUN cd /trb3/; . /trb3/trb3login;  make -j4 update
 
+## 2019-02-11  - - fix strange dabc error
+RUN cd /trb3/; . /trb3/trb3login;  make -j4 update
 
-
+RUN zypper --non-interactive in \
+   firefox \
+   lxpanel

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function usage {
-  echo 'usage:     TDC=<TDC> CONN=<CONN> ./spi <data_file>'
+  echo 'usage:     TDC=<TDC> CONN=<CONN> CHIP=<0|1>./spi <data_file>'
   echo "            CONN can be 1..16"
   echo 
-  echo 'example:   TDC=0x0351 CONN=1 ./spi chip0_settings.txt' 
+  echo 'example:   TDC=0x0351 CONN=1 CHIP=0 ./spi chip0_settings.txt' 
   exit
 }
 
@@ -16,6 +16,11 @@ fi
 
 if [ -z $TDC ]; then
   echo 'error: $TDC not set'
+  usage
+fi
+
+if [ -z $CHIP ]; then
+  echo 'error: $CHIP not set'
   usage
 fi
 
@@ -50,12 +55,23 @@ trbcmd w $TDC 0xd416 $(perl -e "printf(\"0x%X\", 0xFFFF & ~(1<<($CONN-1)))")
 #trbcmd w $TDC 0xd415 0xFFFF
 #trbcmd w $TDC 0xd416 0xFFFF
 
+prefix="0x"
+
+if [ $CHIP == "0" ]; then
+prefix="0x52"
+elif [ $CHIP == "1" ]; then
+prefix="0x54"
+else
+	echo 'error: wrong $CHIP setting'
+	usage
+fi
+
 
 # now parse the data word file line by line
 while read line; do
 
 # writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
-trbcmd w $TDC 0xd400 ${line}0
+trbcmd w $TDC 0xd400 ${prefix}${line}0
 
 # write 1 to length register to trigger sending
 trbcmd w $TDC 0xd411 0x0001
