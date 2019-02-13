@@ -4,6 +4,8 @@ import os
 from ROOT import TFile
 import numpy as np
 import json
+#from pasttrec_ctrl import *
+import pasttrec_ctrl as ptc
 
 #print("Hallo Welt!")
 #os.system("./tot_calib.sh Go4AutoSave.root -q > calib_out.txt")
@@ -37,27 +39,6 @@ def get_tot( file, TDC, channels, no_events):
   return tot_means
 
 
-def set_baseline( TDC, channel,val):
-  
-  conn=int(channel/16)+1
-  chip=int((channel%16)/8)
-  chip_chan=channel%8
-
-  os.system("cd pasttrec_ctrl; TDC=0x"+TDC+" CONN={:d} CHIP={:d} ./baseline {:d} {:d}".format(conn,chip, chip_chan ,val))
-
-  return
-
-def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
-  print("set baselines of the following channels")
-  print channels
-  print("to the following values")
-  print values
-  index=0
-  for i in channels:
-    set_baseline(TDC,i,int(values[index]))
-    index+=1
-    
-  return
 
 ########## main script ##########
 
@@ -71,7 +52,7 @@ chip=0
 
 baselines = np.zeros(len(channels))
 
-set_all_baselines(TDC,channels,baselines)
+ptc.set_all_baselines(TDC,channels,baselines)
 
 #for i in range(0,16):
   #print("set zero baseline channel {:d}".format(i))
@@ -106,7 +87,7 @@ for step_width in [8,4,4,3,2,1,1,0.5,0.5,0.5,0.5,0.5]:
     baselines[index]=np.max([baselines[index],-15])
     baselines[index]=np.min([baselines[index],15])
       
-  set_all_baselines(TDC,channels,baselines)
+  ptc.set_all_baselines(TDC,channels,baselines)
   
   print "get new tot values"
   tot_means = get_tot(file,TDC,channels,no_events)
