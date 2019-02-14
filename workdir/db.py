@@ -58,6 +58,24 @@ def find_board_by_name(board_name):
   return 0
 
 
+def get_calib_json_by_name(board_name):
+  board_info = find_board_by_name(board_name)
+  calib_file = board_info["calib_file"]
+  return get_calib_json(calib_file)
+  
+def write_calib_json_by_name(board_name,calib_json):
+  board_info = find_board_by_name(board_name)
+  calib_file = board_info["calib_file"]
+  write_calib_json(calib_file,calib_json)
+
+def update_calib_json_by_name(board_name,calib_json_update):
+  board_info = find_board_by_name(board_name)
+  calib_file = board_info["calib_file"]
+  calib_json = get_calib_json(calib_file)
+  calib_json.update(calib_json_update)
+  write_calib_json(calib_file,calib_json)
+
+
 ### every other find_board_XXX function will eventually call this ###
 
 def find_board_by_tdc_connector(my_tdc, my_connector):
@@ -70,7 +88,7 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
           conn = board["tdc_connector"]
           if my_connector == conn :
             board_defs = board.copy()
-            board_defs.update({"tdc_addr" : tdc["addr"], "channels": range((conn-1)*16,conn*16)   })
+            board_defs.update({"tdc_addr" : tdc["addr"], "hub_addr" : hub["addr"], "channels": range((conn-1)*16,conn*16)   })
             return board_defs
 
   return 0

@@ -7,7 +7,7 @@ def set_baseline( TDC, channel,val):
   chip=int((channel%16)/8)
   chip_chan=channel%8
 
-  os.system("cd pasttrec_ctrl; TDC=0x"+TDC+" CONN={:d} CHIP={:d} ./baseline {:d} {:d}".format(conn,chip, chip_chan ,val))
+  os.system("cd pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./baseline {:d} {:d}".format(conn,chip, chip_chan ,val))
 
   return
 
