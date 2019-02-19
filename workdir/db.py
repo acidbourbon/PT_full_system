@@ -85,6 +85,15 @@ def get_board_json_by_name(board_name):
           return board
   return 0
 
+def get_tdc_json_by_addr(tdc_addr):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      if tdc["addr"].lower() == tdc_addr.lower():
+        return tdc
+  return 0
+
 def write_board_json_by_name(board_name,board_json):
   setup = get_setup_json()
 

@@ -33,6 +33,7 @@ while True:
                ("3","view/edit setup json"),
                ("4","add board"),
                ("5","remove board"),
+               ("6","move board"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -60,21 +61,26 @@ while True:
     if tag == "4":
       code_4, tdc_addr = dbd.dialog_tdc_list()
       if code_4 == d.DIALOG_OK:
-        code_41, conn_str = d.inputbox(text="enter tdc connector (1,2,..)",init="1")
-        conn = int(conn_str)
-        if code_41 == d.DIALOG_OK:
-          code_42, name_str = d.inputbox(text="enter board name",init="0000")
-          if code_42 == d.DIALOG_OK:
-            code_43, calib_file = d.inputbox(text="enter calib file name",init="./db/board_"+name_str+".json")
-            if code_43 == d.DIALOG_OK:
-              print "adding"
-              print tdc_addr
-              print conn
-              print name_str
-              print calib_file
-              db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
-                  "calib_file":calib_file, "active":0 })
-              #db.insert_board(tdc_addr,name_str)
+
+        while True:
+          code_41, conn_str = dbd.dialog_connector_list(tdc_addr)
+          conn = int(conn_str)
+          if code_41 == d.DIALOG_OK:
+            if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
+              code_42, name_str = d.inputbox(text="enter board name",init="0000")
+              if code_42 == d.DIALOG_OK:
+                code_43, calib_file = d.inputbox(text="enter calib file name",init="./db/board_"+name_str+".json")
+                if code_43 == d.DIALOG_OK:
+                  print "adding"
+                  print tdc_addr
+                  print conn
+                  print name_str
+                  print calib_file
+                  db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
+                      "calib_file":calib_file, "active":0 })
+              break
+            else:
+              d.msgbox("this connector is already occupied :(")
 
     ## remove board ##
     if tag == "5":
@@ -82,6 +88,28 @@ while True:
         code_5, choice_5 = dbd.dialog_board_list()
         if code_5 == d.DIALOG_OK: 
           db.remove_board(choice_5)
+        else:
+          break
+
+    ## move board ##
+    if tag == "6":
+      while True:
+        code_6, board_name = dbd.dialog_board_list()
+        if code_6 == d.DIALOG_OK: 
+          code_61, tdc_addr = dbd.dialog_tdc_list()
+          if code_61 == d.DIALOG_OK:
+            while True:
+              code_62, conn_str = dbd.dialog_connector_list(tdc_addr)
+              if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
+                if code_62 == d.DIALOG_OK:
+                  board_json = db.get_board_json_by_name(board_name)
+                  db.remove_board(board_name)
+                  board_json["tdc_connector"] = int(conn_str)
+                  db.add_board_json(tdc_addr,board_json)
+                break
+              else:
+                d.msgbox("this connector is already occupied :(")
+            
         else:
           break
 

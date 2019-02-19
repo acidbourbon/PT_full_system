@@ -58,6 +58,19 @@ def dialog_tdc_list():
 
   return d.menu("select a tdc:", choices= choices )
 
+def dialog_connector_list(tdc_addr):
+
+  d = Dialog(dialog="dialog")
+  d.set_background_title("select connector")
+  
+  tdc_json = db.get_tdc_json_by_addr(tdc_addr)
+  
+  choices = []
+  for i in range(1,tdc_json["connectors"]+1):
+    choices += [(str(i),"TDC "+tdc_addr+" CONN "+str(i) )]
+
+  return d.menu("select connector:", choices= choices )
+
   
 
 def dialog_board_list():
