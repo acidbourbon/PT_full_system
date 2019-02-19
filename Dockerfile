@@ -108,3 +108,5 @@ RUN cd /trb3/; . /trb3/trb3login;  make -j4 update
 RUN zypper --non-interactive in \
    firefox \
    lxpanel
+
+RUN pip install prettytable python2-pythondialog

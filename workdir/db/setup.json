@@ -6,8 +6,8 @@
         {
           "board": [
             {
-              "active": 1, 
               "calib_file": "./boards/board_0026.json", 
+              "active": 1, 
               "tdc_connector": 1, 
               "name": "0026"
             }, 
@@ -24,13 +24,13 @@
         {
           "board": [
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0027.json", 
               "tdc_connector": 1, 
               "name": "0027"
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0018.json", 
               "tdc_connector": 2, 
               "name": "0018"

@@ -2,12 +2,24 @@
 import os
 from ROOT import TFile
 import numpy as np
-import json
-import pasttrec_ctrl as ptc
-import db
 
 
 use_gausfit=0
+
+
+def enable_channels(TDC,channels):
+  mask = 0;
+  for chan in channels:
+    mask += 1<<chan
+  os.system("trbcmd setbit {:s} 0xc802 {:d}".format(TDC,mask))
+
+
+def disable_channels(TDC,channels):
+  mask = 0;
+  for chan in channels:
+    mask += 1<<chan
+  os.system("trbcmd clearbit {:s} 0xc802 {:d}".format(TDC,mask))
+
 
 
 def get_tot(TDC, channels, no_events):

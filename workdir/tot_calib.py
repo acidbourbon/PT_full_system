@@ -15,6 +15,7 @@ import tdc_daq
 no_events=1000
 
 
+### find board name of first TDC, first connector ###
 board_name = db.find_board_by_tdc_connector("0x0350",1)["name"]
 print "we are calibrating baselines for board "+board_name
 

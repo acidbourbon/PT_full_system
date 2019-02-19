@@ -75,6 +75,39 @@ def update_calib_json_by_name(board_name,calib_json_update):
   calib_json.update(calib_json_update)
   write_calib_json(calib_file,calib_json)
 
+def get_board_json_by_name(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board
+  return 0
+
+def write_board_json_by_name(board_name,board_json):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          for key in board.keys():
+            del board[key]
+          board.update( board_json)
+  write_setup_json(setup)
+  
+def update_board_json_by_name(board_name,board_json_update):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          board.update(board_json_update)
+  write_setup_json(setup)
+  
+
 
 ### every other find_board_XXX function will eventually call this ###
 
@@ -94,6 +127,35 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
   return 0
 
 
+def tdc_list():
+  setup = get_setup_json()
+  tdcs = []
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      tdcs += [tdc["addr"].lower()]
+
+  return tdcs
+
+def board_list():
+  setup = get_setup_json()
+  boards = []
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        boards += [board["name"]]
+
+  return boards
+
+def active_board_list():
+  setup = get_setup_json()
+  boards = []
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board["active"] == 1 :
+          boards += [board["name"]]
+
+  return boards
 
 
 
