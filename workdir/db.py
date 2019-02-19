@@ -126,6 +126,36 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
 
   return 0
 
+def insert_board(my_tdc, board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      if tdc["addr"].lower() == my_tdc.lower():
+        tdc["board"] += [{ "name":board_name }]
+  write_setup_json(setup)
+
+def remove_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          tdc["board"].remove(board)
+  write_setup_json(setup)
+
+
+def add_board_json(my_tdc,board_json):
+  board_name = board_json["name"]
+  insert_board(my_tdc,board_name)
+  update_board_json_by_name(board_name,board_json)
+
+
+
+
+
+
 
 def tdc_list():
   setup = get_setup_json()

@@ -46,6 +46,19 @@ def dialog_enable_disable():
       if not(board_name == "board"):
         db.update_board_json_by_name(board_name,{"active":1})
     
+def dialog_tdc_list():
+
+  d = Dialog(dialog="dialog")
+  d.set_background_title("view TDCs")
+  
+  choices = []
+
+  for tdc_addr in db.tdc_list():
+    choices += [(tdc_addr, "")]
+
+  return d.menu("select a tdc:", choices= choices )
+
+  
 
 def dialog_board_list():
 

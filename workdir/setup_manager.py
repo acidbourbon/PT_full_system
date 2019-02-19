@@ -32,6 +32,7 @@ while True:
                ("2","view/edit board json"),
                ("3","view/edit setup json"),
                ("4","add board"),
+               ("5","remove board"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -54,6 +55,41 @@ while True:
       code_3, text = dbd.dialog_editbox(json.dumps(db.get_setup_json(),indent=2))
       if code_3 == d.DIALOG_OK:
         db.write_setup_json(json.loads(text))
+     
+    ## add board ##
+    if tag == "4":
+      code_4, tdc_addr = dbd.dialog_tdc_list()
+      if code_4 == d.DIALOG_OK:
+        code_41, conn_str = d.inputbox(text="enter tdc connector (1,2,..)",init="1")
+        conn = int(conn_str)
+        if code_41 == d.DIALOG_OK:
+          code_42, name_str = d.inputbox(text="enter board name",init="0000")
+          if code_42 == d.DIALOG_OK:
+            code_43, calib_file = d.inputbox(text="enter calib file name",init="./db/board_"+name_str+".json")
+            if code_43 == d.DIALOG_OK:
+              print "adding"
+              print tdc_addr
+              print conn
+              print name_str
+              print calib_file
+              db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
+                  "calib_file":calib_file, "active":0 })
+              #db.insert_board(tdc_addr,name_str)
+
+    ## remove board ##
+    if tag == "5":
+      while True:
+        code_5, choice_5 = dbd.dialog_board_list()
+        if code_5 == d.DIALOG_OK: 
+          db.remove_board(choice_5)
+        else:
+          break
+
+
+      
+    if tag == "z":
+      exit()
+    
       
   else:
     exit()
