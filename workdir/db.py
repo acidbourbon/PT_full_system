@@ -40,6 +40,14 @@ def write_calib_json(calib_file, calib_json):
   calib_fh.close()
 
 
+
+def enable_board(board_name):
+  update_board_json_by_name(board_name,{"active":1})
+
+def disable_board(board_name):
+  update_board_json_by_name(board_name,{"active":0})
+
+
 def find_board_by_tdc_channel(my_tdc, my_channel):
   setup = get_setup_json()
   my_connector = int(my_channel/16)+1

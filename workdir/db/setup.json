@@ -4,17 +4,18 @@
     {
       "tdc": [
         {
+          "addr": "dummy", 
           "connectors": 8, 
           "board": [], 
-          "addr": "dummy", 
           "name": "dummy"
         }, 
         {
+          "addr": "0x0350", 
           "connectors": 2, 
           "board": [
             {
               "calib_file": "./boards/board_0026.json", 
-              "active": 1, 
+              "active": 0, 
               "tdc_connector": 1, 
               "name": "0026"
             }, 
@@ -25,10 +26,10 @@
               "name": "0021"
             }
           ], 
-          "addr": "0x0350", 
           "name": "0350"
         }, 
         {
+          "addr": "0x0351", 
           "connectors": 2, 
           "board": [
             {
@@ -44,13 +45,12 @@
               "name": "0018"
             }
           ], 
-          "addr": "0x0351", 
           "name": "0351"
         }, 
         {
+          "addr": "0x0352", 
           "connectors": 2, 
           "board": [], 
-          "addr": "0x0352", 
           "name": "0352"
         }
       ], 
@@ -59,7 +59,7 @@
     }
   ], 
   "default_asic_settings": {
-    "threshold": 50, 
+    "threshold": 10, 
     "gain": 4, 
     "pktime": 15
   }

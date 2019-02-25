@@ -41,10 +41,12 @@ def dialog_enable_disable():
 
   if code == d.DIALOG_OK:
     for board_name in board_list:
-      db.update_board_json_by_name(board_name,{"active":0})
+      #db.update_board_json_by_name(board_name,{"active":0})
+      db.disable_board(board_name)
     for board_name in active_boards:
       if not(board_name == "board"):
-        db.update_board_json_by_name(board_name,{"active":1})
+        #db.update_board_json_by_name(board_name,{"active":1})
+        db.enable_board(board_name)
     
 def dialog_tdc_list():
 

@@ -38,6 +38,7 @@ while True:
                ("6","move board"),
                ("7","edit default asic settings"),
                ("8","init setup (active boards)"),
+               ("9","auto calib baselines of board"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -133,6 +134,15 @@ while True:
       ptc.init_active_boards()
       d.msgbox("initialized all active boards\nand enabled respective TDC channels")
       
+    ## calib board baselines ##
+    if tag == "9":
+      code_9, choice_9 = dbd.dialog_board_list()
+      if code_9 == d.DIALOG_OK:
+        board_name = choice_9
+        d.msgbox("Supply standard test pulse to all inputs of board {:s} simultaneously:\n-2V, negative polarity, duration 10 ns, supplied to input\
+via AC coupling and 10k resistor.".format(board_name) )
+        import baseline_calib
+        baseline_calib.baseline_calib(board_name)
 
       
     if tag == "z":

@@ -48,7 +48,11 @@ def init_chip(TDC,conn,chip,pktime,gain,thresh):
     set_all_baselines(TDC,channels,values)
   return
 
+def reset_board(TDC,conn):
+  os.system("cd pasttrec_ctrl; TDC="+TDC+" CONN={:d} ./reset ".format(conn))
+
 def init_board(TDC,conn,pktime,gain,thresh):
+  reset_board(TDC,conn)
   init_chip(TDC,conn,0,pktime,gain,thresh)
   init_chip(TDC,conn,1,pktime,gain,thresh)
   return

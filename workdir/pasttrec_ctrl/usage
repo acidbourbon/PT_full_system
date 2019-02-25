@@ -10,3 +10,4 @@ TDC=0x0350 CONN=1 CHIP=0 pktime=15 gain=1 ./set_gain_pktime
 
 TDC=0x0350 CONN=1 CHIP=0 ./init_pkt15_g4_thr10.sh
 TDC=0x0350 CONN=1 CHIP=1 ./init_pkt15_g4_thr10.sh
+TDC=0x0350 CONN=1 ./reset
