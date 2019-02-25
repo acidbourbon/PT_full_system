@@ -10,6 +10,7 @@ import json
 from prettytable import PrettyTable
 from dialog import Dialog
 import db_dialogs as dbd
+import tdc_daq as td
 
 
 
@@ -41,6 +42,7 @@ while True:
     ## enable/disable boards ##
     if tag == "1":
       dbd.dialog_enable_disable()
+      td.enable_tdc_channels_of_active_boards()
 
     ## edit board json tags ##
     if tag == "2":
@@ -64,7 +66,6 @@ while True:
 
         while True:
           code_41, conn_str = dbd.dialog_connector_list(tdc_addr)
-          conn = int(conn_str)
           if code_41 == d.DIALOG_OK:
             if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
               code_42, name_str = d.inputbox(text="enter board name",init="0000")
@@ -100,15 +101,16 @@ while True:
           if code_61 == d.DIALOG_OK:
             while True:
               code_62, conn_str = dbd.dialog_connector_list(tdc_addr)
-              if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
-                if code_62 == d.DIALOG_OK:
-                  board_json = db.get_board_json_by_name(board_name)
-                  db.remove_board(board_name)
-                  board_json["tdc_connector"] = int(conn_str)
-                  db.add_board_json(tdc_addr,board_json)
-                break
-              else:
-                d.msgbox("this connector is already occupied :(")
+              if code_62 == d.DIALOG_OK:
+                if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
+                  if code_62 == d.DIALOG_OK:
+                    board_json = db.get_board_json_by_name(board_name)
+                    db.remove_board(board_name)
+                    board_json["tdc_connector"] = int(conn_str)
+                    db.add_board_json(tdc_addr,board_json)
+                  break
+                else:
+                  d.msgbox("this connector is already occupied :(")
             
         else:
           break

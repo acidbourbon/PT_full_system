@@ -2,7 +2,7 @@
 import os
 from ROOT import TFile
 import numpy as np
-
+import db
 
 use_gausfit=0
 
@@ -20,6 +20,20 @@ def disable_channels(TDC,channels):
     mask += 1<<chan
   os.system("trbcmd clearbit {:s} 0xc802 {:d}".format(TDC,mask))
 
+
+def enable_tdc_channels_of_active_boards():
+  ### disable all daq channels of listed TDCs
+  for tdc_addr in db.tdc_list():
+    if tdc_addr[0:2].lower() == "0x":
+      disable_channels(tdc_addr,range(0,32))
+  
+  for board_name in db.active_board_list():
+    board_info = db.find_board_by_name(board_name)
+    channels = board_info["channels"]
+    tdc_addr = board_info["tdc_addr"]
+    if tdc_addr[0:2].lower() == "0x":
+      enable_channels(tdc_addr,channels)
+  return
 
 
 def get_tot(TDC, channels, no_events):
