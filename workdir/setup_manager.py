@@ -11,6 +11,7 @@ from prettytable import PrettyTable
 from dialog import Dialog
 import db_dialogs as dbd
 import tdc_daq as td
+import pasttrec_ctrl as ptc
 
 
 
@@ -28,13 +29,15 @@ d.set_background_title("Manage boards")
 
 while True:
 
-  code, tag = d.menu("main menu",
+  code, tag = d.menu("main menu", height="20", menu_height="18",
     choices = [("1","enable/disable boards"),
                ("2","view/edit board json"),
                ("3","view/edit setup json"),
                ("4","add board"),
                ("5","remove board"),
                ("6","move board"),
+               ("7","edit default asic settings"),
+               ("8","init setup (active boards)"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -66,6 +69,7 @@ while True:
 
         while True:
           code_41, conn_str = dbd.dialog_connector_list(tdc_addr)
+          conn = int(conn_str)
           if code_41 == d.DIALOG_OK:
             if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
               code_42, name_str = d.inputbox(text="enter board name",init="0000")
@@ -74,7 +78,7 @@ while True:
                 if code_43 == d.DIALOG_OK:
                   print "adding"
                   print tdc_addr
-                  print conn
+                  print conn_str
                   print name_str
                   print calib_file
                   db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
@@ -115,6 +119,20 @@ while True:
         else:
           break
 
+    ## edit default asic settings ##
+    if tag == "7":
+      code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["default_asic_settings"],indent=2))
+      if code_7 == d.DIALOG_OK:
+        setup = db.get_setup_json()
+        default_asic_settings = json.loads(text)
+        setup["default_asic_settings"] = default_asic_settings;
+        db.write_setup_json(setup)
+   
+    if tag == "8":
+      td.enable_tdc_channels_of_active_boards()
+      ptc.init_active_boards()
+      d.msgbox("initialized all active boards\nand enabled respective TDC channels")
+      
 
       
     if tag == "z":

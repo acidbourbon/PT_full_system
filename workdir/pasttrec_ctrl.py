@@ -54,5 +54,17 @@ def init_board(TDC,conn,pktime,gain,thresh):
   return
   
   
-   
+def init_active_boards():
+  
+  setup     = db.get_setup_json()
+  pktime    = setup["default_asic_settings"]["pktime"]
+  gain      = setup["default_asic_settings"]["gain"]
+  threshold = setup["default_asic_settings"]["threshold"]
 
+  for board_name in db.active_board_list():
+    board_info = db.find_board_by_name(board_name)
+    conn = board_info["tdc_connector"]
+    tdc_addr = board_info["tdc_addr"]
+    if tdc_addr[0:2].lower() == "0x":
+      init_board(tdc_addr,conn,pktime,gain,threshold)
+  return
