@@ -1,5 +1,4 @@
 
-
 class Hit {
 public:
   int chan;
@@ -21,6 +20,7 @@ void unify(void){
   
   cout << "unify!" <<endl;
   
+  Int_t channels = 32;
   
   Int_t ref_chan = 353001; // channel 1 of FPGA 0x0351 is our reference channel!
   
@@ -172,11 +172,30 @@ void unify(void){
   
 //   joint_tree->Draw("hits.t1","hits.chan == 350005");
 //   joint_tree->Draw("hits.t1","hits.chan > 350*1000 && hits.chan < 350*1001");
-  new TCanvas();
-  joint_tree->Draw("hits.chan : hits.t1>>t1_meta(1000,200,250,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
-  new TCanvas();
-  joint_tree->Draw("hits.chan : hits.tot>>tot_meta(1000,0,400,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
+//  new TCanvas();
+//  joint_tree->Draw("hits.chan : hits.t1>>t1_meta(1000,-200,500,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
+//  new TCanvas();
+//  joint_tree->Draw("hits.chan : hits.tot>>tot_meta(1000,0,400,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
 
+  for (Int_t i = 0; i < TDC_list.size(); i++){
+    
+    TString tdc(TDC_list[i]);
+    
+    cout << "found data tree for tdc: " << tdc << endl;
+    
+    
+    TString tdc_number_str( tdc(4,7) );
+    Int_t   tdc_number = tdc_number_str.Atoi();
+    
+    //channel_number_prefix[i] = tdc_number*1000;
+    new TCanvas();
+    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-250,250,32,%d,%d)",tdc_number*1000,tdc_number,1,1+channels),
+            Form("hits.chan > %d && hits.chan < %d",tdc_number*1000,tdc_number*1001),"colz");
+    new TCanvas();
+    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,32,%d,%d)",tdc_number*1000,tdc_number,1,1+channels),
+            Form("hits.chan > %d && hits.chan < %d",tdc_number*1000,tdc_number*1001),"colz");
+  }
   
+  out_file->Write();
   
 }

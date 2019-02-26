@@ -36,6 +36,35 @@ def enable_tdc_channels_of_active_boards():
   return
 
 
+
+
+def record_tree_data(no_events):
+  dummy=os.popen("rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q".format(no_events)).read()
+  return
+
+
+
+def get_t1_tot(tdc_addr,channels):
+  ## run record_tree_data() first ##
+  
+  f = TFile("joint_tree.root")
+
+  t1 = np.zeros(len(channels))
+  tot = np.zeros(len(channels))
+
+  t1_meta  = f.Get(tdc_addr+"_t1_meta")
+  tot_meta = f.Get(tdc_addr+"_tot_meta")
+  
+  index=0
+  for i in channels:
+    t1[index]  = t1_meta.ProjectionX("dummy",i+1,i+1).GetMean()
+    tot[index] = tot_meta.ProjectionX("dummy",i+1,i+1).GetMean()
+    index += 1
+
+  return (t1, tot)
+
+
+
 def get_tot(TDC, channels, no_events):
   
   os.system("rm Go4AutoSave.root")
