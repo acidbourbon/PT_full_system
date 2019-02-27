@@ -39,6 +39,9 @@ while True:
                ("7","edit default asic settings"),
                ("8","init setup (active boards)"),
                ("9","auto calib baselines of board"),
+               ("10","add tdc"),
+               ("11","remove tdc"),
+               ("12","auto calib t1 offsets of board"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -143,6 +146,41 @@ while True:
 via AC coupling and 10k resistor.".format(board_name) )
         import baseline_calib
         baseline_calib.baseline_calib(board_name)
+
+
+    ## remove tdc ##
+    if tag == "11":
+      while True:
+        code, choice = dbd.dialog_tdc_list()
+        if code == d.DIALOG_OK: 
+          db.remove_tdc(choice)
+        else:
+          break
+
+    ## add tdc ##
+    if tag == "10":
+      code, hub_addr = d.inputbox(text="enter hub addr",init="")
+      if code == d.DIALOG_OK:
+        code, tdc_addr = d.inputbox(text="enter tdc addr",init="")
+        if code == d.DIALOG_OK:
+          code, tdc_name = d.inputbox(text="enter tdc name",init=tdc_addr)
+          if code == d.DIALOG_OK:
+            code, channels_str = d.inputbox(text="enter number of channels",init="")
+            if code == d.DIALOG_OK:
+              code, connectors_str = d.inputbox(text="enter number of connectors",init="{:d}".format(int(channels_str)/16))
+              if code == d.DIALOG_OK:
+                db.insert_tdc(hub_addr,tdc_addr,tdc_name,int(channels_str),int(connectors_str))
+
+      
+
+    ## calib board baselines ##
+    if tag == "12":
+      code_9, choice_9 = dbd.dialog_board_list()
+      if code_9 == d.DIALOG_OK:
+        board_name = choice_9
+        d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
+        td.calib_t1_offsets_of_board(board_name)
+
 
       
     if tag == "z":
