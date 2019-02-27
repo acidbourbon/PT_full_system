@@ -44,7 +44,7 @@ def record_tree_data(no_events):
 
 
 
-def get_t1_tot(tdc_addr,channels):
+def get_t1_tot(tdc_addr,channels,corrected):
   ## run record_tree_data() first ##
   
   f = TFile("joint_tree.root")
@@ -55,10 +55,14 @@ def get_t1_tot(tdc_addr,channels):
 
   t1_meta  = f.Get(str(tdc_addr)+"_t1_meta")
   tot_meta = f.Get(str(tdc_addr)+"_tot_meta")
+
+  t1_offset = db.get_tdc_json(str(tdc_addr))["t1_offset"]
   
   index=0
   for i in channels:
     t1[index]  = t1_meta.ProjectionX("dummy",i+1,i+1).GetMean()
+    if corrected:
+      t1[index] -= t1_offset[i]
     tot_proj   = tot_meta.ProjectionX("dummy",i+1,i+1)
     tot[index] = tot_proj.GetMean()
     counts[index] = tot_proj.GetEntries()
@@ -68,7 +72,7 @@ def get_t1_tot(tdc_addr,channels):
 
 def calib_t1_offsets(tdc_addr,channels):
   record_tree_data(1000)
-  t1, tot = get_t1_tot(tdc_addr,channels)
+  t1, tot = get_t1_tot(tdc_addr,channels,0) # take uncorrected t1
   tdc_json = db.get_tdc_json(tdc_addr)
   index=0
   for ch in channels:
@@ -82,10 +86,10 @@ def calib_t1_offsets_of_board(board_name):
   board_info = db.find_board_by_name(board_name)
   calib_t1_offsets(board_info["tdc_addr"],board_info["channels"])
 
-def get_t1_tot_of_board(board_name):
+def get_t1_tot_of_board(board_name,corrected):
   ## run record_tree_data() first ##
   board_info = db.find_board_by_name(board_name)
-  return get_t1_tot(board_info["tdc_addr"],board_info["channels"])
+  return get_t1_tot(board_info["tdc_addr"],board_info["channels"],corrected)
 
 def get_tot(TDC, channels, no_events):
   
