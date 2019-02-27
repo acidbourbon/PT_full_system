@@ -42,6 +42,7 @@ while True:
                ("10","add tdc"),
                ("11","remove tdc"),
                ("12","auto calib t1 offsets of board"),
+               ("13","get t1 and tot of board"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -173,13 +174,24 @@ via AC coupling and 10k resistor.".format(board_name) )
 
       
 
-    ## calib board baselines ##
+    ## calib t1 offsets ##
     if tag == "12":
       code_9, choice_9 = dbd.dialog_board_list()
       if code_9 == d.DIALOG_OK:
         board_name = choice_9
         d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
         td.calib_t1_offsets_of_board(board_name)
+
+    ## read t1 tot of board ##
+    if tag == "13":
+      code, board_name = dbd.dialog_board_list()
+      if code == d.DIALOG_OK:
+        td.record_tree_data(1000)
+        t1, tot, counts = td.get_t1_tot_of_board(board_name)
+        board_info = db.find_board_by_name(board_name)
+        answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
+        code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
+      
 
 
       

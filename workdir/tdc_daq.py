@@ -39,7 +39,7 @@ def enable_tdc_channels_of_active_boards():
 
 
 def record_tree_data(no_events):
-  dummy=os.popen("rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q".format(no_events)).read()
+  dummy=os.popen("rm *.root; tree_out=true go4analysis -number {:d} -stream localhost:6790; root -b -l unify.C -q".format(no_events)).read()
   return
 
 
@@ -51,6 +51,7 @@ def get_t1_tot(tdc_addr,channels):
 
   t1 = np.zeros(len(channels))
   tot = np.zeros(len(channels))
+  counts = np.zeros(len(channels))
 
   t1_meta  = f.Get(str(tdc_addr)+"_t1_meta")
   tot_meta = f.Get(str(tdc_addr)+"_tot_meta")
@@ -58,10 +59,12 @@ def get_t1_tot(tdc_addr,channels):
   index=0
   for i in channels:
     t1[index]  = t1_meta.ProjectionX("dummy",i+1,i+1).GetMean()
-    tot[index] = tot_meta.ProjectionX("dummy",i+1,i+1).GetMean()
+    tot_proj   = tot_meta.ProjectionX("dummy",i+1,i+1)
+    tot[index] = tot_proj.GetMean()
+    counts[index] = tot_proj.GetEntries()
     index += 1
 
-  return (t1.tolist(), tot.tolist())
+  return (t1.tolist(), tot.tolist(), counts.tolist() )
 
 def calib_t1_offsets(tdc_addr,channels):
   record_tree_data(1000)
@@ -72,6 +75,7 @@ def calib_t1_offsets(tdc_addr,channels):
     tdc_json["t1_offset"][ch] = t1[index]
     index+=1
   db.write_tdc_json(tdc_addr,tdc_json)
+  return (t1,tot)
 
 def calib_t1_offsets_of_board(board_name):
   ## run record_tree_data() first ##
