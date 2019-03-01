@@ -72,7 +72,7 @@ def get_t1_tot(tdc_addr,channels,corrected):
 
 def calib_t1_offsets(tdc_addr,channels):
   record_tree_data(1000)
-  t1, tot = get_t1_tot(tdc_addr,channels,0) # take uncorrected t1
+  t1, tot, counts = get_t1_tot(tdc_addr,channels,0) # take uncorrected t1
   tdc_json = db.get_tdc_json(tdc_addr)
   index=0
   for ch in channels:

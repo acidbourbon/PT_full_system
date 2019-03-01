@@ -4,8 +4,6 @@
     {
       "tdc": [
         {
-          "channels": 32, 
-          "addr": "dummy", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -40,30 +38,30 @@
             0.0, 
             0.0
           ], 
+          "addr": "dummy", 
+          "channels": 32, 
           "connectors": 8, 
           "board": [], 
           "name": "dummy"
         }, 
         {
-          "channels": 32, 
-          "addr": "0x0350", 
           "t1_offset": [
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
+            170.18509615384616, 
+            172.17307692307693, 
+            170.26923076923077, 
+            169.48317307692307, 
+            169.64903846153845, 
+            169.69951923076923, 
+            172.4903846153846, 
+            171.13942307692307, 
+            172.0721153846154, 
+            171.69471153846155, 
+            172.21875, 
+            171.90144230769232, 
+            170.7908653846154, 
+            172.42067307692307, 
+            170.51923076923077, 
+            169.83173076923077, 
             168.89659685863873, 
             169.21596858638745, 
             169.18193717277487, 
@@ -81,26 +79,26 @@
             169.2526178010471, 
             168.967277486911
           ], 
+          "addr": "0x0350", 
+          "channels": 32, 
           "connectors": 2, 
           "board": [
             {
-              "calib_file": "./boards/board_0026.json", 
               "active": 0, 
+              "calib_file": "./boards/board_0021.json", 
               "tdc_connector": 1, 
-              "name": "0026"
+              "name": "0021"
             }, 
             {
-              "active": 1, 
-              "calib_file": "./boards/board_0021.json", 
+              "calib_file": "./boards/board_0026.json", 
+              "active": 0, 
               "tdc_connector": 2, 
-              "name": "0021"
+              "name": "0026"
             }
           ], 
           "name": "0350"
         }, 
         {
-          "channels": 32, 
-          "addr": "0x0351", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -135,16 +133,18 @@
             0.0, 
             0.0
           ], 
+          "addr": "0x0351", 
+          "channels": 32, 
           "connectors": 2, 
           "board": [
             {
-              "active": 0, 
+              "active": 1, 
               "calib_file": "./boards/board_0027.json", 
               "tdc_connector": 1, 
               "name": "0027"
             }, 
             {
-              "active": 0, 
+              "active": 1, 
               "calib_file": "./boards/board_0018.json", 
               "tdc_connector": 2, 
               "name": "0018"
@@ -153,6 +153,8 @@
           "name": "0351"
         }, 
         {
+          "channels": 32, 
+          "addr": "0x0352", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -187,8 +189,6 @@
             0.0, 
             0.0
           ], 
-          "addr": "0x0352", 
-          "channels": 32, 
           "connectors": 2, 
           "board": [], 
           "name": "0352"

@@ -31,18 +31,19 @@ while True:
 
   code, tag = d.menu("main menu", height="20", menu_height="18",
     choices = [("1","enable/disable boards"),
-               ("2","view/edit board json"),
-               ("3","view/edit setup json"),
-               ("4","add board"),
-               ("5","remove board"),
-               ("6","move board"),
-               ("7","edit default asic settings"),
                ("8","init setup (active boards)"),
+               ("13","get t1 and tot of board"),
                ("9","auto calib baselines of board"),
+               ("12","auto calib t1 offsets of board"),
+               ("14","reset board"),
+               ("7","edit default asic settings"),
+               ("4","add board"),
+               ("6","move board"),
+               ("5","remove board"),
                ("10","add tdc"),
                ("11","remove tdc"),
-               ("12","auto calib t1 offsets of board"),
-               ("13","get t1 and tot of board"),
+               ("2","view/edit board json"),
+               ("3","view/edit setup json"),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -191,6 +192,12 @@ via AC coupling and 10k resistor.".format(board_name) )
         board_info = db.find_board_by_name(board_name)
         answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
         code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
+      
+    ## reset board ##
+    if tag == "14":
+      code, board_name = dbd.dialog_board_list()
+      if code == d.DIALOG_OK:
+        ptc.reset_board_by_name(board_name)
       
 
 

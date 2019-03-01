@@ -48,6 +48,13 @@ def init_chip(TDC,conn,chip,pktime,gain,thresh):
     set_all_baselines(TDC,channels,values)
   return
 
+def reset_board_by_name(board_name):
+  board_info = db.find_board_by_name(board_name)
+  conn = board_info["tdc_connector"]
+  tdc_addr = board_info["tdc_addr"]
+  if tdc_addr[0:2].lower() == "0x":
+    reset_board(tdc_addr,conn)
+
 def reset_board(TDC,conn):
   os.system("cd pasttrec_ctrl; TDC="+TDC+" CONN={:d} ./reset ".format(conn))
 
@@ -72,3 +79,16 @@ def init_active_boards():
     if tdc_addr[0:2].lower() == "0x":
       init_board(tdc_addr,conn,pktime,gain,threshold)
   return
+
+def init_board_by_name(board_name):
+  
+  setup     = db.get_setup_json()
+  pktime    = setup["default_asic_settings"]["pktime"]
+  gain      = setup["default_asic_settings"]["gain"]
+  threshold = setup["default_asic_settings"]["threshold"]
+
+  board_info = db.find_board_by_name(board_name)
+  conn = board_info["tdc_connector"]
+  tdc_addr = board_info["tdc_addr"]
+  if tdc_addr[0:2].lower() == "0x":
+    init_board(tdc_addr,conn,pktime,gain,threshold)
