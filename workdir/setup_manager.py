@@ -34,6 +34,7 @@ while True:
                ("8","init setup (active boards)"),
                ("13","get t1 and tot of board"),
                ("9","auto calib baselines of board"),
+               ("15","auto calib baselines from noise"),
                ("12","auto calib t1 offsets of board"),
                ("14","reset board"),
                ("7","edit default asic settings"),
@@ -190,8 +191,14 @@ via AC coupling and 10k resistor.".format(board_name) )
         td.record_tree_data(1000)
         t1, tot, counts = td.get_t1_tot_of_board(board_name,1)
         board_info = db.find_board_by_name(board_name)
-        answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
-        code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
+        channels = board_info["channels"]
+        #answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
+        #code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
+        t = PrettyTable(["channel","t1","tot","counts"])
+        for i in range(0,len(channels)):
+          t.add_row(["{:d}".format(channels[i]), "{:3.3f}".format(t1[i]), "{:3.3f}".format(tot[i]), "{:.0f}".format(counts[i])  ])
+      
+        code_21, text_21 = dbd.dialog_editbox(t.get_string())  
       
     ## reset board ##
     if tag == "14":
@@ -199,6 +206,14 @@ via AC coupling and 10k resistor.".format(board_name) )
       if code == d.DIALOG_OK:
         ptc.reset_board_by_name(board_name)
       
+    ## calib board baselines ##
+    if tag == "15":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+        d.msgbox("Disconnect board {:s} from detector or cut voltage of detector to measure pure electronic noise".format(board_name) )
+        import baseline_calib
+        baseline_calib.baseline_calib_by_noise(board_name)
 
 
       

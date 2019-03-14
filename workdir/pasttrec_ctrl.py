@@ -11,6 +11,13 @@ def set_baseline( TDC, channel,val):
 
   return
 
+def set_threshold(TDC,conn,chip,thresh):
+  os.system("cd pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./threshold {:d}".format(conn,chip,thresh))
+
+def set_threshold_for_board(TDC,conn,thresh):
+  set_threshold(TDC,conn,0,thresh)
+  set_threshold(TDC,conn,1,thresh)
+
 def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
   print("set baselines of the following channels")
   print channels

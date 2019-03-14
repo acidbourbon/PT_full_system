@@ -22,6 +22,64 @@ no_events=1000
 
 #############   board name is the only thing that needs to be defined here, everythig else is loaded from db ################
 
+
+def baseline_calib_by_noise(board_name):
+
+  x, matrix = baseline_noise_scan(board_name)
+
+  import matplotlib.pyplot as plt
+  data = np.array(matrix)
+  #plt.imshow(np.log(data))
+  #plt.show()
+  #plt.savefig("tmp.png")
+  #os.system("display tmp.png")
+
+  baselines = np.zeros(16)
+
+  for ch in range(0,16):
+    vals = data[:,ch]
+    mean = float(np.dot(vals,x))/float(np.sum(vals))
+    max  = x[np.argmax(vals)]
+    baselines[ch] = mean
+    #baselines[ch] = max
+
+  db.update_calib_json_by_name(board_name,{"baselines": np.round(baselines).tolist() })
+  ptc.init_active_boards()
+
+  return baselines
+    
+
+def baseline_noise_scan(board_name):
+  
+  
+  board_info = db.find_board_by_name(board_name)
+  channels   = board_info["channels"] # zero based 
+  TDC        = board_info["tdc_addr"]
+  connector  = board_info["tdc_connector"]
+
+  db.enable_board(board_name)
+  ptc.init_active_boards()
+
+  scan_time = 0.2
+  
+  ptc.set_threshold_for_board(TDC,connector,0)
+  
+  result_matrix = []
+  x = range(-15,16)
+
+  for i in x:
+    ptc.set_all_baselines(TDC,channels, [i]*len(channels) )
+    rates = tdc_daq.scaler_rate(TDC,channels,scan_time)
+    result_matrix.append(rates)
+
+
+  return (x, result_matrix)
+  
+
+
+
+
+
 def baseline_calib(board_name):
   
   channels   = db.find_board_by_name(board_name)["channels"] # zero based 
