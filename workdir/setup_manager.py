@@ -190,15 +190,28 @@ via AC coupling and 10k resistor.".format(board_name) )
       if code == d.DIALOG_OK:
         td.record_tree_data(1000)
         t1, tot, counts = td.get_t1_tot_of_board(board_name,1)
+
+        import pandas as pd
+        import numpy as np
+
+
         board_info = db.find_board_by_name(board_name)
         channels = board_info["channels"]
-        #answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
-        #code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
-        t = PrettyTable(["channel","t1","tot","counts"])
-        for i in range(0,len(channels)):
-          t.add_row(["{:d}".format(channels[i]), "{:3.3f}".format(t1[i]), "{:3.3f}".format(tot[i]), "{:.0f}".format(counts[i])  ])
+
+        df = pd.DataFrame(np.transpose(np.array([t1,tot,counts])), index= channels, columns=["t1","tot","counts"] )
+
+        ##answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
+        ##code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
+        #t = PrettyTable(["channel","t1","tot","counts"])
+        #for i in range(0,len(channels)):
+        #  t.add_row(["{:d}".format(channels[i]), "{:3.3f}".format(t1[i]), "{:3.3f}".format(tot[i]), "{:.0f}".format(counts[i])  ])
       
-        code_21, text_21 = dbd.dialog_editbox(t.get_string())  
+        #code_21, text_21 = dbd.dialog_editbox(t.get_string())  
+        report = df.to_string()
+        report += "\n\n\n"
+        report += df.describe().to_string()
+        code_21, text_21 = dbd.dialog_editbox(report)  
+               
       
     ## reset board ##
     if tag == "14":
