@@ -1,4 +1,10 @@
 
+
+
+#include "Riostream.h"
+
+
+
 class Hit {
 public:
   int chan;
@@ -14,9 +20,43 @@ public:
 };
 
 
+void get_t1_offsets(TString TDC,Float_t* target_array){
+  
+
+  TString fname = TDC + ".t1_offsets.txt";
+
+      ifstream in;
+      in.open(fname);
+  
+  
+      Int_t nlines = 0;
+      
+      string line;
+      while (1) {
+        in >> line;
+        if (!in.good()) break;
+        
+        Float_t x;
+        if(sscanf(line.c_str(),"%f",&x)){
+          target_array[nlines] = x;
+          nlines++;
+        }
+      }
+
+}
 
 
 void unify(void){
+
+  Float_t global_t1_shift = 250.0;
+
+  cout << "get t1 offsets from database" << endl;
+
+  gSystem->GetFromPipe("rm *.t1_offsets.txt");
+
+  gSystem->GetFromPipe("./create_t1_offset_lists.py");
+
+  cout << gSystem->GetFromPipe("ls *.t1_offsets.txt") << endl;
   
   cout << "unify!" <<endl;
   
@@ -30,6 +70,7 @@ void unify(void){
    
    
   std::vector<TString> TDC_list;
+
   
    
    TKey *key;
@@ -40,6 +81,8 @@ void unify(void){
 //       key->GetClassName(),key->GetSeekKey());
       TDC_list.push_back(key->GetName());
    }
+  
+  Float_t t1_offsets[TDC_list.size()][64];
    
   TTree* data_tree[TDC_list.size()];
   Int_t  channel_number_prefix[TDC_list.size()];
@@ -57,8 +100,14 @@ void unify(void){
   for (Int_t i = 0; i < TDC_list.size(); i++){
     
     TString tdc(TDC_list[i]);
+
     
     cout << "found data tree for tdc: " << tdc << endl;
+    
+    TString tdc_hex(tdc);
+    tdc_hex.ReplaceAll("TDC_","0x");
+    cout << "get t1 offsets for tdc: " << tdc_hex << endl;
+    get_t1_offsets(tdc_hex,t1_offsets[i]);
     
     
     TString tdc_number_str( tdc(4,7) );
@@ -119,8 +168,20 @@ void unify(void){
             hits_per_trigger++;
             // here the interesting stuff happens, do something with the
             // current hit
+
+            // correct t1 offsets of TDC
+            current_hit.t1 -= t1_offsets[tdc_no][current_hit.chan];
+
+            
+            // code the tdc address in the channel number
             current_hit.chan += channel_number_prefix[tdc_no];
 //             cout << "current hit channel: " << current_hit.chan << endl;
+
+
+            if(current_hit.chan != ref_chan){
+              current_hit.t1 += global_t1_shift;
+            }
+
             
             if(current_hit.chan == ref_chan && (got_reference_time == false)){
 //               cout << "current hit channel: " << current_hit.chan << endl;
@@ -150,6 +211,8 @@ void unify(void){
         
       for(Int_t i = 0; i < my_event.hits.size(); i++){
         my_event.hits[i].t1 -= reference_time;
+
+          
       }
         
       joint_tree->Fill();
