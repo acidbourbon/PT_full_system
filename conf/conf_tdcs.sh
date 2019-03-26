@@ -23,10 +23,10 @@ done
 for TDC in 0x0350 0x0351; do
 
 	# enable the first 16 channels (CONN1)
-	 trbcmd setbit $TDC 0xc802 0x0000FFFF
+	 #trbcmd setbit $TDC 0xc802 0x0000FFFF
 
 	# enable the second 16 channels (CONN2)
-	trbcmd setbit $TDC 0xc802 0xFFFF0000
+	#trbcmd setbit $TDC 0xc802 0xFFFF0000
 
 done
 

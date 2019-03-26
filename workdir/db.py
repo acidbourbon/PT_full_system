@@ -5,6 +5,12 @@ root_dir   = "./db/"
 setup_file = "setup.json"
 
 
+
+def get_t1_offsets(tdc_addr):
+  t1_offset = get_tdc_json(str(tdc_addr))["t1_offset"]
+  return t1_offset
+
+
 def dump(obj):
   print json.dumps(obj,indent=2)  
 

@@ -50,7 +50,7 @@
 // #define spike_rejection 90 //ns for PASTTREC pt20 with LASER
 //#define spike_rejection 90 //ns for PASTTREC pt20 with Fe55
 
-#define spike_rejection 30
+#define spike_rejection 80
 #define spike_rejection_refchan 10
 
 #define individual_spike_rejection 0
@@ -350,7 +350,7 @@ class SecondProc : public base::EventProc {
                   t2_candidate[chid] = tm;
                   Double_t candidate_tot_ns = (t2_candidate[chid] - t1_candidate[chid])*1e9;
                   
-                  if( candidate_tot_ns > effective_spike_rejection || (chid==REFCHAN || candidate_tot_ns > spike_rejection_refchan) ){
+                  if( candidate_tot_ns > effective_spike_rejection || (chid==REFCHAN && candidate_tot_ns > spike_rejection_refchan) ){
                     // hit is long enough not to be rejected
                     t1[chid] = t1_candidate[chid];
                     t2[chid] = t2_candidate[chid];
