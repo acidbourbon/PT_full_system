@@ -121,7 +121,7 @@ void unify(void){
     TString tdc_number_str( tdc(4,7) );
     Int_t   tdc_number = tdc_number_str.Atoi();
 //     cout << "TDC number: " <<  tdc_number <<  endl;
-    cout << "TDC channel prefix/offset (1000 possible TDC channels left): " <<  tdc_number*1000 <<  endl;
+    cout << "TDC channel prefix/offset (100 possible TDC channels left): " <<  tdc_number*100 <<  endl;
     
     data_tree[i] = (TTree*) f.Get(tdc);
     channel_number_prefix[i] = tdc_number*100;
@@ -237,17 +237,7 @@ void unify(void){
   
   out_file->cd();
   joint_tree->Write();
-//   out_file->Close();
-//   delete out_file;
   
-  ///// examples for drawing ////
-  
-//   joint_tree->Draw("hits.t1","hits.chan == 350005");
-//   joint_tree->Draw("hits.t1","hits.chan > 350*1000 && hits.chan < 350*1001");
-//  new TCanvas();
-//  joint_tree->Draw("hits.chan : hits.t1>>t1_meta(1000,-200,500,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
-//  new TCanvas();
-//  joint_tree->Draw("hits.chan : hits.tot>>tot_meta(1000,0,400,32,350001,350032)","hits.chan > 350*1000 && hits.chan < 350*1001","colz");
 
   for (Int_t i = 0; i < TDC_list.size(); i++){
     
@@ -293,8 +283,8 @@ void unify(void){
           coinc_matrix->Fill(hit_a_chan,hit_b_chan);
           if ( (hit_a_chan > 35000) && (hit_a_chan < 35100) && (hit_b_chan > 35100) && (hit_b_chan < 35200)){
             if (  
-                   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) || 
-                   (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )
+                   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ||   /* main diagonal */
+                   (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )     /* next to diagonal */
                ){ 
               Float_t t1_a = this_event->hits[hit_no_a].t1;
               Float_t t1_b = this_event->hits[hit_no_b].t1;
