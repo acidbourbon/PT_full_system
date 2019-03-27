@@ -47,8 +47,10 @@ void get_t1_offsets(TString TDC,Float_t* target_array){
 
 
 void unify(void){
+  
+  Bool_t correct_t1_offsets = true;
 
-  Float_t global_t1_shift = 250.0;
+  Float_t global_t1_shift = 0.0;
 
   cout << "get t1 offsets from database" << endl;
 
@@ -62,7 +64,7 @@ void unify(void){
   
   Int_t channels = 32;
   
-  Int_t ref_chan = 353001; // channel 1 of FPGA 0x0351 is our reference channel!
+  Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
   
   
   TFile f("tree_out.root");
@@ -107,7 +109,9 @@ void unify(void){
     TString tdc_hex(tdc);
     tdc_hex.ReplaceAll("TDC_","0x");
     cout << "get t1 offsets for tdc: " << tdc_hex << endl;
-    get_t1_offsets(tdc_hex,t1_offsets[i]);
+    
+    if(correct_t1_offsets)
+      get_t1_offsets(tdc_hex,t1_offsets[i]);
     
     
     TString tdc_number_str( tdc(4,7) );
@@ -116,7 +120,7 @@ void unify(void){
     cout << "TDC channel prefix/offset (1000 possible TDC channels left): " <<  tdc_number*1000 <<  endl;
     
     data_tree[i] = (TTree*) f.Get(tdc);
-    channel_number_prefix[i] = tdc_number*1000;
+    channel_number_prefix[i] = tdc_number*100;
     
     data_tree_entries[i] = data_tree[i]->GetEntries();
     
@@ -170,7 +174,8 @@ void unify(void){
             // current hit
 
             // correct t1 offsets of TDC
-            current_hit.t1 -= t1_offsets[tdc_no][current_hit.chan];
+            if(correct_t1_offsets)
+              current_hit.t1 -= t1_offsets[tdc_no][current_hit.chan-1];
 
             
             // code the tdc address in the channel number
@@ -250,15 +255,54 @@ void unify(void){
     TString tdc_number_str( tdc(4,7) );
     Int_t   tdc_number = tdc_number_str.Atoi();
     
-    //channel_number_prefix[i] = tdc_number*1000;
+    
+    
     new TCanvas();
-    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-250,250,32,%d,%d)",tdc_number*1000,tdc_number,1,1+channels),
-            Form("hits.chan > %d && hits.chan < %d",tdc_number*1000,tdc_number*1001),"colz");
+    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-1000,1000,32,%d,%d)",tdc_number*100,tdc_number,1,1+channels),
+            Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
     new TCanvas();
-    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,32,%d,%d)",tdc_number*1000,tdc_number,1,1+channels),
-            Form("hits.chan > %d && hits.chan < %d",tdc_number*1000,tdc_number*1001),"colz");
+    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,32,%d,%d)",tdc_number*100,tdc_number,1,1+channels),
+            Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
   }
+
+
+
+
+// make coincidence matrix
   
+  Event* this_event = new Event();
+  joint_tree->SetBranchAddress("event",&this_event);
+
+
+  TH2F* coinc_matrix = new TH2F("coinc_matrix","coinc_matrix", 500, 35000, 35000+500, 500, 35000, 35000+500);
+
+  TH2F* meta_fish = new TH2F("meta_fish","meta_fish", 500, -250, 250, 500, -250, 250);
+
+  for (Int_t evt_no = 0; evt_no < joint_tree->GetEntries(); evt_no++){
+
+    joint_tree->GetEntry(evt_no); 
+    for (Int_t hit_no_a = 0; hit_no_a < this_event->hits.size(); hit_no_a++){
+      Int_t hit_a_chan = this_event->hits[hit_no_a].chan;
+      for (Int_t hit_no_b = hit_no_a; hit_no_b < this_event->hits.size(); hit_no_b++){
+        Int_t hit_b_chan = this_event->hits[hit_no_b].chan;
+ 
+          coinc_matrix->Fill(hit_a_chan,hit_b_chan);
+          if ( (hit_a_chan < 35300) && (hit_b_chan < 35300)){
+            if (   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ){ // main diagonal
+              Float_t t1_a = this_event->hits[hit_no_a].t1;
+              Float_t t1_b = this_event->hits[hit_no_b].t1;
+              meta_fish->Fill(t1_a +t1_b, t1_a -t1_b);
+            }
+          } 
+         
+      } 
+    }
+
+  }
+
+  //coinc_matrix->Write(); // not necessary because histogram
+     
+
   out_file->Write();
   
 }

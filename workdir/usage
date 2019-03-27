@@ -33,3 +33,5 @@ rm *.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:808
 
 rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q; ./rbrowse joint_tree.root
 rm *.root; tree_out=true go4analysis -number 1000 -user /workdir/data/lena_cosmics/TDC_data19078162428.hld; root -b -l unify.C -q; ./rbrowse joint_tree.root
+# in the browser:
+joint_tree->Draw("hits.t1","hits.chan == 35001")
