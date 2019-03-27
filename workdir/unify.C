@@ -28,8 +28,10 @@ void get_t1_offsets(TString TDC,Float_t* target_array){
       ifstream in;
       in.open(fname);
   
+      cout << "read t1 offsets of " << TDC << endl;
   
       Int_t nlines = 0;
+          cout << " " << endl;
       
       string line;
       while (1) {
@@ -40,17 +42,19 @@ void get_t1_offsets(TString TDC,Float_t* target_array){
         if(sscanf(line.c_str(),"%f",&x)){
           target_array[nlines] = x;
           nlines++;
+          cout << " " << x;
         }
       }
 
+          cout << " " << endl;
 }
 
 
 void unify(void){
   
-  Bool_t correct_t1_offsets = true;
+  Int_t correct_t1_offsets = 1;
 
-  Float_t global_t1_shift = 0.0;
+  Float_t global_t1_shift = 260.0;
 
   cout << "get t1 offsets from database" << endl;
 
@@ -84,7 +88,7 @@ void unify(void){
       TDC_list.push_back(key->GetName());
    }
   
-  Float_t t1_offsets[TDC_list.size()][64];
+  Float_t t1_offsets[8][64];
    
   TTree* data_tree[TDC_list.size()];
   Int_t  channel_number_prefix[TDC_list.size()];
@@ -287,8 +291,11 @@ void unify(void){
         Int_t hit_b_chan = this_event->hits[hit_no_b].chan;
  
           coinc_matrix->Fill(hit_a_chan,hit_b_chan);
-          if ( (hit_a_chan < 35300) && (hit_b_chan < 35300)){
-            if (   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ){ // main diagonal
+          if ( (hit_a_chan > 35000) && (hit_a_chan < 35100) && (hit_b_chan > 35100) && (hit_b_chan < 35200)){
+            if (  
+                   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) || 
+                   (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )
+               ){ 
               Float_t t1_a = this_event->hits[hit_no_a].t1;
               Float_t t1_b = this_event->hits[hit_no_b].t1;
               meta_fish->Fill(t1_a +t1_b, t1_a -t1_b);
