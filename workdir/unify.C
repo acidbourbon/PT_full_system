@@ -68,7 +68,8 @@ void unify(void){
   
   Int_t channels = 32;
   
-  Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
+  //Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
+  Int_t ref_chan = 35049; // channel 49 of FPGA 0x0350 is our reference channel!
   
   
   TFile f("tree_out.root");
@@ -257,6 +258,9 @@ void unify(void){
     new TCanvas();
     joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,32,%d,%d)",tdc_number*100,tdc_number,1,1+channels),
             Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
+    new TCanvas();
+    joint_tree->Draw(Form("hits.tot : hits.t1 >>0x%04d_potato(1000,-500,500,1000,0,1000)",tdc_number),
+            Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
   }
 
 
@@ -283,8 +287,12 @@ void unify(void){
           coinc_matrix->Fill(hit_a_chan,hit_b_chan);
           if ( (hit_a_chan > 35000) && (hit_a_chan < 35100) && (hit_b_chan > 35100) && (hit_b_chan < 35200)){
             if (  
-                   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ||   /* main diagonal */
-                   (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )     /* next to diagonal */
+                 // Lena
+                 //  (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ||   /* main diagonal */
+                 //  (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )     /* next to diagonal */
+
+                 // Sandra
+                  (hit_a_chan % 100 -1)  == (hit_b_chan % 100 -1) 
                ){ 
               Float_t t1_a = this_event->hits[hit_no_a].t1;
               Float_t t1_b = this_event->hits[hit_no_b].t1;

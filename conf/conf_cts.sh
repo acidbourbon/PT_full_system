@@ -1,26 +1,24 @@
-#!/bin/bash
-
-# CTS Configuration dump                                                                                                                                                                                                                                                                                                              
-#  generated:        2019-02-05 15:10                                                                                                                                                                                                                                                                                                 
-#  CTS Compile time: 2019-01-21 14:47                                                                                                                                                                                                                                                                                                 
-#                                                                                                                                                                                                                                                                                                                                     
-# trbcmd Dev.   Reg.   Value                                                                                                                                                                                                                                                                                                          
-trbcmd setbit 0xc035 0xa00c 0x80000000  # Disable all triggers                                                                                                                                                                                                                                                                        
-trbcmd w 0xc035 0xa008 0xffffffff  # cts_fsm_limits: ro=65535, td=65535                                                                                                                                                                                                                                                               
-trbcmd w 0xc035 0xa009 0x00000001  # cts_readout_config:                                                                                                                                                                                                                                                                              
-                            # channel_cnt=false, idle_dead_cnt=false, input_cnt=true                                                                                                                                                                                                                                                  
-                            # timestamp=false, trg_cnt=false                                                                                                                                                                                                                                                                          
-trbcmd w 0xc035 0xa00c 0x80000400  # cts_throttle: enable=true, stop=false, threshold=0                                                                                                                                                                                                                                               
-trbcmd w 0xc035 0xa00d 0x00000001  # cts_eventbuilder:                                                                                                                                                                                                                                                                                
-                            # cal_eb=0, mask=0000 0000 0000 0001, rr_interval=0                                                                                                                                                                                                                                                       
-                            # use_cal_eb=false                                                                                                                                                                                                                                                                                        
-trbcmd w 0xc035 0xa101 0xffff0400  # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0100 0000 0000                                                                                                                                                                                                                             
-trbcmd w 0xc035 0xa124 0x00000000  # trg_input_config0: delay=0, invert=false, override=off, spike_rej=0                                                                                                                                                                                                                              
-trbcmd w 0xc035 0xa125 0x00000000  # trg_input_config1: delay=0, invert=false, override=off, spike_rej=0                                                                                                                                                                                                                              
-trbcmd w 0xc035 0xa126 0x00000000  # trg_input_config2: delay=0, invert=false, override=off, spike_rej=0                                                                                                                                                                                                                              
-trbcmd w 0xc035 0xa127 0x00000000  # trg_input_config3: delay=0, invert=false, override=off, spike_rej=0                                                                                                                                                                                                                              
-trbcmd w 0xc035 0xa128 0x00000000  # trg_input_config4: delay=0, invert=false, override=off, spike_rej=0                                                                                                                                                                                                                              
-trbcmd w 0xc035 0xa129 0x00000000  # trg_input_config5: delay=0, invert=false, override=off, spike_rej=0                                                                                                                                                                                                                              
+# CTS Configuration dump
+#  generated:        2019-04-12 13:24
+#  CTS Compile time: 2019-01-21 14:47
+#
+# trbcmd Dev.   Reg.   Value
+trbcmd setbit 0xc035 0xa00c 0x80000000  # Disable all triggers
+trbcmd w 0xc035 0xa008 0xffffffff  # cts_fsm_limits: ro=65535, td=65535
+trbcmd w 0xc035 0xa009 0x00000001  # cts_readout_config: 
+                            # channel_cnt=false, idle_dead_cnt=false, input_cnt=true
+                            # timestamp=false, trg_cnt=false
+trbcmd w 0xc035 0xa00c 0x80000400  # cts_throttle: enable=true, stop=false, threshold=0
+trbcmd w 0xc035 0xa00d 0x00000001  # cts_eventbuilder: 
+                            # cal_eb=0, mask=0000 0000 0000 0001, rr_interval=0
+                            # use_cal_eb=false
+trbcmd w 0xc035 0xa101 0xffff0400  # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0100 0000 0000
+trbcmd w 0xc035 0xa124 0x00000000  # trg_input_config0: delay=0, invert=false, override=off, spike_rej=0
+trbcmd w 0xc035 0xa125 0x00000000  # trg_input_config1: delay=0, invert=false, override=off, spike_rej=0
+trbcmd w 0xc035 0xa126 0x00000000  # trg_input_config2: delay=0, invert=false, override=off, spike_rej=0
+trbcmd w 0xc035 0xa127 0x00000000  # trg_input_config3: delay=0, invert=false, override=off, spike_rej=0
+trbcmd w 0xc035 0xa128 0x00000000  # trg_input_config4: delay=0, invert=false, override=off, spike_rej=0
+trbcmd w 0xc035 0xa129 0x00000000  # trg_input_config5: delay=0, invert=false, override=off, spike_rej=0
 trbcmd w 0xc035 0xa12a 0x00000000  # trg_input_config6: delay=0, invert=false, override=off, spike_rej=0
 trbcmd w 0xc035 0xa13b 0x000f0000  # trg_coin_config0: 
                             # coin_mask=0000 0000, inhibit_mask=0000 0000
@@ -43,7 +41,7 @@ trbcmd w 0xc035 0xa14a 0x00000004  # trg_addon_output_mux4: input=itc[4]
 trbcmd w 0xc035 0xa14b 0x00000005  # trg_addon_output_mux5: input=itc[5]
 trbcmd w 0xc035 0xa14c 0x00000006  # trg_addon_output_mux6: input=itc[6]
 trbcmd w 0xc035 0xa14d 0x00000007  # trg_addon_output_mux7: input=itc[7]
-trbcmd w 0xc035 0xa14f 0x00010000  # trg_periph_config0: mask=0001 0000 0000 0000 0000
+trbcmd w 0xc035 0xa14f 0x00000002  # trg_periph_config0: mask=0000 0000 0000 0000 0010
 trbcmd w 0xc035 0xa150 0x00000000  # trg_periph_config1: mask=0000 0000 0000 0000 0000
 trbcmd w 0xc035 0xa151 0x00000000  # trg_periph_config2: mask=0000 0000 0000 0000 0000
 trbcmd w 0xc035 0xa152 0x00000000  # trg_periph_config3: mask=0000 0000 0000 0000 0000
@@ -61,4 +59,3 @@ trbcmd w 0xc035 0xa15a 0x11111111  # _trg_trigger_types1:
                             # type14=0x1_physics_trigger, type15=0x1_physics_trigger
                             # type8=0x1_physics_trigger, type9=0x1_physics_trigger
 trbcmd clearbit 0xc035 0xa00c 0x80000000  # Enable all triggers
-

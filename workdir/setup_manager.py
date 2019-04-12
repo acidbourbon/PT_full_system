@@ -44,6 +44,7 @@ while True:
                ("10","add tdc"),
                ("11","remove tdc"),
                ("2","view/edit board json"),
+               ("16","view board baselines"),
                ("3","view/edit setup json"),
                ("z","exit")] )
   
@@ -81,7 +82,7 @@ while True:
             if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
               code_42, name_str = d.inputbox(text="enter board name",init="0000")
               if code_42 == d.DIALOG_OK:
-                code_43, calib_file = d.inputbox(text="enter calib file name",init="./db/board_"+name_str+".json")
+                code_43, calib_file = d.inputbox(text="enter calib file name",init="./boards/board_"+name_str+".json")
                 if code_43 == d.DIALOG_OK:
                   print "adding"
                   print tdc_addr
@@ -188,7 +189,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "13":
       code, board_name = dbd.dialog_board_list()
       if code == d.DIALOG_OK:
-        td.record_tree_data(1000)
+        td.record_tree_data(100)
         t1, tot, counts = td.get_t1_tot_of_board(board_name,1)
 
         import pandas as pd
@@ -227,7 +228,38 @@ via AC coupling and 10k resistor.".format(board_name) )
         d.msgbox("Disconnect board {:s} from detector or cut voltage of detector to measure pure electronic noise".format(board_name) )
         import baseline_calib
         baseline_calib.baseline_calib_by_noise(board_name)
+        
+        baselines = db.get_calib_json_by_name(board_name)["baselines"]
+        board_info = db.find_board_by_name(board_name)
+        channels = board_info["channels"]
 
+        import pandas as pd
+        import numpy as np
+
+        df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
+        report = df.to_string()
+        report += "\n\n\n"
+        report += df.describe().to_string()
+        code_21, text_21 = dbd.dialog_editbox(report)  
+
+    ## view board baselines ##
+    if tag == "16":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+
+        import pandas as pd
+        import numpy as np
+
+        baselines = db.get_calib_json_by_name(board_name)["baselines"]
+        board_info = db.find_board_by_name(board_name)
+        channels = board_info["channels"]
+
+        df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
+        report = df.to_string()
+        report += "\n\n\n"
+        report += df.describe().to_string()
+        code_21, text_21 = dbd.dialog_editbox(report)  
 
       
     if tag == "z":

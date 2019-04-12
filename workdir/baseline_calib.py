@@ -70,6 +70,8 @@ def baseline_noise_scan(board_name):
   for i in x:
     ptc.set_all_baselines(TDC,channels, [i]*len(channels) )
     rates = tdc_daq.scaler_rate(TDC,channels,scan_time)
+    print "rates"
+    print rates
     result_matrix.append(rates)
 
 

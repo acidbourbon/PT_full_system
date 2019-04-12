@@ -17,7 +17,7 @@
 #include "base/Event.h"
 #include "hadaq/TdcSubEvent.h"
 
-#define CHANNELS 33
+#define CHANNELS 53
 #define REFCHAN 0
 // #define REFCHAN_B 0
 

@@ -10,6 +10,12 @@ rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";
 rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";  rm -f *.root
 
 
+### tot calibration, new path
+
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/workdir/data/*.hld";  rm -f *.root
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/workdir/data/*.hld" | less
+
+
 
 CALMODE=10000 CALTRIG=13 go4analysis -stream localhost:6789
 rm *.root; go4 my_hotstart.hotstart
@@ -30,8 +36,11 @@ rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -
 
 ## ROOTJS -> also displays second.C histograms
 rm *.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:8080 
+rm *.root; tree_out=true go4analysis -stream localhost:6789 -http localhost:8080 
 
 rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q; ./rbrowse joint_tree.root
 rm *.root; tree_out=true go4analysis -number 1000 -user /workdir/data/lena_cosmics/TDC_data19078162428.hld; root -b -l unify.C -q; ./rbrowse joint_tree.root
 # in the browser:
 joint_tree->Draw("hits.t1","hits.chan == 35001")
+rm *.root; tree_out=true go4analysis -user /workdir/data/sandra_cosmics/*.hld; root -b -l unify.C -q; ./rbrowse joint_tree.root
+
