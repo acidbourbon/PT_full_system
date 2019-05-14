@@ -144,7 +144,36 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
           conn = board["tdc_connector"]
           if my_connector == conn :
             board_defs = board.copy()
-            board_defs.update({"tdc_addr" : tdc["addr"], "hub_addr" : hub["addr"], "channels": range((conn-1)*16,conn*16)   })
+            fpc_a = -4           
+            fpc_b = -3
+            fpc_c = -2
+            fpc_d = -1
+            reverse_mapping = 0
+
+            if( "fpc_a" in board_defs):
+              fpc_a = board_defs["fpc_a"]  
+            if( "fpc_b" in board_defs):
+              fpc_b = board_defs["fpc_b"] 
+            if( "fpc_c" in board_defs):
+              fpc_c = board_defs["fpc_c"]
+            if( "fpc_d" in board_defs):
+              fpc_d = board_defs["fpc_d"]
+
+            if( "reverse_mapping" in board_defs):
+              reverse_mapping = board_defs["reverse_mapping"]
+
+            wires = []
+
+            if( reverse_mapping ):
+              wires = [ range((fpc_a+1)*4-1,fpc_a*4-1, -1) + range((fpc_b+1)*4-1,fpc_b*4-1, -1) + range((fpc_c+1)*4-1,fpc_c*4-1, -1) + range((fpc_d+1)*4-1,fpc_d*4-1, -1) ]
+            else:
+              wires = [ range(fpc_a*4,(fpc_a+1)*4) + range(fpc_b*4,(fpc_b+1)*4) + range(fpc_c*4,(fpc_c+1)*4) + range(fpc_d*4,(fpc_d+1)*4) ]
+            
+            
+            board_defs.update({"tdc_addr" : tdc["addr"], "hub_addr" : hub["addr"],\
+            "channels": range((conn-1)*16,conn*16),\
+            "wires" : wires,\
+            })
             return board_defs
 
   return 0

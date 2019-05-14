@@ -4,8 +4,6 @@
     {
       "tdc": [
         {
-          "channels": 32, 
-          "addr": "dummy", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -40,6 +38,8 @@
             0.0, 
             0.0
           ], 
+          "addr": "dummy", 
+          "channels": 32, 
           "connectors": 8, 
           "board": [
             {
@@ -65,11 +65,26 @@
               "calib_file": "./boards/board_0018.json", 
               "tdc_connector": 4, 
               "name": "0018"
+            }, 
+            {
+              "layer": 0, 
+              "name": "9999", 
+              "chamber": 0, 
+              "reverse_mapping": 1, 
+              "calib_file": "./boards/board_9999.json", 
+              "fpc_d": 3, 
+              "fpc_a": 0, 
+              "fpc_c": 2, 
+              "fpc_b": 1, 
+              "active": 0, 
+              "tdc_connector": 5
             }
           ], 
           "name": "dummy"
         }, 
         {
+          "channels": 32, 
+          "addr": "0x0350", 
           "t1_offset": [
             189.6372255489022, 
             191.625249500998, 
@@ -104,8 +119,6 @@
             188.66753653444675, 
             188.2917536534447
           ], 
-          "addr": "0x0350", 
-          "channels": 32, 
           "connectors": 2, 
           "board": [
             {
@@ -124,8 +137,6 @@
           "name": "0350"
         }, 
         {
-          "channels": 32, 
-          "addr": "0x0351", 
           "t1_offset": [
             169.15740740740742, 
             171.1468253968254, 
@@ -160,6 +171,8 @@
             174.40252525252527, 
             174.01565656565657
           ], 
+          "addr": "0x0351", 
+          "channels": 32, 
           "connectors": 2, 
           "board": [
             {
@@ -178,6 +191,8 @@
           "name": "0351"
         }, 
         {
+          "channels": 32, 
+          "addr": "0x0352", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -212,8 +227,6 @@
             0.0, 
             0.0
           ], 
-          "addr": "0x0352", 
-          "channels": 32, 
           "connectors": 2, 
           "board": [], 
           "name": "0352"
