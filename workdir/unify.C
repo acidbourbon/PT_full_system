@@ -3,7 +3,8 @@
 
 #include "Riostream.h"
 
-
+#define NO_TDCS 16
+#define MAX_CHANNELS 64
 
 class Hit {
 public:
@@ -12,6 +13,10 @@ public:
   int ref_chan;
   double t1;
   double tot;
+  int wire;
+  int layer;
+  int fpc;
+  int chamber;
 };
 
 class Event {
@@ -20,10 +25,10 @@ public:
 };
 
 
-void get_t1_offsets(TString TDC,Float_t* target_array){
+void get_channel_info(TString TDC,Float_t* t1_offsets, Int_t* chamber, Int_t* layer, Int_t* fpc, Int_t* wire){
   
 
-  TString fname = TDC + ".t1_offsets.txt";
+  TString fname = "unify_channel_info/"+TDC + ".channel_info.txt";
 
       ifstream in;
       in.open(fname);
@@ -31,22 +36,25 @@ void get_t1_offsets(TString TDC,Float_t* target_array){
       cout << "read t1 offsets of " << TDC << endl;
   
       Int_t nlines = 0;
-          cout << " " << endl;
+      cout << " " << endl;
       
       string line;
-      while (1) {
-        in >> line;
-        if (!in.good()) break;
+      while (getline(in,line)) {
         
-        Float_t x;
-        if(sscanf(line.c_str(),"%f",&x)){
-          target_array[nlines] = x;
+        Float_t x1;
+        Int_t x2,x3,x4,x5;
+        if(sscanf(line.c_str(),"%f %d %d %d %d",&x1,&x2,&x3,&x4,&x5)){
+          t1_offsets[nlines] = x1;
+          chamber[nlines]    = x2;
+          layer[nlines]      = x3;
+          fpc[nlines]        = x4;
+          wire[nlines]       = x5;
           nlines++;
-          cout << " " << x;
+          cout << "line: " << line.c_str() << endl;
+          cout << "chan " << nlines << " t1_offset " << x1 << " chamber " << x2 << " layer " << x3 << " fpc " << x4 << " wire " << x5 << endl;
         }
       }
 
-          cout << " " << endl;
 }
 
 
@@ -58,18 +66,16 @@ void unify(void){
 
   cout << "get t1 offsets from database" << endl;
 
-  gSystem->GetFromPipe("rm *.t1_offsets.txt");
+  gSystem->GetFromPipe("./create_channel_info.py");
 
-  gSystem->GetFromPipe("./create_t1_offset_lists.py");
-
-  cout << gSystem->GetFromPipe("ls *.t1_offsets.txt") << endl;
+  cout << gSystem->GetFromPipe("ls unify_channel_info/*.channel_info.txt") << endl;
   
   cout << "unify!" <<endl;
   
   Int_t channels = 32;
   
-  //Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
-  Int_t ref_chan = 35049; // channel 49 of FPGA 0x0350 is our reference channel!
+  Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
+  //Int_t ref_chan = 35049; // channel 49 of FPGA 0x0350 is our reference channel!
   
   
   TFile f("tree_out.root");
@@ -89,7 +95,11 @@ void unify(void){
       TDC_list.push_back(key->GetName());
    }
   
-  Float_t t1_offsets[8][64];
+  Float_t t1_offsets[NO_TDCS][MAX_CHANNELS];
+  Int_t   wire_info[NO_TDCS][MAX_CHANNELS];
+  Int_t   fpc_info[NO_TDCS][MAX_CHANNELS];
+  Int_t   layer_info[NO_TDCS][MAX_CHANNELS];
+  Int_t   chamber_info[NO_TDCS][MAX_CHANNELS];
    
   TTree* data_tree[TDC_list.size()];
   Int_t  channel_number_prefix[TDC_list.size()];
@@ -115,8 +125,8 @@ void unify(void){
     tdc_hex.ReplaceAll("TDC_","0x");
     cout << "get t1 offsets for tdc: " << tdc_hex << endl;
     
-    if(correct_t1_offsets)
-      get_t1_offsets(tdc_hex,t1_offsets[i]);
+    //if(correct_t1_offsets)
+    get_channel_info(tdc_hex,t1_offsets[i],chamber_info[i],layer_info[i],fpc_info[i],wire_info[i]);
     
     
     TString tdc_number_str( tdc(4,7) );
@@ -182,10 +192,16 @@ void unify(void){
             if(correct_t1_offsets)
               current_hit.t1 -= t1_offsets[tdc_no][current_hit.chan-1];
 
+            // enter database info into the tree
+            current_hit.wire     = wire_info[tdc_no][current_hit.chan-1];
+            current_hit.chamber  = chamber_info[tdc_no][current_hit.chan-1];
+            current_hit.layer    = layer_info[tdc_no][current_hit.chan-1];
+            current_hit.fpc      = fpc_info[tdc_no][current_hit.chan-1];
             
             // code the tdc address in the channel number
             current_hit.chan += channel_number_prefix[tdc_no];
 //             cout << "current hit channel: " << current_hit.chan << endl;
+
 
 
             if(current_hit.chan != ref_chan){

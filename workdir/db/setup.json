@@ -1,4 +1,7 @@
 {
+  "global_settings": {
+    "reference_channel": 35301
+  }, 
   "name": "DLAB", 
   "hub": [
     {
@@ -65,19 +68,6 @@
               "calib_file": "./boards/board_0018.json", 
               "tdc_connector": 4, 
               "name": "0018"
-            }, 
-            {
-              "layer": 0, 
-              "name": "9999", 
-              "chamber": 0, 
-              "reverse_mapping": 1, 
-              "calib_file": "./boards/board_9999.json", 
-              "fpc_d": 3, 
-              "fpc_a": 0, 
-              "fpc_c": 2, 
-              "fpc_b": 1, 
-              "active": 0, 
-              "tdc_connector": 5
             }
           ], 
           "name": "dummy"
@@ -129,7 +119,7 @@
             }, 
             {
               "calib_file": "./boards/board_0014.json", 
-              "active": 0, 
+              "active": 1, 
               "tdc_connector": 2, 
               "name": "0014"
             }
@@ -177,13 +167,13 @@
           "board": [
             {
               "calib_file": "./boards/board_0013.json", 
-              "active": 0, 
+              "active": 1, 
               "tdc_connector": 1, 
               "name": "0013"
             }, 
             {
               "calib_file": "./boards/board_0025.json", 
-              "active": 0, 
+              "active": 1, 
               "tdc_connector": 2, 
               "name": "0025"
             }
@@ -230,6 +220,47 @@
           "connectors": 2, 
           "board": [], 
           "name": "0352"
+        }, 
+        {
+          "channels": 32, 
+          "t1_offset": [
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0, 
+            0
+          ], 
+          "connectors": 2, 
+          "addr": "0x0353", 
+          "board": [], 
+          "name": "0353"
         }
       ], 
       "name": "c035", 

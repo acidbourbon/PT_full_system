@@ -38,6 +38,7 @@ while True:
                ("12","auto calib t1 offsets of board"),
                ("14","reset board"),
                ("7","edit default asic settings"),
+               ("17","edit global settings"),
                ("4","add board"),
                ("6","move board"),
                ("5","remove board"),
@@ -153,6 +154,8 @@ while True:
                   break
                 else:
                   d.msgbox("this connector is already occupied :(")
+              else:
+                break
             
         else:
           break
@@ -290,6 +293,15 @@ via AC coupling and 10k resistor.".format(board_name) )
         report += "\n\n\n"
         report += df.describe().to_string()
         code_21, text_21 = dbd.dialog_editbox(report)  
+
+    ## edit global settings ##
+    if tag == "17":
+      code_17, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["global_settings"],indent=2))
+      if code_17 == d.DIALOG_OK:
+        setup = db.get_setup_json()
+        global_settings = json.loads(text)
+        setup["global_settings"] = global_settings;
+        db.write_setup_json(setup)
 
       
     if tag == "z":

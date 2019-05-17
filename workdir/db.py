@@ -10,6 +10,9 @@ def get_t1_offsets(tdc_addr):
   t1_offset = get_tdc_json(str(tdc_addr))["t1_offset"]
   return t1_offset
 
+def get_global_settings():
+  return get_setup_json()["global_settings"]
+
 
 def dump(obj):
   print json.dumps(obj,indent=2)  
@@ -165,9 +168,9 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
             wires = []
 
             if( reverse_mapping ):
-              wires = [ range((fpc_a+1)*4-1,fpc_a*4-1, -1) + range((fpc_b+1)*4-1,fpc_b*4-1, -1) + range((fpc_c+1)*4-1,fpc_c*4-1, -1) + range((fpc_d+1)*4-1,fpc_d*4-1, -1) ]
+              wires =  range((fpc_a+1)*4-1,fpc_a*4-1, -1) + range((fpc_b+1)*4-1,fpc_b*4-1, -1) + range((fpc_c+1)*4-1,fpc_c*4-1, -1) + range((fpc_d+1)*4-1,fpc_d*4-1, -1) 
             else:
-              wires = [ range(fpc_a*4,(fpc_a+1)*4) + range(fpc_b*4,(fpc_b+1)*4) + range(fpc_c*4,(fpc_c+1)*4) + range(fpc_d*4,(fpc_d+1)*4) ]
+              wires =  range(fpc_a*4,(fpc_a+1)*4) + range(fpc_b*4,(fpc_b+1)*4) + range(fpc_c*4,(fpc_c+1)*4) + range(fpc_d*4,(fpc_d+1)*4)
             
             
             board_defs.update({"tdc_addr" : tdc["addr"], "hub_addr" : hub["addr"],\
@@ -295,7 +298,7 @@ def insert_tdc(my_hub_addr,my_tdc_addr, name ,channels,connectors):
 
   for hub in setup["hub"]:
     if hub["addr"].lower() == my_hub_addr:
-      hub["tdc"] += [{ "addr": my_tdc_addr , "name": name, "channels":channels,"connectors":connectors,"t1_offset": [0] * channels }]
+      hub["tdc"] += [{ "addr": my_tdc_addr , "board":[], "name": name, "channels":channels,"connectors":connectors,"t1_offset": [0] * channels }]
   write_setup_json(setup)
   
 def remove_tdc(my_tdc):
