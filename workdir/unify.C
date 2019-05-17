@@ -57,6 +57,28 @@ void get_channel_info(TString TDC,Float_t* t1_offsets, Int_t* chamber, Int_t* la
 
 }
 
+Int_t get_reference_channel(void){
+  TString fname = "unify_channel_info/reference_channel.txt";
+
+  ifstream in;
+  in.open(fname);
+  
+  
+  Int_t ref_chan = -1;
+  
+  string line;
+  if(getline(in,line)) {
+    
+    Int_t x;
+    if(sscanf(line.c_str(),"%d",&x)){
+      ref_chan = x;
+    }
+  }
+  cout << "read global reference channel: " << ref_chan << endl;
+  return ref_chan;
+
+}
+
 
 void unify(void){
   
@@ -74,8 +96,9 @@ void unify(void){
   
   Int_t channels = 32;
   
-  Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
+  //Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
   //Int_t ref_chan = 35049; // channel 49 of FPGA 0x0350 is our reference channel!
+  Int_t ref_chan = get_reference_channel(); // get it from database
   
   
   TFile f("tree_out.root");

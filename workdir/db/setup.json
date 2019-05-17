@@ -1,12 +1,14 @@
 {
   "global_settings": {
-    "reference_channel": 35301
+    "reference_channel": 35049
   }, 
   "name": "DLAB", 
   "hub": [
     {
       "tdc": [
         {
+          "channels": 32, 
+          "addr": "dummy", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -41,8 +43,6 @@
             0.0, 
             0.0
           ], 
-          "addr": "dummy", 
-          "channels": 32, 
           "connectors": 8, 
           "board": [
             {
@@ -73,8 +73,6 @@
           "name": "dummy"
         }, 
         {
-          "channels": 32, 
-          "addr": "0x0350", 
           "t1_offset": [
             189.6372255489022, 
             191.625249500998, 
@@ -109,6 +107,8 @@
             188.66753653444675, 
             188.2917536534447
           ], 
+          "addr": "0x0350", 
+          "channels": 32, 
           "connectors": 2, 
           "board": [
             {
@@ -127,6 +127,8 @@
           "name": "0350"
         }, 
         {
+          "channels": 32, 
+          "addr": "0x0351", 
           "t1_offset": [
             169.15740740740742, 
             171.1468253968254, 
@@ -161,8 +163,6 @@
             174.40252525252527, 
             174.01565656565657
           ], 
-          "addr": "0x0351", 
-          "channels": 32, 
           "connectors": 2, 
           "board": [
             {
@@ -181,8 +181,6 @@
           "name": "0351"
         }, 
         {
-          "channels": 32, 
-          "addr": "0x0352", 
           "t1_offset": [
             0.0, 
             0.0, 
@@ -217,12 +215,13 @@
             0.0, 
             0.0
           ], 
+          "addr": "0x0352", 
+          "channels": 32, 
           "connectors": 2, 
           "board": [], 
           "name": "0352"
         }, 
         {
-          "channels": 32, 
           "t1_offset": [
             0, 
             0, 
@@ -257,8 +256,9 @@
             0, 
             0
           ], 
-          "connectors": 2, 
           "addr": "0x0353", 
+          "channels": 32, 
+          "connectors": 2, 
           "board": [], 
           "name": "0353"
         }
