@@ -94,7 +94,6 @@ void unify(void){
   
   cout << "unify!" <<endl;
   
-  Int_t channels = 32;
   
   //Int_t ref_chan = 35301; // channel 1 of FPGA 0x0351 is our reference channel!
   //Int_t ref_chan = 35049; // channel 49 of FPGA 0x0350 is our reference channel!
@@ -292,10 +291,10 @@ void unify(void){
     
     
     new TCanvas();
-    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-1000,1000,32,%d,%d)",tdc_number*100,tdc_number,1,1+channels),
+    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-1000,1000,MAX_CHANNELS,%d,%d)",tdc_number*100,tdc_number,1,1+MAX_CHANNELS),
             Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
     new TCanvas();
-    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,32,%d,%d)",tdc_number*100,tdc_number,1,1+channels),
+    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,MAX_CHANNELS,%d,%d)",tdc_number*100,tdc_number,1,1+MAX_CHANNELS),
             Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
     new TCanvas();
     joint_tree->Draw(Form("hits.tot : hits.t1 >>0x%04d_potato(1000,-500,500,1000,0,1000)",tdc_number),
