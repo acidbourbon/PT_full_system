@@ -37,36 +37,17 @@
 
 // in the first iteration, scanning through data in the coincidence window, rejecting hits (fuzzy edges)
 
-//#define spike_rejection 90 //ns for ASD8 0x72 (25000) with LASER
-// #define spike_rejection 90 //ns for PASTTREC pt10 // for t1 calibration
-//#define spike_rejection 60 //ns for PASTTREC pt10 
-// #define spike_rejection 45 //ns for PASTTREC with all the nice filters
-// #define spike_rejection 90 //ns for PASTTREC pt15
-//#define spike_rejection 100 //ns for PASTTREC pt20
-// #define spike_rejection 30 //ns for ASD8 0xA9
-// #define spike_rejection 60 //ns for ASD8 0x72
-// #define spike_rejection 75 //ns for ASD8 0x52
-//#define spike_rejection 47 //ns for ASD8 thr 37000 with LASER
-// #define spike_rejection 90 //ns for PASTTREC pt20 with LASER
-//#define spike_rejection 90 //ns for PASTTREC pt20 with Fe55
 
-#define spike_rejection 80
+#define spike_rejection 80 // for PASTTREC test
+#define spike_rejection 30 // for pulser test
 #define spike_rejection_refchan 10
 
 #define individual_spike_rejection 0
 
-//#define ref_spike_rejection 100
 
 
-//#define t1_accept_L (-250 + ref_channel_offset) //ns // GSI Dlab
-//#define t1_accept_L (-1000000 + ref_channel_offset) //ns // HZDR fe55
 #define t1_accept_L (-2000 + ref_channel_offset) //ns // EE
-//#define t1_accept_L (-150 + ref_channel_offset) //ns // Muentz-Torte
-//#define t1_accept_R (100 + ref_channel_offset)//ns // GSI Dlab
-//#define t1_accept_R (1000000 + ref_channel_offset)//ns // HZDR fe55
 #define t1_accept_R (2000 + ref_channel_offset)//ns // EE
-// #define t1_accept_R (-130 + ref_channel_offset)//ns // Muentz-Torte
-// #define t1_accept_R (-90 + ref_channel_offset)//ns // ASD8 with thr 0x52
 
 #define fish_proj_cut 20
 
@@ -201,21 +182,12 @@ class SecondProc : public base::EventProc {
         meta_tot_2d = MakeH2("meta_tot_2d","meta_tot_2d", 2000, tot_L, tot_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
         meta_potato_h = MakeH2("meta_potato","meta_potato",500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
         
-//         evt_no = 0;
-        
-//         ref_counts_h = MakeH1("ref_counts","ref_counts", CHANNELS -1, 0.5, CHANNELS-0.5, "channel #");
-//         dut_counts_h = MakeH1("dut_counts","dut_counts", CHANNELS -1, 0.5, CHANNELS-0.5, "channel #");
         efficiency_h = MakeH1("efficiency","efficiency", CHANNELS -1, 0.5, CHANNELS-0.5, "channel #;kind:F");
             ((TH1F*) efficiency_h)->SetDrawOption("P0");
             ((TH1F*) efficiency_h)->SetMarkerStyle(22);
             ((TH1F*) efficiency_h)->GetXaxis()->SetNdivisions(55);
          
         coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-2.5,9.5,10,15-0.5,24+0.5, "channels 0-7;channels 16-23");
-        //meta_fish = MakeH2("meta_fish","meta_fish",250,-300,200,200,-100,100, "T_A+T_B;T_B-T_A");
-        
-        //meta_fish_proj = MakeH1("meta_fish_proj","meta_fish_proj",250,-300,200, "T_A+T_B;counts");
-        
- 
          
          // enable storing already in constructor
          SetStoreEnabled();
@@ -226,7 +198,6 @@ class SecondProc : public base::EventProc {
         static Int_t was_called_before = 0;
         
         cout << "--- User Post Loop " << fTdcId << endl;
-//         TFile* tree_out = new TFile( Form("tree_out_%s.root",fTdcId.c_str())  ,"RECREATE");
         
         if(from_env("tree_out","false") == "true"){
           
@@ -273,29 +244,8 @@ class SecondProc : public base::EventProc {
         static float effective_spike_rejection = from_env("spike_rejection", TString::Itoa(spike_rejection,10) ).Atof();
         
         
-//         static int ref_counts[CHANNELS];
-//         static int dut_counts[CHANNELS];
-//         static bool is_dut[CHANNELS];
         
         
-        // this is only run once --
-        static bool is_initialized=false;
-        if(not(is_initialized)){
-          for( int i = 0; i<31; i++){
-//             ref_counts[i] = 0;
-//             dut_counts[i] = 0;
-//             is_dut[i] = false;
-//             if((overlaps[i][0] >= 0) && (overlaps[i][1] >= 0)){
-//               is_dut[i] = true;
-//             }
-          }
-          
-
-          
-          
-          is_initialized = true;
-        }
-        // ------
 
          double num(0), ch0tm(0), ch1tm(0), ch2tm(0), ch3tm(0);
          double t1_candidate[CHANNELS];

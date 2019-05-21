@@ -132,11 +132,11 @@ def calib_t1_offsets_of_board(board_name):
   ## run record_tree_data() first ##
   board_info = db.find_board_by_name(board_name)
   t1, tot, counts = calib_t1_offsets(board_info["tdc_addr"],board_info["channels"])
-  // record efficiency in calib for debugging
+  # record efficiency in calib for debugging
   counts_array       = np.array(counts)
   efficiency_array   = counts_array / no_pulses
   calib_json_update  = { "t1_calib_efficiency": efficiency_array.tolist() }
-  db.update_calib_json_by_name(board_name,calib_json_update):
+  db.update_calib_json_by_name(board_name,calib_json_update)
 
 def get_t1_tot_of_board(board_name,corrected):
   ## run record_tree_data() first ##

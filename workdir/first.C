@@ -29,7 +29,8 @@ void first()
 
    //hadaq::T
    // [min..max] range for HUB ids
-   hadaq::TrbProcessor::SetHUBRange(0xc001, 0xcfff);
+   //hadaq::TrbProcessor::SetHUBRange(0xc001, 0xcfff);
+   hadaq::TrbProcessor::SetHUBRange(0xc035, 0xc035);
 
    // when first argument true - TRB/TDC will be created on-the-fly
    // second parameter is function name, called after elements are created
@@ -110,7 +111,7 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
 
       // if (tdc->GetID() == 0x1130);
       
-      for (int n=1;n<49;++n)
+      for (int n=1;n<53;++n)
          tdc->SetRefChannel(n,0, 0xffff, 6000, -200, 200); // LED DIFF
    }
 }
