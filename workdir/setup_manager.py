@@ -29,27 +29,37 @@ d.set_background_title("Manage boards")
 
 while True:
 
-  code, tag = d.menu("main menu", height="20", menu_height="18",
-    choices = [("1","enable/disable boards"),
+  code, tag = d.menu("main menu", height="30", menu_height="28",
+    choices = [
+               ("","--- operation ---"),
+               ("1","enable/disable boards"),
                ("8","init setup (active boards)"),
                ("13","get t1 and tot of board"),
+               ("14","reset board"),
+               ("",""),
+               ("","--- calibration ---"),
                ("9","auto calib baselines of board"),
                ("15","auto calib baselines from noise"),
                ("12","auto calib t1 offsets of board"),
                ("18","clear t1 offsets of board"),
                ("20","clear t1 offsets of tdc"),
-               ("14","reset board"),
+               ("",""),
+               ("","--- edit ---"),
                ("7","edit default asic settings"),
                ("17","edit global settings"),
+               ("2","view/edit board json"),
+               ("21","view/edit board calib json"),
+               ("19","view/edit tdc json"),
+               ("16","view board baselines"),
+               ("3","view/edit setup json"),
+               ("",""),
+               ("","--- housekeeping ---"),
                ("4","add board"),
                ("6","move board"),
                ("5","remove board"),
                ("10","add tdc"),
                ("11","remove tdc"),
-               ("2","view/edit board json"),
-               ("19","view/edit tdc json"),
-               ("16","view board baselines"),
-               ("3","view/edit setup json"),
+               ("",""),
                ("z","exit")] )
   
   if code == d.DIALOG_OK:
@@ -334,6 +344,16 @@ via AC coupling and 10k resistor.".format(board_name) )
       if code == d.DIALOG_OK: 
         td.clear_t1_offsets_of_tdc(tdc_addr)
         d.msgbox("cleared" )
+
+    ## edit board calib ##
+    if tag == "21":
+      code, board = dbd.dialog_board_list()
+      if code == d.DIALOG_OK: 
+        calib_json = db.get_calib_json_by_name(board)
+        code_17, text = dbd.dialog_editbox(json.dumps(calib_json,indent=2,sort_keys=True))
+        if code_17 == d.DIALOG_OK:
+          calib_json = json.loads(text)
+          db.write_calib_json_by_name(board,calib_json)
 
       
     if tag == "z":
