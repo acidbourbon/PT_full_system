@@ -238,16 +238,16 @@ via AC coupling and 10k resistor.".format(board_name) )
         if code == d.DIALOG_OK:
           no_pulses = int(no_pulses_str)
           td.record_tree_data(no_pulses)
-          t1, t1_stdev, tot, tot_stdev, counts = td.get_t1_tot_of_board(board_name)
 
           import pandas as pd
           import numpy as np
 
+          t1, t1_stdev, tot, tot_stdev, counts = td.get_t1_tot_of_board(board_name)
 
           board_info = db.find_board_by_name(board_name)
           channels = board_info["channels"]
 
-          df = pd.DataFrame(np.transpose(np.array([t1,tot,counts])), index= channels, columns=["t1","tot","counts"] )
+          df = pd.DataFrame(np.transpose(np.array([t1,t1_stdev,tot,tot_stdev,counts])), index= channels, columns=["t1","t1_stdev","tot","tot_stdev","counts"] )
 
           ##answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
           ##code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2,sort_keys=True))  
