@@ -39,7 +39,6 @@
 
 
 #define spike_rejection 80 // for PASTTREC test
-#define spike_rejection 30 // for pulser test
 #define spike_rejection_refchan 10
 
 #define individual_spike_rejection 0

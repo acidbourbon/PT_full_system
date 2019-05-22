@@ -25,7 +25,7 @@ public:
 };
 
 
-void get_channel_info(TString TDC,Float_t* t1_offsets, Int_t* chamber, Int_t* layer, Int_t* fpc, Int_t* wire){
+Int_t get_channel_info(TString TDC,Float_t* t1_offsets, Int_t* chamber, Int_t* layer, Int_t* fpc, Int_t* wire){
   
 
   TString fname = "unify_channel_info/"+TDC + ".channel_info.txt";
@@ -37,6 +37,7 @@ void get_channel_info(TString TDC,Float_t* t1_offsets, Int_t* chamber, Int_t* la
   
       Int_t nlines = 0;
       cout << " " << endl;
+  
       
       string line;
       while (getline(in,line)) {
@@ -54,6 +55,7 @@ void get_channel_info(TString TDC,Float_t* t1_offsets, Int_t* chamber, Int_t* la
           cout << "chan " << nlines << " t1_offset " << x1 << " chamber " << x2 << " layer " << x3 << " fpc " << x4 << " wire " << x5 << endl;
         }
       }
+      return nlines;
 
 }
 
@@ -84,7 +86,7 @@ void unify(void){
   
   Int_t correct_t1_offsets = 1;
 
-  Float_t global_t1_shift = 260.0;
+  Float_t global_t1_shift = 0;
 
   cout << "get t1 offsets from database" << endl;
 
@@ -122,6 +124,7 @@ void unify(void){
   Int_t   fpc_info[NO_TDCS][MAX_CHANNELS];
   Int_t   layer_info[NO_TDCS][MAX_CHANNELS];
   Int_t   chamber_info[NO_TDCS][MAX_CHANNELS];
+  Int_t   tdc_channels[NO_TDCS];
    
   TTree* data_tree[TDC_list.size()];
   Int_t  channel_number_prefix[TDC_list.size()];
@@ -148,7 +151,7 @@ void unify(void){
     cout << "get t1 offsets for tdc: " << tdc_hex << endl;
     
     //if(correct_t1_offsets)
-    get_channel_info(tdc_hex,t1_offsets[i],chamber_info[i],layer_info[i],fpc_info[i],wire_info[i]);
+    tdc_channels[i] = get_channel_info(tdc_hex,t1_offsets[i],chamber_info[i],layer_info[i],fpc_info[i],wire_info[i]);
     
     
     TString tdc_number_str( tdc(4,7) );
@@ -291,10 +294,10 @@ void unify(void){
     
     
     new TCanvas();
-    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-1000,1000,MAX_CHANNELS,%d,%d)",tdc_number*100,tdc_number,1,1+MAX_CHANNELS),
+    joint_tree->Draw(Form("hits.chan - %d: hits.t1>>0x%04d_t1_meta(1000,-1000,1000,%d,%d,%d)",tdc_number*100,tdc_number,tdc_channels[i],1,1+tdc_channels[i]),
             Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
     new TCanvas();
-    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,1000,MAX_CHANNELS,%d,%d)",tdc_number*100,tdc_number,1,1+MAX_CHANNELS),
+    joint_tree->Draw(Form("hits.chan - %d: hits.tot>>0x%04d_tot_meta(1000,0,2000,%d,%d,%d)",tdc_number*100,tdc_number,tdc_channels[i],1,1+tdc_channels[i]),
             Form("hits.chan > %d && hits.chan < %d",tdc_number*100,tdc_number*100+100),"colz");
     new TCanvas();
     joint_tree->Draw(Form("hits.tot : hits.t1 >>0x%04d_potato(1000,-500,500,1000,0,1000)",tdc_number),
