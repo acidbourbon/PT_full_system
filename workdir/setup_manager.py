@@ -234,30 +234,33 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "13":
       code, board_name = dbd.dialog_board_list()
       if code == d.DIALOG_OK:
-        td.record_tree_data(1000)
-        t1, tot, counts = td.get_t1_tot_of_board(board_name)
+        code, no_pulses_str = d.inputbox(text="enter number of pulses to record",init="100")
+        if code == d.DIALOG_OK:
+          no_pulses = int(no_pulses_str)
+          td.record_tree_data(no_pulses)
+          t1, t1_stdev, tot, tot_stdev, counts = td.get_t1_tot_of_board(board_name)
 
-        import pandas as pd
-        import numpy as np
+          import pandas as pd
+          import numpy as np
 
 
-        board_info = db.find_board_by_name(board_name)
-        channels = board_info["channels"]
+          board_info = db.find_board_by_name(board_name)
+          channels = board_info["channels"]
 
-        df = pd.DataFrame(np.transpose(np.array([t1,tot,counts])), index= channels, columns=["t1","tot","counts"] )
+          df = pd.DataFrame(np.transpose(np.array([t1,tot,counts])), index= channels, columns=["t1","tot","counts"] )
 
-        ##answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
-        ##code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2,sort_keys=True))  
-        #t = PrettyTable(["channel","t1","tot","counts"])
-        #for i in range(0,len(channels)):
-        #  t.add_row(["{:d}".format(channels[i]), "{:3.3f}".format(t1[i]), "{:3.3f}".format(tot[i]), "{:.0f}".format(counts[i])  ])
+          ##answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
+          ##code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2,sort_keys=True))  
+          #t = PrettyTable(["channel","t1","tot","counts"])
+          #for i in range(0,len(channels)):
+          #  t.add_row(["{:d}".format(channels[i]), "{:3.3f}".format(t1[i]), "{:3.3f}".format(tot[i]), "{:.0f}".format(counts[i])  ])
       
-        #code_21, text_21 = dbd.dialog_editbox(t.get_string())  
-        report = df.to_string()
-        report += "\n\n\n"
-        report += df.describe().to_string()
-        code_21, text_21 = dbd.dialog_editbox(report)  
-               
+          #code_21, text_21 = dbd.dialog_editbox(t.get_string())  
+          report = df.to_string()
+          report += "\n\n\n"
+          report += df.describe().to_string()
+          code_21, text_21 = dbd.dialog_editbox(report)  
+                 
       
     ## reset board ##
     if tag == "14":

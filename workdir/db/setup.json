@@ -1,80 +1,37 @@
 {
+  "default_asic_settings": {
+    "gain": 4, 
+    "pktime": 15, 
+    "threshold": 10
+  }, 
   "global_settings": {
     "reference_channel": 35049
   }, 
-  "name": "DLAB", 
   "hub": [
     {
+      "addr": "0xc035", 
+      "name": "c035", 
       "tdc": [
         {
-          "channels": 32, 
-          "addr": "dummy", 
-          "t1_offset": [
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0, 
-            0.0
-          ], 
-          "connectors": 8, 
+          "addr": "0x0350", 
           "board": [
             {
-              "active": 0, 
-              "calib_file": "./boards/board_0021.json", 
-              "tdc_connector": 1, 
-              "name": "0021"
-            }, 
-            {
-              "calib_file": "./boards/board_0026.json", 
-              "active": 0, 
-              "tdc_connector": 2, 
-              "name": "0026"
-            }, 
-            {
-              "active": 0, 
-              "calib_file": "./boards/board_0027.json", 
-              "tdc_connector": 3, 
-              "name": "0027"
-            }, 
-            {
-              "active": 0, 
-              "calib_file": "./boards/board_0018.json", 
-              "tdc_connector": 4, 
-              "name": "0018"
+              "active": 1, 
+              "calib_file": "./boards/board_9999.json", 
+              "chamber": 0, 
+              "fpc_a": 4, 
+              "fpc_b": 3, 
+              "fpc_c": 2, 
+              "fpc_d": 1, 
+              "layer": 3, 
+              "name": "9999", 
+              "reverse_mapping": 1, 
+              "tdc_connector": 1
             }
           ], 
-          "name": "dummy"
-        }, 
-        {
           "channels": 48, 
-          "addr": "0x0350", 
+          "connectors": 3, 
+          "name": "0x0350", 
           "t1_offset": [
             0, 
             0, 
@@ -124,33 +81,10 @@
             0, 
             0, 
             0
-          ], 
-          "connectors": 3, 
-          "board": [
-            {
-              "layer": 3, 
-              "name": "9999", 
-              "fpc_d": 1, 
-              "reverse_mapping": 1, 
-              "calib_file": "./boards/board_9999.json", 
-              "chamber": 0, 
-              "fpc_a": 4, 
-              "fpc_c": 2, 
-              "fpc_b": 3, 
-              "active": 1, 
-              "tdc_connector": 1
-            }
-          ], 
-          "name": "0x0350"
+          ]
         }
-      ], 
-      "name": "c035", 
-      "addr": "0xc035"
+      ]
     }
   ], 
-  "default_asic_settings": {
-    "threshold": 10, 
-    "gain": 4, 
-    "pktime": 15
-  }
+  "name": "DLAB"
 }
