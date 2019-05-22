@@ -15,7 +15,7 @@ def get_global_settings():
 
 
 def dump(obj):
-  print json.dumps(obj,indent=2)  
+  print json.dumps(obj,indent=2,sort_keys=True)  
 
 
 def get_setup_json():
@@ -39,13 +39,13 @@ def get_calib_json(calib_file):
 
 def write_setup_json(setup):
   setup_fh = open(root_dir+setup_file,"w")
-  json.dump(setup,setup_fh,indent=2)
+  json.dump(setup,setup_fh,indent=2,sort_keys=True)
   setup_fh.close()
 
 
 def write_calib_json(calib_file, calib_json):
   calib_fh = open(root_dir+calib_file,"w")
-  json.dump(calib_json,calib_fh,indent=2)
+  json.dump(calib_json,calib_fh,indent=2,sort_keys=True)
   calib_fh.close()
 
 

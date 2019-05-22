@@ -64,13 +64,13 @@ while True:
       code2, choice2 = dbd.dialog_board_list()
       if code2 == d.DIALOG_OK: 
         board_json = db.get_board_json_by_name(choice2)
-        code_21, text_21 = dbd.dialog_editbox(json.dumps(board_json,indent=2))  
+        code_21, text_21 = dbd.dialog_editbox(json.dumps(board_json,indent=2,sort_keys=True))  
         if code_21 == d.DIALOG_OK:
           db.write_board_json_by_name(choice2,json.loads(text_21))
 
     ## edit complete setup json ##
     if tag == "3":
-      code_3, text = dbd.dialog_editbox(json.dumps(db.get_setup_json(),indent=2))
+      code_3, text = dbd.dialog_editbox(json.dumps(db.get_setup_json(),indent=2,sort_keys=True))
       if code_3 == d.DIALOG_OK:
         db.write_setup_json(json.loads(text))
      
@@ -165,7 +165,7 @@ while True:
 
     ## edit default asic settings ##
     if tag == "7":
-      code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["default_asic_settings"],indent=2))
+      code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["default_asic_settings"],indent=2,sort_keys=True))
       if code_7 == d.DIALOG_OK:
         setup = db.get_setup_json()
         default_asic_settings = json.loads(text)
@@ -247,7 +247,7 @@ via AC coupling and 10k resistor.".format(board_name) )
         df = pd.DataFrame(np.transpose(np.array([t1,tot,counts])), index= channels, columns=["t1","tot","counts"] )
 
         ##answer = { "channels": board_info["channels"], "t1":t1, "tot":tot, "counts":counts}
-        ##code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2))  
+        ##code_21, text_21 = dbd.dialog_editbox(json.dumps(answer,indent=2,sort_keys=True))  
         #t = PrettyTable(["channel","t1","tot","counts"])
         #for i in range(0,len(channels)):
         #  t.add_row(["{:d}".format(channels[i]), "{:3.3f}".format(t1[i]), "{:3.3f}".format(tot[i]), "{:.0f}".format(counts[i])  ])
@@ -308,7 +308,7 @@ via AC coupling and 10k resistor.".format(board_name) )
 
     ## edit global settings ##
     if tag == "17":
-      code_17, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["global_settings"],indent=2))
+      code_17, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["global_settings"],indent=2,sort_keys=True))
       if code_17 == d.DIALOG_OK:
         setup = db.get_setup_json()
         global_settings = json.loads(text)
@@ -320,7 +320,7 @@ via AC coupling and 10k resistor.".format(board_name) )
       code, tdc_addr = dbd.dialog_tdc_list()
       if code == d.DIALOG_OK: 
         tdc_json = db.get_tdc_json(str(tdc_addr))
-        code_17, text = dbd.dialog_editbox(json.dumps(tdc_json,indent=2))
+        code_17, text = dbd.dialog_editbox(json.dumps(tdc_json,indent=2,sort_keys=True))
         if code_17 == d.DIALOG_OK:
           tdc_json = json.loads(text)
           db.write_tdc_json(str(tdc_addr),tdc_json)
