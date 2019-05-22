@@ -73,6 +73,8 @@
           "name": "dummy"
         }, 
         {
+          "channels": 48, 
+          "addr": "0x0350", 
           "t1_offset": [
             0, 
             0, 
@@ -123,21 +125,19 @@
             0, 
             0
           ], 
-          "addr": "0x0350", 
-          "channels": 48, 
           "connectors": 3, 
           "board": [
             {
               "layer": 3, 
               "name": "9999", 
-              "chamber": 0, 
+              "fpc_d": 1, 
               "reverse_mapping": 1, 
               "calib_file": "./boards/board_9999.json", 
-              "fpc_d": 1, 
+              "chamber": 0, 
               "fpc_a": 4, 
               "fpc_c": 2, 
               "fpc_b": 3, 
-              "active": 0, 
+              "active": 1, 
               "tdc_connector": 1
             }
           ], 

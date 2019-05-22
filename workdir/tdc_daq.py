@@ -89,7 +89,7 @@ def record_tree_data(no_events):
 
 
 
-def get_t1_tot(tdc_addr,channels,corrected):
+def get_t1_tot(tdc_addr,channels):
   ## run record_tree_data() first ##
   
   f = TFile("joint_tree.root")
@@ -106,8 +106,6 @@ def get_t1_tot(tdc_addr,channels,corrected):
   index=0
   for i in channels:
     t1[index]  = t1_meta.ProjectionX("dummy",i+1,i+1).GetMean()
-    if corrected:
-      t1[index] -= t1_offset[i]
     tot_proj   = tot_meta.ProjectionX("dummy",i+1,i+1)
     tot[index] = tot_proj.GetMean()
     counts[index] = tot_proj.GetEntries()
@@ -115,10 +113,9 @@ def get_t1_tot(tdc_addr,channels,corrected):
 
   return (t1.tolist(), tot.tolist(), counts.tolist() )
 
-def calib_t1_offsets(tdc_addr,channels):
-  no_pulses = 1000
+def calib_t1_offsets(tdc_addr,channels,no_pulses):
   record_tree_data(no_pulses)
-  t1, tot, counts = get_t1_tot(tdc_addr,channels,0) # take uncorrected t1
+  t1, tot, counts = get_t1_tot(tdc_addr,channels) # take uncorrected t1
 
   tdc_json = db.get_tdc_json(tdc_addr)
   index=0
@@ -129,19 +126,36 @@ def calib_t1_offsets(tdc_addr,channels):
   return (t1,tot,counts)
 
 def calib_t1_offsets_of_board(board_name):
+  no_pulses = 1000
   ## run record_tree_data() first ##
   board_info = db.find_board_by_name(board_name)
-  t1, tot, counts = calib_t1_offsets(board_info["tdc_addr"],board_info["channels"])
+  t1, tot, counts = calib_t1_offsets(board_info["tdc_addr"],board_info["channels"],no_pulses)
   # record efficiency in calib for debugging
   counts_array       = np.array(counts)
   efficiency_array   = counts_array / no_pulses
   calib_json_update  = { "t1_calib_efficiency": efficiency_array.tolist() }
   db.update_calib_json_by_name(board_name,calib_json_update)
 
-def get_t1_tot_of_board(board_name,corrected):
+def clear_t1_offsets_of_board(board_name):
+  board_info = db.find_board_by_name(board_name)
+  tdc_addr = board_info["tdc_addr"]
+  channels = board_info["channels"]
+  tdc_json = db.get_tdc_json(tdc_addr)
+  for ch in channels:
+    tdc_json["t1_offset"][ch] = 0
+  db.write_tdc_json(tdc_addr,tdc_json)
+
+def clear_t1_offsets_of_tdc(tdc_addr):
+  tdc_json = db.get_tdc_json(str(tdc_addr))
+  channels = tdc_json["channels"]
+  tdc_json["t1_offset"] = [0]*channels
+  db.write_tdc_json(str(tdc_addr),tdc_json)
+
+
+def get_t1_tot_of_board(board_name):
   ## run record_tree_data() first ##
   board_info = db.find_board_by_name(board_name)
-  return get_t1_tot(board_info["tdc_addr"],board_info["channels"],corrected)
+  return get_t1_tot(board_info["tdc_addr"],board_info["channels"])
 
 def get_tot(TDC, channels, no_events):
   

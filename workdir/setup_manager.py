@@ -36,6 +36,8 @@ while True:
                ("9","auto calib baselines of board"),
                ("15","auto calib baselines from noise"),
                ("12","auto calib t1 offsets of board"),
+               ("18","clear t1 offsets of board"),
+               ("20","clear t1 offsets of tdc"),
                ("14","reset board"),
                ("7","edit default asic settings"),
                ("17","edit global settings"),
@@ -45,6 +47,7 @@ while True:
                ("10","add tdc"),
                ("11","remove tdc"),
                ("2","view/edit board json"),
+               ("19","view/edit tdc json"),
                ("16","view board baselines"),
                ("3","view/edit setup json"),
                ("z","exit")] )
@@ -218,12 +221,21 @@ via AC coupling and 10k resistor.".format(board_name) )
         d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
         td.calib_t1_offsets_of_board(board_name)
 
+    ## clear t1 offsets ##
+    if tag == "18":
+      code_9, choice_9 = dbd.dialog_board_list()
+      if code_9 == d.DIALOG_OK:
+        board_name = choice_9
+        td.clear_t1_offsets_of_board(board_name)
+        d.msgbox("cleared" )
+
+
     ## read t1 tot of board ##
     if tag == "13":
       code, board_name = dbd.dialog_board_list()
       if code == d.DIALOG_OK:
-        td.record_tree_data(100)
-        t1, tot, counts = td.get_t1_tot_of_board(board_name,1)
+        td.record_tree_data(1000)
+        t1, tot, counts = td.get_t1_tot_of_board(board_name)
 
         import pandas as pd
         import numpy as np
@@ -302,6 +314,23 @@ via AC coupling and 10k resistor.".format(board_name) )
         global_settings = json.loads(text)
         setup["global_settings"] = global_settings;
         db.write_setup_json(setup)
+
+    ## edit tdc json ##
+    if tag == "19":
+      code, tdc_addr = dbd.dialog_tdc_list()
+      if code == d.DIALOG_OK: 
+        tdc_json = db.get_tdc_json(str(tdc_addr))
+        code_17, text = dbd.dialog_editbox(json.dumps(tdc_json,indent=2))
+        if code_17 == d.DIALOG_OK:
+          tdc_json = json.loads(text)
+          db.write_tdc_json(str(tdc_addr),tdc_json)
+
+    ## clear t1 offsets of tdc ##
+    if tag == "20":
+      code, tdc_addr = dbd.dialog_tdc_list()
+      if code == d.DIALOG_OK: 
+        td.clear_t1_offsets_of_tdc(tdc_addr)
+        d.msgbox("cleared" )
 
       
     if tag == "z":
