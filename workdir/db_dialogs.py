@@ -60,6 +60,18 @@ def dialog_tdc_list():
 
   return d.menu("select a tdc:", choices= choices )
 
+def dialog_hub_list():
+
+  d = Dialog(dialog="dialog")
+  d.set_background_title("view hubs")
+  
+  choices = []
+
+  for hub_addr in db.hub_list():
+    choices += [(hub_addr, "")]
+
+  return d.menu("select a hub:", choices= choices )
+
 def dialog_connector_list(tdc_addr):
 
   d = Dialog(dialog="dialog")

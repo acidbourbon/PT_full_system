@@ -54,11 +54,16 @@ while True:
                ("3","view/edit setup json"),
                ("",""),
                ("","--- housekeeping ---"),
+               ("24","view board list"),
+               ("25","view tdc list"),
+               ("26","view hub list"),
                ("4","add board"),
                ("6","move board"),
                ("5","remove board"),
                ("10","add tdc"),
                ("11","remove tdc"),
+               ("22","add hub"),
+               ("23","remove hub"),
                ("",""),
                ("z","exit")] )
   
@@ -209,18 +214,46 @@ via AC coupling and 10k resistor.".format(board_name) )
 
     ## add tdc ##
     if tag == "10":
-      code, hub_addr = d.inputbox(text="enter hub addr",init="")
+      code, hub_addr = dbd.dialog_hub_list()
       if code == d.DIALOG_OK:
         code, tdc_addr = d.inputbox(text="enter tdc addr",init="")
         if code == d.DIALOG_OK:
           code, tdc_name = d.inputbox(text="enter tdc name",init=tdc_addr)
           if code == d.DIALOG_OK:
-            code, channels_str = d.inputbox(text="enter number of channels",init="")
+            code, channels_str = d.inputbox(text="enter number of channels",init="48")
             if code == d.DIALOG_OK:
               code, connectors_str = d.inputbox(text="enter number of connectors",init="{:d}".format(int(channels_str)/16))
               if code == d.DIALOG_OK:
                 db.insert_tdc(hub_addr,tdc_addr,tdc_name,int(channels_str),int(connectors_str))
 
+    ## add hub ##
+    if tag == "22":
+      code, hub_addr = d.inputbox(text="enter hub addr",init="")
+      if code == d.DIALOG_OK:
+        code, hub_name = d.inputbox(text="enter hub name",init=hub_addr)
+        if code == d.DIALOG_OK:
+          db.insert_hub(hub_addr,hub_name)
+
+    ## remove hub ##
+    if tag == "23":
+      while True:
+        code, choice = dbd.dialog_hub_list()
+        if code == d.DIALOG_OK: 
+          db.remove_hub(choice)
+        else:
+          break
+
+    ## view board list ##
+    if tag == "24":
+      code, choice = dbd.dialog_board_list()
+
+    ## view tdc list ##
+    if tag == "25":
+      code, choice = dbd.dialog_tdc_list()
+
+    ## view hub list ##
+    if tag == "26":
+      code, choice = dbd.dialog_hub_list()
       
 
     ## calib t1 offsets ##

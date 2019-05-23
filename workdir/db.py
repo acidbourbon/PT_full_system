@@ -210,6 +210,13 @@ def add_board_json(my_tdc,board_json):
 
 
 
+def hub_list():
+  setup = get_setup_json()
+  hubs = []
+  for hub in setup["hub"]:
+    hubs += [hub["addr"].lower()]
+
+  return hubs
 
 
 def tdc_list():
