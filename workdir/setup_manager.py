@@ -33,7 +33,7 @@ while True:
     choices = [
                ("","--- operation ---"),
                ("1","enable/disable boards"),
-               ("8","init setup (active boards)"),
+               ("8","init ASICs (active boards)"),
                ("13","get t1 and tot of board"),
                ("14","reset board"),
                ("",""),

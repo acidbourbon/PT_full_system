@@ -20,7 +20,7 @@ void first()
    //hadaq::TdcProcessor::DisableCalibrationFor(0,8);
    // [min..max] range for TDC ids
    //hadaq::TrbProcessor::SetTDCRange(0x610, 0x613);
-   hadaq::TrbProcessor::SetTDCRange(0x0350, 0x0353);
+   hadaq::TrbProcessor::SetTDCRange(0x0001, 0x9FFF);
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram
@@ -29,8 +29,8 @@ void first()
 
    //hadaq::T
    // [min..max] range for HUB ids
-   //hadaq::TrbProcessor::SetHUBRange(0xc001, 0xcfff);
-   hadaq::TrbProcessor::SetHUBRange(0xc035, 0xc035);
+   hadaq::TrbProcessor::SetHUBRange(0xc001, 0xcfff);
+   //hadaq::TrbProcessor::SetHUBRange(0xc035, 0xc035);
 
    // when first argument true - TRB/TDC will be created on-the-fly
    // second parameter is function name, called after elements are created

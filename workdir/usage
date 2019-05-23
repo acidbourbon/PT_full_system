@@ -44,3 +44,8 @@ rm *.root; tree_out=true go4analysis -number 1000 -user /workdir/data/lena_cosmi
 joint_tree->Draw("hits.t1","hits.chan == 35001")
 rm *.root; tree_out=true go4analysis -user /workdir/data/sandra_cosmics/*.hld; root -b -l unify.C -q; ./rbrowse joint_tree.root
 
+
+# this needs to be working for data taking and calibration
+rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q; ./rbrowse joint_tree.root
+
+
