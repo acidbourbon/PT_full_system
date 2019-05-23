@@ -399,6 +399,11 @@ void second()
   new SecondProc("Sec_0351", "TDC_0351");
   new SecondProc("Sec_0352", "TDC_0352");
   new SecondProc("Sec_0353", "TDC_0353");
+
+  new SecondProc("Sec_1500", "TDC_1500");
+  new SecondProc("Sec_1501", "TDC_1501");
+  new SecondProc("Sec_1502", "TDC_1502");
+  new SecondProc("Sec_1503", "TDC_1503");
 //   tree_out->Write();
 //   tree_out->Close();
 }

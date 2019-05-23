@@ -297,10 +297,17 @@ def insert_tdc(my_hub_addr,my_tdc_addr, name ,channels,connectors):
   setup = get_setup_json()
 
   for hub in setup["hub"]:
+    hub_found = False
     if hub["addr"].lower() == my_hub_addr:
-      hub["tdc"] += [{ "addr": my_tdc_addr , "board":[], "name": name, "channels":channels,"connectors":connectors,"t1_offset": [0] * channels }]
+      hub_found = True
+      break
+
+  if (hub_found):
+    hub["tdc"] += [{ "addr": my_tdc_addr , "board":[], "name": name, "channels":channels,"connectors":connectors,"t1_offset": [0] * channels }]
+
   write_setup_json(setup)
-  
+ 
+ 
 def remove_tdc(my_tdc):
   setup = get_setup_json()
 
@@ -310,3 +317,15 @@ def remove_tdc(my_tdc):
         hub["tdc"].remove(tdc)
   write_setup_json(setup)
   
+def insert_hub(my_hub_addr,my_hub_name):
+  setup = get_setup_json()
+  setup["hub"] += [{ "addr":my_hub_addr, "tdc":[], "name":my_hub_name }] 
+  write_setup_json(setup)
+
+def remove_hub(my_hub):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    if hub["addr"].lower() == my_hub.lower():
+      setup["hub"].remove(hub)
+  write_setup_json(setup)
