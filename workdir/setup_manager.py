@@ -36,6 +36,9 @@ while True:
                ("8","init ASICs (active boards)"),
                ("13","get t1 and tot of board"),
                ("14","reset board"),
+               ("27","set min threshold"),
+               ("28","set max threshold"),
+               ("29","set threshold"),
                ("",""),
                ("","--- calibration ---"),
                ("9","auto calib baselines of board"),
@@ -191,6 +194,29 @@ while True:
         if code == d.DIALOG_OK:
           ptc.init_active_boards()
           d.msgbox("initialized all active boards\nand enabled respective TDC channels")
+
+    ## threshold all min
+    if tag == "27":
+      setup = db.get_setup_json()
+      setup["default_asic_settings"]["threshold"] = 0;
+      db.write_setup_json(setup)
+      ptc.init_active_boards()
+
+    ## threshold all max
+    if tag == "28":
+      setup = db.get_setup_json()
+      setup["default_asic_settings"]["threshold"] = 127;
+      db.write_setup_json(setup)
+      ptc.init_active_boards()
+
+    ## set threshold
+    if tag == "29":
+      code, thresh_str = d.inputbox(text="enter tdc addr",init="10")
+      if code == d.DIALOG_OK:
+        setup = db.get_setup_json()
+        setup["default_asic_settings"]["threshold"] = int(thresh_str);
+        db.write_setup_json(setup)
+        ptc.init_active_boards()
    
     if tag == "8":
       td.enable_tdc_channels_of_active_boards()
