@@ -20,7 +20,7 @@ void first()
    //hadaq::TdcProcessor::DisableCalibrationFor(0,8);
    // [min..max] range for TDC ids
    //hadaq::TrbProcessor::SetTDCRange(0x610, 0x613);
-   hadaq::TrbProcessor::SetTDCRange(0x0001, 0x9FFF);
+   hadaq::TrbProcessor::SetTDCRange(0x0000, 0x5000);
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram

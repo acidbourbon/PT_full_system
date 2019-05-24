@@ -10,11 +10,23 @@ rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";
 rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";  rm -f *.root
 
 
-### tot calibration, new path
+##################################################
+##            calibration procedure             ##
+##################################################
 
+linux-l8n8:/workdir # vim first.C    #### edit TDC range, select just one
+
+### activate all channels of TDC
+### non invert all channels of TDC (/conf/conf_tdcs_for_calib.sh)
+
+linux-l8n8:/workdir # dabc_exe TdcEventBuilder.xml ### record 100k events
+
+## run calibration twice, look if tot  offset of 30 ns is measured
 rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/workdir/data/*.hld";  rm -f *.root
 rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/workdir/data/*.hld" | less
 
+linux-l8n8:/workdir # mv data/TDC_*.hld data/cal52/0x1501.hld    ## save hld file for calibrating again if needed                                                                                                                             
+###############################
 
 
 CALMODE=10000 CALTRIG=13 go4analysis -stream localhost:6789
