@@ -198,25 +198,34 @@ while True:
     ## threshold all min
     if tag == "27":
       setup = db.get_setup_json()
-      setup["default_asic_settings"]["threshold"] = 0;
+      current_thresh = setup["default_asic_settings"]["threshold"]
+      setup["default_asic_settings"]["threshold"] = 0
       db.write_setup_json(setup)
       ptc.init_active_boards()
+      setup["default_asic_settings"]["threshold"] = current_thresh
+      db.write_setup_json(setup)
 
     ## threshold all max
     if tag == "28":
       setup = db.get_setup_json()
-      setup["default_asic_settings"]["threshold"] = 127;
+      current_thresh = setup["default_asic_settings"]["threshold"]
+      setup["default_asic_settings"]["threshold"] = 127
       db.write_setup_json(setup)
       ptc.init_active_boards()
+      setup["default_asic_settings"]["threshold"] = current_thresh
+      db.write_setup_json(setup)
 
     ## set threshold
     if tag == "29":
-      code, thresh_str = d.inputbox(text="enter tdc addr",init="10")
+      setup = db.get_setup_json()
+      current_thresh = setup["default_asic_settings"]["threshold"]
+      code, thresh_str = d.inputbox(text="enter temporary threshold (default={:d})".format(current_thresh),init=str(current_thresh))
       if code == d.DIALOG_OK:
-        setup = db.get_setup_json()
-        setup["default_asic_settings"]["threshold"] = int(thresh_str);
+        setup["default_asic_settings"]["threshold"] = int(thresh_str)
         db.write_setup_json(setup)
         ptc.init_active_boards()
+        setup["default_asic_settings"]["threshold"] = current_thresh
+        db.write_setup_json(setup)
    
     if tag == "8":
       td.enable_tdc_channels_of_active_boards()

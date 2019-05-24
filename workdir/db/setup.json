@@ -2,7 +2,7 @@
   "default_asic_settings": {
     "gain": 4, 
     "pktime": 15, 
-    "threshold": 127
+    "threshold": 10
   }, 
   "global_settings": {
     "reference_channel": 35049
