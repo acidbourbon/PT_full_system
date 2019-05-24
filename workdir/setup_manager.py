@@ -96,8 +96,8 @@ while True:
 
         while True:
           code_41, conn_str = dbd.dialog_connector_list(tdc_addr)
-          conn = int(conn_str)
           if code_41 == d.DIALOG_OK:
+            conn = int(conn_str)
             if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
               code_42, name_str = d.inputbox(text="enter board name",init="0000")
               if code_42 == d.DIALOG_OK:

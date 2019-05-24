@@ -54,21 +54,29 @@ def enable_channels(TDC,channels):
   mask = 0;
   for chan in channels:
     mask += 1<<chan
-  os.system("trbcmd setbit {:s} 0xc802 {:d}".format(TDC,mask))
+  upper_mask = (mask & 0xFFFFFFFF00000000)>>32
+  lower_mask = mask & 0x00000000FFFFFFFF
+  os.system("trbcmd setbit {:s} 0xc802 {:d}".format(TDC,lower_mask))
+  os.system("trbcmd setbit {:s} 0xc803 {:d}".format(TDC,upper_mask))
 
 
 def disable_channels(TDC,channels):
   mask = 0;
   for chan in channels:
     mask += 1<<chan
-  os.system("trbcmd clearbit {:s} 0xc802 {:d}".format(TDC,mask))
+  upper_mask = (mask & 0xFFFFFFFF00000000)>>32
+  lower_mask = mask & 0x00000000FFFFFFFF
+  os.system("trbcmd clearbit {:s} 0xc802 {:d}".format(TDC,lower_mask))
+  os.system("trbcmd clearbit {:s} 0xc803 {:d}".format(TDC,upper_mask))
 
 
 def enable_tdc_channels_of_active_boards():
   ### disable all daq channels of listed TDCs
   for tdc_addr in db.tdc_list():
+    tdc_json = db.get_tdc_json(str(tdc_addr))
+    channels = tdc_json["channels"]
     if tdc_addr[0:2].lower() == "0x":
-      disable_channels(tdc_addr,range(0,32))
+      disable_channels(tdc_addr,range(0,channels))
   
   for board_name in db.active_board_list():
     board_info = db.find_board_by_name(board_name)
