@@ -42,7 +42,8 @@ while True:
                ("",""),
                ("","--- calibration ---"),
                ("9","auto calib baselines of board"),
-               ("15","auto calib baselines from noise"),
+               ("15","auto calib board baselines from noise"),
+               ("30","  -||- for  all active boards"),
                ("12","auto calib t1 offsets of board"),
                ("18","clear t1 offsets of board"),
                ("20","clear t1 offsets of tdc"),
@@ -372,6 +373,15 @@ via AC coupling and 10k resistor.".format(board_name) )
         report += "\n\n\n"
         report += df.describe().to_string()
         code_21, text_21 = dbd.dialog_editbox(report)  
+    
+    ## calib board baselines of all active boards
+    if tag == "30":
+      import baseline_calib
+      for board_name in db.active_board_list():
+        print "calibrating board {:s}".format(board_name)
+        baseline_calib.baseline_calib_by_noise(board_name)
+        print "done"
+
 
     ## view board baselines ##
     if tag == "16":
