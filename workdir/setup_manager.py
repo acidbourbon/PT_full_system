@@ -186,6 +186,11 @@ while True:
         default_asic_settings = json.loads(text)
         setup["default_asic_settings"] = default_asic_settings;
         db.write_setup_json(setup)
+
+        code = d.yesno("do you wish to reprogram ASICs with the new settings?")
+        if code == d.DIALOG_OK:
+          ptc.init_active_boards()
+          d.msgbox("initialized all active boards\nand enabled respective TDC channels")
    
     if tag == "8":
       td.enable_tdc_channels_of_active_boards()
