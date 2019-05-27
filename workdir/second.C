@@ -17,7 +17,9 @@
 #include "base/Event.h"
 #include "hadaq/TdcSubEvent.h"
 
-#define CHANNELS 53
+#include "go4_settings.h"
+
+// #define CHANNELS 53 // in "go_settings.h"
 #define REFCHAN 0
 // #define REFCHAN_B 0
 
@@ -38,8 +40,9 @@
 // in the first iteration, scanning through data in the coincidence window, rejecting hits (fuzzy edges)
 
 
-#define spike_rejection 80 // for PASTTREC test
-#define spike_rejection_refchan 10
+// moved to "go4_settings.h"
+// #define spike_rejection 80 // for PASTTREC test
+// #define spike_rejection_refchan 10
 
 #define individual_spike_rejection 0
 

@@ -6,6 +6,24 @@ setup_file = "setup.json"
 
 
 
+def write_go4_settings_h():
+  with open("go4_settings.h","w") as f:
+    f.write("//do not edit by hand, this is automatically generated/overwritten by db.py\n\n\n")
+
+    global_settings = get_global_settings()
+    for key in  global_settings:
+      f.write("#define {:s} {:s}\n".format(str(key),str(global_settings[key])))
+
+    sorted_hub_list = sorted(hub_list())
+    sorted_tdc_list = sorted(tdc_list())
+    f.write("#define HUBLIST_START {:s}\n".format( str(sorted_hub_list[0]) ))
+    f.write("#define HUBLIST_STOP {:s}\n".format(  str(sorted_hub_list[-1]) ))
+    f.write("#define TDCLIST_START {:s}\n".format( str(sorted_tdc_list[0]) ))
+    f.write("#define TDCLIST_STOP {:s}\n".format(  str(sorted_tdc_list[-1]) ))
+
+    f.close()
+
+
 def get_t1_offsets(tdc_addr):
   t1_offset = get_tdc_json(str(tdc_addr))["t1_offset"]
   return t1_offset

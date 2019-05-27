@@ -2,6 +2,7 @@
 
 
 #include <stdlib.h>
+#include "go4_settings.h"
 
 void first()
 {
@@ -20,7 +21,7 @@ void first()
    //hadaq::TdcProcessor::DisableCalibrationFor(0,8);
    // [min..max] range for TDC ids
    //hadaq::TrbProcessor::SetTDCRange(0x610, 0x613);
-   hadaq::TrbProcessor::SetTDCRange(0x0000, 0x5000);
+   hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram
@@ -29,7 +30,7 @@ void first()
 
    //hadaq::T
    // [min..max] range for HUB ids
-   hadaq::TrbProcessor::SetHUBRange(0xc001, 0xcfff);
+   hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
    //hadaq::TrbProcessor::SetHUBRange(0xc035, 0xc035);
 
    // when first argument true - TRB/TDC will be created on-the-fly
