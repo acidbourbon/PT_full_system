@@ -26,6 +26,7 @@ d = Dialog(dialog="dialog")
   
 d.set_background_title("Manage boards")
 
+db.write_go4_settings_h()
 
 while True:
 

@@ -14,12 +14,29 @@ def write_go4_settings_h():
     for key in  global_settings:
       f.write("#define {:s} {:s}\n".format(str(key),str(global_settings[key])))
 
-    sorted_hub_list = sorted(hub_list())
-    sorted_tdc_list = sorted(tdc_list())
-    f.write("#define HUBLIST_START {:s}\n".format( str(sorted_hub_list[0]) ))
-    f.write("#define HUBLIST_STOP {:s}\n".format(  str(sorted_hub_list[-1]) ))
-    f.write("#define TDCLIST_START {:s}\n".format( str(sorted_tdc_list[0]) ))
-    f.write("#define TDCLIST_STOP {:s}\n".format(  str(sorted_tdc_list[-1]) ))
+    sorted_hub_list = sorted(active_hub_list())
+    sorted_tdc_list = sorted(active_tdc_list())
+    f.write("#define HUBRANGE_START {:s}\n".format( str(sorted_hub_list[0]) ))
+    f.write("#define HUBRANGE_STOP {:s}\n".format(  str(sorted_hub_list[-1]) ))
+    f.write("#define TDCRANGE_START {:s}\n".format( str(sorted_tdc_list[0]) ))
+    f.write("#define TDCRANGE_STOP {:s}\n".format(  str(sorted_tdc_list[-1]) ))
+    
+    f.write("\n\n// second processes in second.C:\n")
+    ### // new SecondProc("Sec_0350", "TDC_0350");
+    f.write("#define SECOND_PROCESS_TDCs ")
+    for tdc_addr in active_tdc_list():
+      tdc_int = tdc_addr.replace("0x","");
+      f.write("new SecondProc(\"Sec_{:s}\", \"TDC_{:s}\");".format(tdc_int,tdc_int));
+
+    f.write("\n\n")
+
+    ## find tdc with the most channels
+    #no_channels_list = []
+    #for tdc_addr in active_tdc_list():
+    #  no_channels_list += [get_tdc_json(tdc_addr)["channels"]]
+
+    #f.write("#define CHANNELS {:d}\n".format( max(no_channels_list)  ))
+      
 
     f.close()
 
@@ -59,6 +76,7 @@ def write_setup_json(setup):
   setup_fh = open(root_dir+setup_file,"w")
   json.dump(setup,setup_fh,indent=2,sort_keys=True)
   setup_fh.close()
+  write_go4_settings_h()
 
 
 def write_calib_json(calib_file, calib_json):
@@ -245,6 +263,37 @@ def tdc_list():
       tdcs += [tdc["addr"].lower()]
 
   return tdcs
+
+def active_hub_list():
+  hubs = []
+  ref_chan_tdc_addr = ref_chan_tdc()
+  setup = get_setup_json()
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      if tdc["addr"] == ref_chan_tdc_addr:
+        hubs += [hub["addr"]]
+      for board in tdc["board"]:
+        if board["active"] == 1 :
+          hubs += [hub["addr"]]
+  return  sorted(set(hubs))
+
+def active_tdc_list():
+  ref_chan_tdc_addr = ref_chan_tdc()
+  tdcs = []
+  setup = get_setup_json()
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      if tdc["addr"] == ref_chan_tdc_addr:
+        tdcs += [tdc["addr"]]
+      for board in tdc["board"]:
+        if board["active"] == 1 :
+          tdcs += [tdc["addr"]]
+  return  sorted(set(tdcs))
+
+def ref_chan_tdc():
+  refchan = get_global_settings()["reference_channel"]
+  return "0x{:04d}".format(refchan /100)
+    
 
 def board_list():
   setup = get_setup_json()
