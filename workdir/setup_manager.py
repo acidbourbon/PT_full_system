@@ -28,51 +28,126 @@ d.set_background_title("Manage boards")
 
 db.write_go4_settings_h()
 
+mm_tag = ""
+
 while True:
 
-  code, tag = d.menu("main menu", height="30", menu_height="28",
+
+  if mm_tag == "":
+    code, tag = d.menu("main menu", height="30", menu_height="28",
+      choices = [
+                 ("m1","--- operation ---"),
+                 ("m2","--- calibration ---"),
+                 ("m3","--- edit ---"),
+                 ("m4","--- housekeeping ---"),
+                 ("z","exit")] )
+    if code == d.DIALOG_OK:
+      mm_tag = tag
+
+
+
+  if mm_tag == "m1":
+    code, tag = d.menu("operation", height="30", menu_height="28",
     choices = [
-               ("","--- operation ---"),
                ("1","enable/disable boards"),
                ("8","init ASICs (active boards)"),
                ("13","get t1 and tot of board"),
                ("14","reset board"),
                ("27","set min threshold"),
                ("28","set max threshold"),
-               ("29","set threshold"),
-               ("",""),
-               ("","--- calibration ---"),
-               ("9","auto calib baselines of board"),
-               ("15","auto calib board baselines from noise"),
-               ("30","  -||- for  all active boards"),
-               ("12","auto calib t1 offsets of board"),
-               ("18","clear t1 offsets of board"),
-               ("20","clear t1 offsets of tdc"),
-               ("",""),
-               ("","--- edit ---"),
-               ("7","edit default asic settings"),
-               ("17","edit global settings"),
-               ("2","view/edit board json"),
-               ("21","view/edit board calib json"),
-               ("19","view/edit tdc json"),
-               ("16","view board baselines"),
-               ("3","view/edit setup json"),
-               ("",""),
-               ("","--- housekeeping ---"),
-               ("24","view board list"),
-               ("25","view tdc list"),
-               ("26","view hub list"),
-               ("4","add board"),
-               ("6","move board"),
-               ("5","remove board"),
-               ("10","add tdc"),
-               ("11","remove tdc"),
-               ("22","add hub"),
-               ("23","remove hub"),
-               ("",""),
-               ("z","exit")] )
-  
+               ("29","set threshold")
+              ])
+  if mm_tag == "m2":
+    code, tag = d.menu("calibration", height="30", menu_height="28",
+    choices = [
+             ("9","auto calib baselines of board"),
+             ("15","auto calib board baselines from noise"),
+             ("30","  -||- for  all active boards"),
+             ("12","auto calib t1 offsets of board"),
+             ("18","clear t1 offsets of board"),
+             ("20","clear t1 offsets of tdc")
+              ])
+  if mm_tag == "m3":
+    code, tag = d.menu("edit/config", height="30", menu_height="28",
+    choices = [
+             ("7","edit default asic settings"),
+             ("17","edit global settings"),
+             ("2","view/edit board json"),
+             ("21","view/edit board calib json"),
+             ("19","view/edit tdc json"),
+             ("16","view board baselines"),
+             ("3","view/edit setup json")
+              ])
+  if mm_tag == "m4":
+    code, tag = d.menu("housekeeping", height="30", menu_height="28",
+    choices = [
+             ("24","view board list"),
+             ("25","view tdc list"),
+             ("26","view hub list"),
+             ("4","add board"),
+             ("6","move board"),
+             ("5","remove board"),
+             ("10","add tdc"),
+             ("11","remove tdc"),
+             ("22","add hub"),
+             ("23","remove hub")
+              ])
   if code == d.DIALOG_OK:
+
+#######  old main menu ######
+#  code, tag = d.menu("main menu", height="30", menu_height="28",
+#    choices = [
+#               ("","--- operation ---"),
+#               ("1","enable/disable boards"),
+#               ("8","init ASICs (active boards)"),
+#               ("13","get t1 and tot of board"),
+#               ("14","reset board"),
+#               ("27","set min threshold"),
+#               ("28","set max threshold"),
+#               ("29","set threshold"),
+#               ("",""),
+#               ("","--- calibration ---"),
+#               ("9","auto calib baselines of board"),
+#               ("15","auto calib board baselines from noise"),
+#               ("30","  -||- for  all active boards"),
+#               ("12","auto calib t1 offsets of board"),
+#               ("18","clear t1 offsets of board"),
+#               ("20","clear t1 offsets of tdc"),
+#               ("",""),
+#               ("","--- edit ---"),
+#               ("7","edit default asic settings"),
+#               ("17","edit global settings"),
+#               ("2","view/edit board json"),
+#               ("21","view/edit board calib json"),
+#               ("19","view/edit tdc json"),
+#               ("16","view board baselines"),
+#               ("3","view/edit setup json"),
+#               ("",""),
+#               ("","--- housekeeping ---"),
+#               ("24","view board list"),
+#               ("25","view tdc list"),
+#               ("26","view hub list"),
+#               ("4","add board"),
+#               ("6","move board"),
+#               ("5","remove board"),
+#               ("10","add tdc"),
+#               ("11","remove tdc"),
+#               ("22","add hub"),
+#               ("23","remove hub"),
+#               ("",""),
+#               ("z","exit")] )
+#  
+#  if code == d.DIALOG_OK:
+
+
+
+
+
+
+
+
+
+
 
     ## enable/disable boards ##
     if tag == "1":
@@ -81,12 +156,15 @@ while True:
 
     ## edit board json tags ##
     if tag == "2":
-      code2, choice2 = dbd.dialog_board_list()
-      if code2 == d.DIALOG_OK: 
-        board_json = db.get_board_json_by_name(choice2)
-        code_21, text_21 = dbd.dialog_editbox(json.dumps(board_json,indent=2,sort_keys=True))  
-        if code_21 == d.DIALOG_OK:
-          db.write_board_json_by_name(choice2,json.loads(text_21))
+      while True:
+        code2, choice2 = dbd.dialog_board_list()
+        if code2 == d.DIALOG_OK: 
+          board_json = db.get_board_json_by_name(choice2)
+          code_21, text_21 = dbd.dialog_editbox(json.dumps(board_json,indent=2,sort_keys=True))  
+          if code_21 == d.DIALOG_OK:
+            db.write_board_json_by_name(choice2,json.loads(text_21))
+        else:
+          break
 
     ## edit complete setup json ##
     if tag == "3":
@@ -386,22 +464,25 @@ via AC coupling and 10k resistor.".format(board_name) )
 
     ## view board baselines ##
     if tag == "16":
-      code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
-        board_name = choice_15
+      while True:
+        code_15, choice_15 = dbd.dialog_board_list()
+        if code_15 == d.DIALOG_OK:
+          board_name = choice_15
 
-        import pandas as pd
-        import numpy as np
+          import pandas as pd
+          import numpy as np
 
-        baselines = db.get_calib_json_by_name(board_name)["baselines"]
-        board_info = db.find_board_by_name(board_name)
-        channels = board_info["channels"]
+          baselines = db.get_calib_json_by_name(board_name)["baselines"]
+          board_info = db.find_board_by_name(board_name)
+          channels = board_info["channels"]
 
-        df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
-        report = df.to_string()
-        report += "\n\n\n"
-        report += df.describe().to_string()
-        code_21, text_21 = dbd.dialog_editbox(report)  
+          df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
+          report = df.to_string()
+          report += "\n\n\n"
+          report += df.describe().to_string()
+          code_21, text_21 = dbd.dialog_editbox(report)  
+        else:
+          break
 
     ## edit global settings ##
     if tag == "17":
@@ -445,40 +526,11 @@ via AC coupling and 10k resistor.".format(board_name) )
     
       
   else:
-    exit()
+    mm_tag = ""
 
 
 
 
-
-
-
-while 0:
-  
-  print "TDCs:" 
-  tdc_t = PrettyTable(["TDC"])
-  for tdc_addr in db.tdc_list():
-    tdc_t.add_row([tdc_addr])
-  print tdc_t
-  print 
-  print
-  print "boards:"
-  boards_t = PrettyTable(["TDC","CONN","board name","active","bl calib"])
-  for board_name in db.board_list():
-    board_info = db.find_board_by_name(board_name)
-    board_calib = db.get_calib_json_by_name(board_name)
-    got_bl_calib = "-"
-    if "baselines" in board_calib:
-      got_bl_calib = "yes"
-    boards_t.add_row( [board_info["tdc_addr"], board_info["tdc_connector"], board_name, board_info["active"], got_bl_calib ] ) 
-
-  print boards_t  
-
-  print "main menu"
-  a=sys.stdin.readline()
-
-  if a == "q\n" or a== "quit\n" or a== "exit\n":
-    exit()
 
 
 
