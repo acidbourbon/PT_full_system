@@ -60,9 +60,10 @@ while True:
   if mm_tag == "m2":
     code, tag = d.menu("calibration", height="30", menu_height="28",
     choices = [
-             ("9","auto calib baselines of board"),
-             ("15","auto calib board baselines from noise"),
-             ("30","  -||- for  all active boards"),
+             ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
+             ("15","calib baselines (noise method) of board"),
+             ("30"," ... for all active boards"),
+             ("16","view board baselines"),
              ("12","auto calib t1 offsets of board"),
              ("18","clear t1 offsets of board"),
              ("20","clear t1 offsets of tdc")
@@ -75,7 +76,6 @@ while True:
              ("2","view/edit board json"),
              ("21","view/edit board calib json"),
              ("19","view/edit tdc json"),
-             ("16","view board baselines"),
              ("3","view/edit setup json")
               ])
   if mm_tag == "m4":
@@ -193,13 +193,13 @@ while True:
                       code_455, tag_455 = d.menu("wire to channel mapping",\
                         choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
                       if code_455 == d.DIALOG_OK:
-                        code_46, str_46 = d.inputbox(text="enter FPC number (1/4) beginning with 0",init="")
+                        code_46, str_46 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn A (PT chan 1-4)",init="")
                         if code_46 == d.DIALOG_OK:
-                          code_47, str_47 = d.inputbox(text="enter FPC number (2/4) beginning with 0",init="")
+                          code_47, str_47 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn B (PT chan 5-8)",init="")
                           if code_47 == d.DIALOG_OK:
-                            code_48, str_48 = d.inputbox(text="enter FPC number (3/4) beginning with 0",init="")
+                            code_48, str_48 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn C (PT chan 9-12)",init="")
                             if code_48 == d.DIALOG_OK:
-                              code_49, str_49 = d.inputbox(text="enter FPC number (4/4) beginning with 0",init="")
+                              code_49, str_49 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn D (PT chan 13-16)",init="")
                               if code_49 == d.DIALOG_OK:
                                 chamber_no = int(str_44)
                                 layer_no   = int(str_45)
@@ -471,16 +471,20 @@ via AC coupling and 10k resistor.".format(board_name) )
 
           import pandas as pd
           import numpy as np
+          calib_json = db.get_calib_json_by_name(board_name)
+          if "baselines" in calib_json:
+            baselines = calib_json["baselines"]
+            board_info = db.find_board_by_name(board_name)
+            channels = board_info["channels"]
 
-          baselines = db.get_calib_json_by_name(board_name)["baselines"]
-          board_info = db.find_board_by_name(board_name)
-          channels = board_info["channels"]
-
-          df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
-          report = df.to_string()
-          report += "\n\n\n"
-          report += df.describe().to_string()
-          code_21, text_21 = dbd.dialog_editbox(report)  
+            df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
+            report = df.to_string()
+            report += "\n\n\n"
+            report += df.describe().to_string()
+            code_21, text_21 = dbd.dialog_editbox(report)  
+          else:
+            d.msgbox("no baseline info, not calibrated")
+            
         else:
           break
 

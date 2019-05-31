@@ -223,7 +223,7 @@ def insert_board(my_tdc, board_name):
   for hub in setup["hub"]:
     for tdc in hub["tdc"]:
       if tdc["addr"].lower() == my_tdc.lower():
-        tdc["board"] += [{ "name":board_name }]
+        tdc["board"] += [{ "name":board_name, "active":0 }]
   write_setup_json(setup)
 
 def remove_board(board_name):
