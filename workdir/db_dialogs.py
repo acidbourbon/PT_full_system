@@ -93,8 +93,8 @@ def dialog_board_list():
   d.set_background_title("view boards")
 
   choices = []
-  info_format = "{:>8s}  {:>8s}"
-  info = info_format.format("TDC", "CONN")
+  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}"
+  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal")
   choices += [("board",info)]
 
   board_list = db.board_list()
@@ -102,8 +102,12 @@ def dialog_board_list():
   for board_name in board_list:
     board_info = db.find_board_by_name(board_name)
     board_calib = db.get_calib_json_by_name(board_name)
+    
+    bl_calib = " - "
+    if "baselines" in board_calib:
+      bl_calib = "yes"
   
-    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]))
+    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, " no "        )
     choices += [(board_name,info)]
   
   

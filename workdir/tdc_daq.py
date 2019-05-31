@@ -162,21 +162,6 @@ def calib_t1_offsets_of_board(board_name):
   calib_json_update  = { "t1_calib_efficiency": efficiency_array.tolist() }
   db.update_calib_json_by_name(board_name,calib_json_update)
 
-def clear_t1_offsets_of_board(board_name):
-  board_info = db.find_board_by_name(board_name)
-  tdc_addr = board_info["tdc_addr"]
-  channels = board_info["channels"]
-  tdc_json = db.get_tdc_json(tdc_addr)
-  for ch in channels:
-    tdc_json["t1_offset"][ch] = 0
-  db.write_tdc_json(tdc_addr,tdc_json)
-
-def clear_t1_offsets_of_tdc(tdc_addr):
-  tdc_json = db.get_tdc_json(str(tdc_addr))
-  channels = tdc_json["channels"]
-  tdc_json["t1_offset"] = [0]*channels
-  db.write_tdc_json(str(tdc_addr),tdc_json)
-
 
 def get_t1_tot_of_board(board_name):
   ## run record_tree_data() first ##

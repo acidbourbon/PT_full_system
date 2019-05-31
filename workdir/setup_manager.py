@@ -389,7 +389,7 @@ via AC coupling and 10k resistor.".format(board_name) )
       code_9, choice_9 = dbd.dialog_board_list()
       if code_9 == d.DIALOG_OK:
         board_name = choice_9
-        td.clear_t1_offsets_of_board(board_name)
+        db.clear_t1_offsets_of_board(board_name)
         d.msgbox("cleared" )
 
 
@@ -511,7 +511,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "20":
       code, tdc_addr = dbd.dialog_tdc_list()
       if code == d.DIALOG_OK: 
-        td.clear_t1_offsets_of_tdc(tdc_addr)
+        db.clear_t1_offsets_of_tdc(tdc_addr)
         d.msgbox("cleared" )
 
     ## edit board calib ##

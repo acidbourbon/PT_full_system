@@ -40,6 +40,32 @@ def write_go4_settings_h():
 
     f.close()
 
+def clear_t1_offsets_of_board(board_name):
+  board_info = find_board_by_name(board_name)
+  tdc_addr = board_info["tdc_addr"]
+  channels = board_info["channels"]
+  tdc_json = get_tdc_json(tdc_addr)
+  for ch in channels:
+    tdc_json["t1_offset"][ch] = 0
+  write_tdc_json(tdc_addr,tdc_json)
+
+def get_t1_offsets_of_board(board_name):
+  board_info = find_board_by_name(board_name)
+  tdc_addr = board_info["tdc_addr"]
+  channels = board_info["channels"]
+  tdc_json = get_tdc_json(tdc_addr)
+  out = []
+  for ch in channels:
+    out += [tdc_json["t1_offset"][ch]]
+  return out
+
+def clear_t1_offsets_of_tdc(tdc_addr):
+  tdc_json = get_tdc_json(str(tdc_addr))
+  channels = tdc_json["channels"]
+  tdc_json["t1_offset"] = [0]*channels
+  write_tdc_json(str(tdc_addr),tdc_json)
+
+
 
 def get_t1_offsets(tdc_addr):
   t1_offset = get_tdc_json(str(tdc_addr))["t1_offset"]
