@@ -18,22 +18,44 @@ def dialog_enable_disable():
   choices = []
   info_format = "{:>8s}  {:>8s}"
   info = info_format.format("TDC", "CONN")
+  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}"
+  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal")
   choices += [("board",info, False)]
 
 
   board_list = db.board_list()
   
+#  for board_name in board_list:
+#    board_info = db.find_board_by_name(board_name)
+#    board_calib = db.get_calib_json_by_name(board_name)
+#    got_bl_calib = "-"
+#    if "baselines" in board_calib:
+#      got_bl_calib = "yes"
+#  
+#    active = board_info["active"]
+#  
+#    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]))
+#    choices += [(board_name,info, active)]
+
   for board_name in board_list:
     board_info = db.find_board_by_name(board_name)
     board_calib = db.get_calib_json_by_name(board_name)
-    got_bl_calib = "-"
-    if "baselines" in board_calib:
-      got_bl_calib = "yes"
+    
+    bl_calib = " - "
+    if board_info["baseline_is_calibrated"]:
+      bl_calib = "yes"
+
+
+    t1_calib = " - "
+    if board_info["t1_is_calibrated"]:
+      t1_calib = "yes"
+
+    active =  board_info["active"]
   
-    active = board_info["active"]
-  
-    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]))
+    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib,      )
+#    choices += [(board_name,info)]
     choices += [(board_name,info, active)]
+  
   
   
   code, active_boards = d.checklist("enable/disable boards",
