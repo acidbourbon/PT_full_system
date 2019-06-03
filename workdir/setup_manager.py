@@ -252,6 +252,7 @@ while True:
                     db.remove_board(board_name)
                     board_json["tdc_connector"] = int(conn_str)
                     db.add_board_json(tdc_addr,board_json)
+                    d.msgbox("board was moved in database")
                   break
                 else:
                   d.msgbox("this connector is already occupied :(")

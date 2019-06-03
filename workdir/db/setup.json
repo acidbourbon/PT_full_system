@@ -30,19 +30,6 @@
               "name": "0027", 
               "reverse_mapping": 1, 
               "tdc_connector": 1
-            }, 
-            {
-              "active": 0, 
-              "calib_file": "./boards/board_9999.json", 
-              "chamber": 0, 
-              "fpc_a": 1, 
-              "fpc_b": 2, 
-              "fpc_c": 3, 
-              "fpc_d": 4, 
-              "layer": 0, 
-              "name": "9999", 
-              "reverse_mapping": 1, 
-              "tdc_connector": 2
             }
           ], 
           "channels": 48, 
@@ -101,7 +88,21 @@
         }, 
         {
           "addr": "0x0351", 
-          "board": [], 
+          "board": [
+            {
+              "active": 0, 
+              "calib_file": "./boards/board_9999.json", 
+              "chamber": 0, 
+              "fpc_a": 1, 
+              "fpc_b": 2, 
+              "fpc_c": 3, 
+              "fpc_d": 4, 
+              "layer": 0, 
+              "name": "9999", 
+              "reverse_mapping": 1, 
+              "tdc_connector": 1
+            }
+          ], 
           "channels": 48, 
           "connectors": 3, 
           "name": "0x0351", 
