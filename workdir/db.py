@@ -239,8 +239,12 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
               t1_is_calibrated = 1
             
             baseline_is_calibrated = 0
-            if "baselines" in get_calib_json(board_defs["calib_file"]):
+            calib_json =  get_calib_json(board_defs["calib_file"])
+            if "baselines" in calib_json:
               baseline_is_calibrated = 1
+            if "ch_error" in calib_json:
+              if calib_json["ch_error"] != [0]*16:
+                baseline_is_calibrated = -1
             
             board_defs.update({"tdc_addr" : tdc["addr"], "hub_addr" : hub["addr"],\
             "channels": channels,\

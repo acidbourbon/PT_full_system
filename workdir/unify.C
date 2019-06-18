@@ -84,7 +84,7 @@ Int_t get_reference_channel(void){
 
 void unify(void){
   
-  Int_t correct_t1_offsets = 1;
+  //Int_t correct_t1_offsets = 1;
 
   Float_t global_t1_shift = 0;
 
@@ -213,15 +213,27 @@ void unify(void){
             // here the interesting stuff happens, do something with the
             // current hit
 
-            // correct t1 offsets of TDC
-            if(correct_t1_offsets)
-              current_hit.t1 -= t1_offsets[tdc_no][current_hit.chan-1];
+            if (current_hit.chan >=1 && current_hit.chan <= tdc_channels[tdc_no]) { // in the channel range declared by db system
 
-            // enter database info into the tree
-            current_hit.wire     = wire_info[tdc_no][current_hit.chan-1];
-            current_hit.chamber  = chamber_info[tdc_no][current_hit.chan-1];
-            current_hit.layer    = layer_info[tdc_no][current_hit.chan-1];
-            current_hit.fpc      = fpc_info[tdc_no][current_hit.chan-1];
+              // correct t1 offsets of TDC
+              //if(correct_t1_offsets)
+                current_hit.t1 -= t1_offsets[tdc_no][current_hit.chan-1];
+
+              // enter database info into the tree
+              current_hit.wire     = wire_info[tdc_no][current_hit.chan-1];
+              current_hit.chamber  = chamber_info[tdc_no][current_hit.chan-1];
+              current_hit.layer    = layer_info[tdc_no][current_hit.chan-1];
+              current_hit.fpc      = fpc_info[tdc_no][current_hit.chan-1];
+
+            } else { // channel 0 or global ref chan, or some aux channels ... ch 49-53
+
+              // enter database info into the tree -> set everything to a non-physical number
+              current_hit.wire     = -1;
+              current_hit.chamber  = -1;
+              current_hit.layer    = -1;
+              current_hit.fpc      = -1;
+
+            }
             
             // code the tdc address in the channel number
             current_hit.chan += channel_number_prefix[tdc_no];

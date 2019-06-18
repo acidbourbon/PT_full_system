@@ -35,15 +35,39 @@ def baseline_calib_by_noise(board_name):
   #os.system("display tmp.png")
 
   baselines = np.zeros(16)
+  baseline_stddev = np.zeros(16)
+  ch_error = np.zeros(16)
+
+  max_baseline_stddev = 5
+  global_settings = db.get_global_settings()
+  if "max_baseline_stddev" in global_settings:
+    max_baseline_stddev = global_settings["max_baseline_stddev"]
 
   for ch in range(0,16):
     vals = data[:,ch]
-    mean = float(np.dot(vals,x))/float(np.sum(vals))
+    sum  = float(np.sum(vals))
+    mean = 0
+    stddev  = -1
+    if (sum > 0):
+      weights = vals/float(sum)
+      mean    = np.dot(weights,x)
+      stddev    = np.sqrt(np.dot(weights,np.power(x-mean,2)))
+    else:
+      ch_error[ch] = 1
     max  = x[np.argmax(vals)]
     baselines[ch] = mean
+    baseline_stddev[ch] = stddev
+    if stddev >  max_baseline_stddev: 
+      ch_error[ch] = 1
     #baselines[ch] = max
 
-  db.update_calib_json_by_name(board_name,{"baselines": np.round(baselines).tolist() })
+  db.update_calib_json_by_name(board_name,{
+    "baselines"      : np.round(baselines).tolist(),
+    "baseline_stddev"      : baseline_stddev.tolist(),
+    "bl_range"       : x,
+    "noise_scan_raw" : np.transpose(data).tolist(),
+    "ch_error"       : ch_error.tolist()
+  })
   ptc.init_active_boards()
 
   return baselines
@@ -68,6 +92,7 @@ def baseline_noise_scan(board_name):
   x = range(-15,16)
 
   for i in x:
+    print "threshold scan of board "+board_name
     ptc.set_all_baselines(TDC,channels, [i]*len(channels) )
     rates = tdc_daq.scaler_rate(TDC,channels,scan_time)
     print "rates"

@@ -8,6 +8,29 @@ import os
 from dialog import Dialog
 
 
+def board_baseline_report(board_name):
+  import pandas as pd
+  import numpy as np
+  d = Dialog(dialog="dialog")
+  calib_json = db.get_calib_json_by_name(board_name)
+  if "baselines" in calib_json:
+    baselines = calib_json["baselines"]
+    baseline_stddev = calib_json["baseline_stddev"]
+    ch_error = calib_json["ch_error"]
+    bl_range = calib_json["bl_range"]
+    board_info = db.find_board_by_name(board_name)
+    channels = board_info["channels"]
+
+    df = pd.DataFrame(
+       np.transpose(np.array([baselines,baseline_stddev,ch_error])),
+      index= channels, columns=["baseline","stddev","error"]
+    )
+    report = df.to_string()
+    report += "\n\n\n"
+    report += df.describe().to_string()
+    code_21, text_21 = dialog_editbox(report)  
+  else:
+    d.msgbox("no baseline info, not calibrated")
 
 def dialog_enable_disable():
 
@@ -42,8 +65,10 @@ def dialog_enable_disable():
     board_calib = db.get_calib_json_by_name(board_name)
     
     bl_calib = " - "
-    if board_info["baseline_is_calibrated"]:
+    if board_info["baseline_is_calibrated"] == 1:
       bl_calib = "yes"
+    elif board_info["baseline_is_calibrated"] == -1:
+      bl_calib = "err"
 
 
     t1_calib = " - "
@@ -126,8 +151,10 @@ def dialog_board_list():
     board_calib = db.get_calib_json_by_name(board_name)
     
     bl_calib = " - "
-    if board_info["baseline_is_calibrated"]:
+    if board_info["baseline_is_calibrated"] == 1:
       bl_calib = "yes"
+    elif board_info["baseline_is_calibrated"] == -1:
+      bl_calib = "err"
 
 
     t1_calib = " - "

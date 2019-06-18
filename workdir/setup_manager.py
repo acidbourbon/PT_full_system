@@ -38,7 +38,7 @@ while True:
       choices = [
                  ("m1","--- operation ---"),
                  ("m2","--- calibration ---"),
-                 ("m3","--- edit ---"),
+                 ("m3","--- config/view/edit ---"),
                  ("m4","--- housekeeping ---"),
                  ("z","exit")] )
     if code == d.DIALOG_OK:
@@ -64,6 +64,7 @@ while True:
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
              ("16","view board baselines"),
+             ("21","view/edit board calib json"),
              ("12","auto calib t1 offsets of board"),
              ("18","clear t1 offsets of board"),
              ("20","clear t1 offsets of tdc")
@@ -382,8 +383,12 @@ via AC coupling and 10k resistor.".format(board_name) )
       code_9, choice_9 = dbd.dialog_board_list()
       if code_9 == d.DIALOG_OK:
         board_name = choice_9
-        d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
-        td.calib_t1_offsets_of_board(board_name)
+        board_info = db.find_board_by_name(board_name)
+        if board_info["t1_is_calibrated"]:
+          d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
+          td.calib_t1_offsets_of_board(board_name)
+        else:
+          d.msgbox("t1 calibration not possible. Please calibrate baselines first, or the walk effect might skew your t1 calibration.")
 
     ## clear t1 offsets ##
     if tag == "18":
@@ -444,15 +449,7 @@ via AC coupling and 10k resistor.".format(board_name) )
         baselines = db.get_calib_json_by_name(board_name)["baselines"]
         board_info = db.find_board_by_name(board_name)
         channels = board_info["channels"]
-
-        import pandas as pd
-        import numpy as np
-
-        df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
-        report = df.to_string()
-        report += "\n\n\n"
-        report += df.describe().to_string()
-        code_21, text_21 = dbd.dialog_editbox(report)  
+        dbd.board_baseline_report(board_name)
     
     ## calib board baselines of all active boards
     if tag == "30":
@@ -469,22 +466,7 @@ via AC coupling and 10k resistor.".format(board_name) )
         code_15, choice_15 = dbd.dialog_board_list()
         if code_15 == d.DIALOG_OK:
           board_name = choice_15
-
-          import pandas as pd
-          import numpy as np
-          calib_json = db.get_calib_json_by_name(board_name)
-          if "baselines" in calib_json:
-            baselines = calib_json["baselines"]
-            board_info = db.find_board_by_name(board_name)
-            channels = board_info["channels"]
-
-            df = pd.DataFrame(np.transpose(np.array(baselines)), index= channels, columns=["baseline"] )
-            report = df.to_string()
-            report += "\n\n\n"
-            report += df.describe().to_string()
-            code_21, text_21 = dbd.dialog_editbox(report)  
-          else:
-            d.msgbox("no baseline info, not calibrated")
+          dbd.board_baseline_report(board_name)
             
         else:
           break
