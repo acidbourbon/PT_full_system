@@ -5,8 +5,13 @@ import sys
 import tempfile
 import os
 import pasttrec_ctrl as ptc
+import misc
 
 from dialog import Dialog
+
+
+  
+
 
 
 def board_baseline_report(board_name):
@@ -21,6 +26,8 @@ def board_baseline_report(board_name):
     bl_range = calib_json["bl_range"]
     board_info = db.find_board_by_name(board_name)
     channels = board_info["channels"]
+    noise_scan_raw = calib_json["noise_scan_raw"]
+    noise_scan_x = calib_json["bl_range"]
 
     df = pd.DataFrame(
        np.transpose(np.array([baselines,baseline_stddev,ch_error])),
@@ -29,6 +36,10 @@ def board_baseline_report(board_name):
     report = df.to_string()
     report += "\n\n\n"
     report += df.describe().to_string()
+    report += "\n\n\n"
+    board_chan = 0
+    for scan in noise_scan_raw:
+      report += misc.ascii_hist(scan,xdata=noise_scan_x,title="PT "+board_name+" ch "+str(board_chan).rjust(2))
     code_21, text_21 = dialog_editbox(report)  
   else:
     d.msgbox("no baseline info, not calibrated")
