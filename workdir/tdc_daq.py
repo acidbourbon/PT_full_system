@@ -40,6 +40,23 @@ def read_scalers(TDC,channels):
     index += 1
 
   return return_vals
+
+def read_ch_state(TDC,channels):
+
+  first_chan = channels[0]
+  last_chan = channels[len(channels)-1]
+  memory_size = last_chan-first_chan +1
+  
+  first_register = first_chan + 0xc001
+  values = read_memory(TDC,first_register,memory_size)
+  return_vals = [0] * len(channels)
+  index = 0
+  for ch in channels:
+    # only take first bit, because it is the input state
+    return_vals[index] = (values[ch + 0xc001] & 0x80000000)>>31
+    index += 1
+
+  return return_vals
   
 def scaler_rate(TDC,channels,time):
   a = np.array(read_scalers(TDC,channels))

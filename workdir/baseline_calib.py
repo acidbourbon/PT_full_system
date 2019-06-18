@@ -68,7 +68,7 @@ def baseline_calib_by_noise(board_name):
     "noise_scan_raw" : np.transpose(data).tolist(),
     "ch_error"       : ch_error.tolist()
   })
-  ptc.init_active_boards()
+  ptc.init_board_by_name(board_name)
 
   return baselines
     
@@ -82,7 +82,8 @@ def baseline_noise_scan(board_name):
   connector  = board_info["tdc_connector"]
 
   db.enable_board(board_name)
-  ptc.init_active_boards()
+  #ptc.init_active_boards()
+  ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   
@@ -102,9 +103,6 @@ def baseline_noise_scan(board_name):
 
   return (x, result_matrix)
   
-
-
-
 
 
 def baseline_calib(board_name):

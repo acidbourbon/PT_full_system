@@ -51,6 +51,7 @@ while True:
     choices = [
                ("1","enable/disable boards"),
                ("8","init ASICs (active boards)"),
+               ("31","slow control test (active boards)"),
                ("13","get t1 and tot of board"),
                ("14","reset board"),
                ("27","set min threshold"),
@@ -429,6 +430,12 @@ via AC coupling and 10k resistor.".format(board_name) )
           report += "\n\n\n"
           report += df.describe().to_string()
           code_21, text_21 = dbd.dialog_editbox(report)  
+
+    ## slow control test of active boards ##
+    if tag == "31":
+      test_results = ptc.slow_control_test_active_boards()
+      code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
+
                  
       
     ## reset board ##

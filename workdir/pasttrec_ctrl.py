@@ -1,6 +1,42 @@
 
 import os
 import db
+import tdc_daq
+from time import sleep
+
+
+def slow_control_test(board_name):
+  
+  scan_time = 0.2
+  
+  board_info = db.find_board_by_name(board_name)
+  channels   = board_info["channels"] # zero based 
+  TDC        = board_info["tdc_addr"]
+  connector  = board_info["tdc_connector"]
+
+  db.enable_board(board_name)
+  init_board_by_name(board_name)
+
+  
+  print "slow control test of board "+board_name
+  set_threshold_for_board(TDC,connector,0)
+  rates_lo_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
+
+  set_threshold_for_board(TDC,connector,127)
+  rates_hi_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
+  state_hi_thr = tdc_daq.read_ch_state(TDC,channels)
+ 
+  print "rates low thr"
+  print rates_lo_thr
+  print "rates high thr"
+  print rates_hi_thr
+  print "state high thr"
+  print state_hi_thr
+
+  if state_hi_thr == [1]*len(channels) and rates_hi_thr == [0]*len(channels) and rates_lo_thr != [0]*len(channels):
+    return 1
+  else:
+    return 0
 
 def set_baseline( TDC, channel,val):
 
@@ -70,7 +106,16 @@ def init_board(TDC,conn,pktime,gain,thresh):
   init_chip(TDC,conn,0,pktime,gain,thresh)
   init_chip(TDC,conn,1,pktime,gain,thresh)
   return
-  
+ 
+
+def slow_control_test_active_boards(): 
+  test_results = {}
+  for board_name in db.active_board_list():
+    answer = slow_control_test(board_name)
+    test_results[board_name] = answer
+
+  print test_results
+  return test_results
   
 def init_active_boards():
   
