@@ -433,8 +433,9 @@ via AC coupling and 10k resistor.".format(board_name) )
 
     ## slow control test of active boards ##
     if tag == "31":
-      test_results = ptc.slow_control_test_active_boards()
-      code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
+      #test_results = ptc.slow_control_test_active_boards()
+      #code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
+      dbd.dialog_slow_control_test()
 
                  
       

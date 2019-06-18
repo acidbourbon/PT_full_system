@@ -4,6 +4,7 @@ import db
 import sys
 import tempfile
 import os
+import pasttrec_ctrl as ptc
 
 from dialog import Dialog
 
@@ -193,4 +194,50 @@ def dialog_editbox(in_text):
   code, text = d.editbox(temp_path)
   os.remove(temp_path)
   return (code, text)
+
+
+def dialog_slow_control_test():
+
+  d = Dialog(dialog="dialog")
+  d.set_background_title("view boards")
+
+  choices = []
+  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}  {:>6s}  {:>6s}"
+  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active", "SloCon")
+  choices += [("board",info)]
+
+  board_list = db.active_board_list()
+
+  test_results = ptc.slow_control_test_active_boards()
+  
+  for board_name in board_list:
+    board_info = db.find_board_by_name(board_name)
+    board_calib = db.get_calib_json_by_name(board_name)
+    
+    bl_calib = " - "
+    if board_info["baseline_is_calibrated"] == 1:
+      bl_calib = "yes"
+    elif board_info["baseline_is_calibrated"] == -1:
+      bl_calib = "err"
+
+
+    t1_calib = " - "
+    if board_info["t1_is_calibrated"]:
+      t1_calib = "yes"
+
+    active = " - "
+    if board_info["active"]:
+      active = "yes"
+
+    sctest = "err"
+    if test_results[board_name] == 1:
+      sctest = " ok"
+  
+    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib, active, sctest       )
+    choices += [(board_name,info)]
+  
+  
+
+  code, tag = d.menu("slow control test - active boards",
+                     choices= choices, height="30", menu_height="28", width="70")
 
