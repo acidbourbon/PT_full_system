@@ -40,6 +40,7 @@ def board_baseline_report(board_name):
     board_chan = 0
     for scan in noise_scan_raw:
       report += misc.ascii_hist(scan,xdata=noise_scan_x,title="PT "+board_name+" ch "+str(board_chan).rjust(2))
+      board_chan += 1
     code_21, text_21 = dialog_editbox(report)  
   else:
     d.msgbox("no baseline info, not calibrated")

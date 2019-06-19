@@ -385,7 +385,7 @@ via AC coupling and 10k resistor.".format(board_name) )
       if code_9 == d.DIALOG_OK:
         board_name = choice_9
         board_info = db.find_board_by_name(board_name)
-        if board_info["t1_is_calibrated"]:
+        if board_info["baseline_is_calibrated"]:
           d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
           td.calib_t1_offsets_of_board(board_name)
         else:

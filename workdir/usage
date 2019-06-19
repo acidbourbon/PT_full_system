@@ -60,4 +60,5 @@ rm *.root; tree_out=true go4analysis -user /workdir/data/sandra_cosmics/*.hld; r
 # this needs to be working for data taking and calibration
 rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q; ./rbrowse joint_tree.root
 
-
+# draw from root tree
+ joint_tree->Draw("t1","wire==50") 

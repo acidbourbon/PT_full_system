@@ -2,7 +2,7 @@
 
 def ascii_hist(data, **kwargs):
 
-  height = kwargs.get("height", 5)
+  height = kwargs.get("height", 10)
   normalized = kwargs.get("normalized", True)
   tics = kwargs.get("tics", 5)
   xdata = kwargs.get("xdata", range(0,len(data)))
@@ -36,8 +36,8 @@ def ascii_hist(data, **kwargs):
     out += "_"*(left_width*2+bins)+"\n\n"
   
   if title:
-    title2 = title.center(bins-6)
-    title2 = "## " + title2 + " ##"
+    title2 = title.center(bins-10)
+    title2 = "#### " + title2 + " ####"
     out += " ".rjust(left_width) + title2 + "\n\n"
 
 
@@ -45,7 +45,7 @@ def ascii_hist(data, **kwargs):
   for i in range(0,height):
     y = height -1 -i
     if normalized:
-      ylabel = y/float(height-1)*100
+      ylabel = (height-i)/float(height)*100
       left_format = "{:.1f}% |"
       out += left_format.format(ylabel).rjust(left_width)
     else: 

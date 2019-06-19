@@ -24,7 +24,7 @@ provide_trbnetd=yes
 provide_cts_gui=yes
 
 provide_vnc=yes
-vnc_password=
+vnc_password=1234
 vnc_port=5902
 vnc_geometry=1500x1024
 

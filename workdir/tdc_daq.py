@@ -167,7 +167,7 @@ def calib_t1_offsets(tdc_addr,channels,no_pulses):
 def calib_t1_offsets_of_board(board_name):
   
   # we clear old offsets of board first
-  clear_t1_offsets_of_board(board_name)
+  db.clear_t1_offsets_of_board(board_name)
 
   no_pulses = 1000
   ## run record_tree_data() first ##

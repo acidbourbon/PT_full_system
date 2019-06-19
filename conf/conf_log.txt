@@ -19,7 +19,7 @@ started cts_gui with following parameters:
 started vnc server (e.g. for Go4 window)
 port=5902
 DISPLAY=:2
-password=
+password=1234
 
 connect with: vncviewer localhost:5902
 
