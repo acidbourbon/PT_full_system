@@ -37,9 +37,11 @@ def board_baseline_report(board_name):
     report += "\n\n\n"
     report += df.describe().to_string()
     report += "\n\n\n"
+    report += "\n\n\n"
     board_chan = 0
     for scan in noise_scan_raw:
       report += misc.ascii_hist(scan,xdata=noise_scan_x,title="PT "+board_name+" ch "+str(board_chan).rjust(2))
+      report += "\n"*10
       board_chan += 1
     code_21, text_21 = dialog_editbox(report)  
   else:

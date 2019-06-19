@@ -23,9 +23,16 @@ no_events=1000
 #############   board name is the only thing that needs to be defined here, everythig else is loaded from db ################
 
 
-def baseline_calib_by_noise(board_name):
+def baseline_calib_by_noise(board_name,**kwargs):
 
-  x, matrix = baseline_noise_scan(board_name)
+  individual = kwargs.get("individual",False)
+
+  x = []
+  matrix = []
+  if individual:
+    x, matrix = individual_channel_baseline_noise_scan(board_name)
+  else:
+    x, matrix = baseline_noise_scan(board_name)
 
   import matplotlib.pyplot as plt
   data = np.array(matrix)
@@ -96,6 +103,42 @@ def baseline_noise_scan(board_name):
     print "threshold scan of board "+board_name
     ptc.set_all_baselines(TDC,channels, [i]*len(channels) )
     rates = tdc_daq.scaler_rate(TDC,channels,scan_time)
+    print "rates"
+    print rates
+    result_matrix.append(rates)
+
+
+  return (x, result_matrix)
+
+def individual_channel_baseline_noise_scan(board_name):
+  
+  
+  board_info = db.find_board_by_name(board_name)
+  channels   = board_info["channels"] # zero based 
+  TDC        = board_info["tdc_addr"]
+  connector  = board_info["tdc_connector"]
+
+  db.enable_board(board_name)
+  #ptc.init_active_boards()
+  ptc.init_board_by_name(board_name)
+
+  scan_time = 0.2
+  
+  ptc.set_threshold_for_board(TDC,connector,0)
+  
+  result_matrix = []
+  x = range(-15,16)
+
+  for i in x:
+    print "threshold scan of board "+board_name
+    rates = []
+    print "setting baseline "+str(i)
+    for ch in range(0,16):
+      print "probing channel "+str(ch)
+      ptc.set_all_baselines(TDC,channels, [-15]*len(channels) )
+      ptc.set_baseline(TDC,channels[ch],i)
+      ch_rate = tdc_daq.scaler_rate(TDC,channels,scan_time)[ch]
+      rates.append(ch_rate)
     print "rates"
     print rates
     result_matrix.append(rates)

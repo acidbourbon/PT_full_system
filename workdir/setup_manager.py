@@ -64,6 +64,7 @@ while True:
              ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
+             ("32","calib baselines (noise method, per channel) of board"),
              ("16","view board baselines"),
              ("21","view/edit board calib json"),
              ("12","auto calib t1 offsets of board"),
@@ -453,6 +454,20 @@ via AC coupling and 10k resistor.".format(board_name) )
         d.msgbox("Disconnect board {:s} from detector or cut voltage of detector to measure pure electronic noise".format(board_name) )
         import baseline_calib
         baseline_calib.baseline_calib_by_noise(board_name)
+        
+        baselines = db.get_calib_json_by_name(board_name)["baselines"]
+        board_info = db.find_board_by_name(board_name)
+        channels = board_info["channels"]
+        dbd.board_baseline_report(board_name)
+
+    ## calib board baselines, individual channels ##
+    if tag == "32":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+        d.msgbox("Disconnect board {:s} from detector or cut voltage of detector to measure pure electronic noise".format(board_name) )
+        import baseline_calib
+        baseline_calib.baseline_calib_by_noise(board_name,individual=True)
         
         baselines = db.get_calib_json_by_name(board_name)["baselines"]
         board_info = db.find_board_by_name(board_name)
