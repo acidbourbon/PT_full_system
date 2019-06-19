@@ -25,6 +25,10 @@ no_events=1000
 
 def baseline_calib_by_noise(board_name,**kwargs):
 
+  ### kwargs is passed through to read/write calib files
+  ### use baseline_calib_by_noise(board_name, dummy_calib=True) for test/dry run
+  ### dummy_calib = kwargs.get("dummy_calib",False)
+
   individual = kwargs.get("individual",False)
 
   x = []
@@ -74,7 +78,7 @@ def baseline_calib_by_noise(board_name,**kwargs):
     "bl_range"       : x,
     "noise_scan_raw" : np.transpose(data).tolist(),
     "ch_error"       : ch_error.tolist()
-  })
+  },**kwargs)
   ptc.init_board_by_name(board_name)
 
   return baselines

@@ -80,7 +80,11 @@ def get_setup_json():
   return setup
 
 
-def get_calib_json(calib_file):
+def get_calib_json(calib_file,**kwargs):
+
+  dummy_calib = kwargs.get("dummy_calib",False)
+  if dummy_calib:
+    calib_file = calib_file+".dummy"
   
   if os.path.exists(root_dir+calib_file):
 
@@ -99,7 +103,12 @@ def write_setup_json(setup):
   write_go4_settings_h()
 
 
-def write_calib_json(calib_file, calib_json):
+def write_calib_json(calib_file, calib_json,**kwargs):
+
+  dummy_calib = kwargs.get("dummy_calib",False)
+  if dummy_calib:
+    calib_file = calib_file+".dummy"
+
   calib_fh = open(root_dir+calib_file,"w")
   json.dump(calib_json,calib_fh,indent=2,sort_keys=True)
   calib_fh.close()
@@ -131,22 +140,22 @@ def find_board_by_name(board_name):
   return 0
 
 
-def get_calib_json_by_name(board_name):
+def get_calib_json_by_name(board_name,**kwargs):
   board_info = find_board_by_name(board_name)
   calib_file = board_info["calib_file"]
-  return get_calib_json(calib_file)
+  return get_calib_json(calib_file,**kwargs)
   
-def write_calib_json_by_name(board_name,calib_json):
+def write_calib_json_by_name(board_name,calib_json,**kwargs):
   board_info = find_board_by_name(board_name)
   calib_file = board_info["calib_file"]
-  write_calib_json(calib_file,calib_json)
+  write_calib_json(calib_file,calib_json,**kwargs)
 
-def update_calib_json_by_name(board_name,calib_json_update):
+def update_calib_json_by_name(board_name,calib_json_update,**kwargs):
   board_info = find_board_by_name(board_name)
   calib_file = board_info["calib_file"]
-  calib_json = get_calib_json(calib_file)
+  calib_json = get_calib_json(calib_file,**kwargs)
   calib_json.update(calib_json_update)
-  write_calib_json(calib_file,calib_json)
+  write_calib_json(calib_file,calib_json,**kwargs)
 
 def get_board_json_by_name(board_name):
   setup = get_setup_json()

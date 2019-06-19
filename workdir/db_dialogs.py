@@ -11,14 +11,11 @@ from dialog import Dialog
 
 
   
+def gen_baseline_report(board_name,**kwargs):
 
-
-
-def board_baseline_report(board_name):
   import pandas as pd
   import numpy as np
-  d = Dialog(dialog="dialog")
-  calib_json = db.get_calib_json_by_name(board_name)
+  calib_json = db.get_calib_json_by_name(board_name,**kwargs)
   if "baselines" in calib_json:
     baselines = calib_json["baselines"]
     baseline_stddev = calib_json["baseline_stddev"]
@@ -43,9 +40,33 @@ def board_baseline_report(board_name):
       report += misc.ascii_hist(scan,xdata=noise_scan_x,title="PT "+board_name+" ch "+str(board_chan).rjust(2))
       report += "\n"*10
       board_chan += 1
+    return report
+  else:
+    return 0
+
+def board_baseline_report(board_name,**kwargs):
+
+  ### if you want to display the dummy baseline calib
+  ### use board_baseline_report(board_name,dummy_calib=True)
+
+  dummy_calib = kwargs.get("dummy_calib",False)
+
+  d = Dialog(dialog="dialog")
+
+  report_calib = gen_baseline_report(board_name)
+  report_dummy = ""
+  report = report_calib
+  if dummy_calib:
+    report_dummy = gen_baseline_report(board_name,dummy_calib=True)
+    report_calib = "\n  #####  calib  ##### \n\n\n" + report_calib
+    report_dummy = "\n  #####  dummy  ##### \n\n\n" + report_dummy
+    report = misc.side_by_side(report_calib,report_dummy,width=60)
+
+  if report: 
     code_21, text_21 = dialog_editbox(report)  
   else:
     d.msgbox("no baseline info, not calibrated")
+
 
 def dialog_enable_disable():
 

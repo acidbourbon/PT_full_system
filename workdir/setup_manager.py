@@ -64,12 +64,16 @@ while True:
              ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
-             ("32","calib baselines (noise method, per channel) of board"),
-             ("16","view board baselines"),
+             ("16","view board baseline calib"),
+             ("33","dummy calib baselines of board"),
+             ("34","view baseline dummy calib"),
              ("21","view/edit board calib json"),
              ("12","auto calib t1 offsets of board"),
              ("18","clear t1 offsets of board"),
-             ("20","clear t1 offsets of tdc")
+             ("20","clear t1 offsets of tdc"),
+             (""," "),
+             (""," --- experimental methods ---"),
+             ("32","calib baselines (noise method, per channel) of board")
               ])
   if mm_tag == "m3":
     code, tag = d.menu("edit/config", height="30", menu_height="28",
@@ -455,10 +459,25 @@ via AC coupling and 10k resistor.".format(board_name) )
         import baseline_calib
         baseline_calib.baseline_calib_by_noise(board_name)
         
-        baselines = db.get_calib_json_by_name(board_name)["baselines"]
-        board_info = db.find_board_by_name(board_name)
-        channels = board_info["channels"]
         dbd.board_baseline_report(board_name)
+
+    ## dummy calib / scan board baselines ##
+    if tag == "33":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+        import baseline_calib
+        baseline_calib.baseline_calib_by_noise(board_name,dummy_calib=True)
+        
+        dbd.board_baseline_report(board_name,dummy_calib=True)
+
+    ## view dummy calib ##
+    if tag == "34":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+        
+        dbd.board_baseline_report(board_name,dummy_calib=True)
 
     ## calib board baselines, individual channels ##
     if tag == "32":

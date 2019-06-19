@@ -1,5 +1,28 @@
 #!/usr/bin/env python
 
+
+def side_by_side(a,b,**kwargs):
+
+  width = kwargs.get("width",30)
+  
+  a_arr = a.split("\n")
+  b_arr = b.split("\n")
+  a_len = len(a_arr)
+  b_len = len(b_arr)
+
+  out=""
+
+  for i in range(0,max(a_len,b_len)):
+    a_pad = " "*width
+    b_pad = " "*width
+    if i < a_len:
+      a_pad = a_arr[i].ljust(width)
+    if i < b_len:
+      b_pad = b_arr[i].ljust(width)
+    out += a_pad + b_pad + "\n"
+
+  return out
+
 def ascii_hist(data, **kwargs):
 
   height = kwargs.get("height", 10)
