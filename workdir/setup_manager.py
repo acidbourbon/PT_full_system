@@ -82,7 +82,7 @@ while True:
     code, tag = d.menu("edit/config", height="30", menu_height="28",
     choices = [
              ("1","view boards - enable/disable boards"),
-             ("7","edit default asic settings"),
+             ("7","edit default/standby  asic settings"),
              ("17","edit global settings"),
              ("2","view/edit board json"),
              ("21","view/edit board calib json"),
@@ -234,13 +234,13 @@ while True:
         else:
           break
 
-    ## edit default asic settings ##
+    ## edit  asic settings ##
     if tag == "7":
-      code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["default_asic_settings"],indent=2,sort_keys=True))
+      code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["asic_settings"],indent=2,sort_keys=True))
       if code_7 == d.DIALOG_OK:
         setup = db.get_setup_json()
-        default_asic_settings = json.loads(text)
-        setup["default_asic_settings"] = default_asic_settings;
+        _asic_settings = json.loads(text)
+        setup["asic_settings"] = _asic_settings;
         db.write_setup_json(setup)
 
         code = d.yesno("do you wish to reprogram ASICs with the new settings?")
@@ -251,33 +251,33 @@ while True:
     ## threshold all min
     if tag == "27":
       setup = db.get_setup_json()
-      current_thresh = setup["default_asic_settings"]["threshold"]
-      setup["default_asic_settings"]["threshold"] = 0
+      current_thresh = setup["asic_settings"]["default"]["threshold"]
+      setup["asic_settings"]["default"]["threshold"] = 0
       db.write_setup_json(setup)
       ptc.init_active_boards()
-      setup["default_asic_settings"]["threshold"] = current_thresh
+      setup["asic_settings"]["default"]["threshold"] = current_thresh
       db.write_setup_json(setup)
 
     ## threshold all max
     if tag == "28":
       setup = db.get_setup_json()
-      current_thresh = setup["default_asic_settings"]["threshold"]
-      setup["default_asic_settings"]["threshold"] = 127
+      current_thresh = setup["asic_settings"]["default"]["threshold"]
+      setup["asic_settings"]["default"]["threshold"] = 127
       db.write_setup_json(setup)
       ptc.init_active_boards()
-      setup["default_asic_settings"]["threshold"] = current_thresh
+      setup["asic_settings"]["default"]["threshold"] = current_thresh
       db.write_setup_json(setup)
 
     ## set threshold
     if tag == "29":
       setup = db.get_setup_json()
-      current_thresh = setup["default_asic_settings"]["threshold"]
+      current_thresh = setup["asic_settings"]["default"]["threshold"]
       code, thresh_str = d.inputbox(text="enter temporary threshold (default={:d})".format(current_thresh),init=str(current_thresh))
       if code == d.DIALOG_OK:
-        setup["default_asic_settings"]["threshold"] = int(thresh_str)
+        setup["asic_settings"]["default"]["threshold"] = int(thresh_str)
         db.write_setup_json(setup)
         ptc.init_active_boards()
-        setup["default_asic_settings"]["threshold"] = current_thresh
+        setup["asic_settings"]["default"]["threshold"] = current_thresh
         db.write_setup_json(setup)
    
     if tag == "8":

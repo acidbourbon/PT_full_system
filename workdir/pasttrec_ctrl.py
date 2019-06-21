@@ -116,31 +116,40 @@ def slow_control_test_active_boards():
 
   print test_results
   return test_results
-  
+
 def init_active_boards():
+  return init_boards_by_name(db.active_board_list())
+
+def init_boards_by_name(board_list):
   
   setup     = db.get_setup_json()
-  pktime    = setup["default_asic_settings"]["pktime"]
-  gain      = setup["default_asic_settings"]["gain"]
-  threshold = setup["default_asic_settings"]["threshold"]
 
-  for board_name in db.active_board_list():
+  pktime    = setup["asic_settings"]["default"]["pktime"]
+  gain      = setup["asic_settings"]["default"]["gain"]
+  threshold = setup["asic_settings"]["default"]["threshold"]
+
+  standby_pktime    = setup["asic_settings"]["standby"]["pktime"]
+  standby_gain      = setup["asic_settings"]["standby"]["gain"]
+  standby_threshold = setup["asic_settings"]["standby"]["threshold"]
+
+  
+
+  for board_name in board_list:
     board_info = db.find_board_by_name(board_name)
     conn = board_info["tdc_connector"]
     tdc_addr = board_info["tdc_addr"]
+
+    standby = False
+    if "standby" in board_info:
+      if board_info["standby"]:
+        standby=True
+
     if tdc_addr[0:2].lower() == "0x":
-      init_board(tdc_addr,conn,pktime,gain,threshold)
+      if standby:
+        init_board(tdc_addr,conn,standby_pktime,standby_gain,standby_threshold)
+      else:
+        init_board(tdc_addr,conn,pktime,gain,threshold)
   return
 
 def init_board_by_name(board_name):
-  
-  setup     = db.get_setup_json()
-  pktime    = setup["default_asic_settings"]["pktime"]
-  gain      = setup["default_asic_settings"]["gain"]
-  threshold = setup["default_asic_settings"]["threshold"]
-
-  board_info = db.find_board_by_name(board_name)
-  conn = board_info["tdc_connector"]
-  tdc_addr = board_info["tdc_addr"]
-  if tdc_addr[0:2].lower() == "0x":
-    init_board(tdc_addr,conn,pktime,gain,threshold)
+  return init_boards_by_name([board_name])

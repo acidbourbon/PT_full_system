@@ -1,8 +1,15 @@
 {
-  "default_asic_settings": {
-    "gain": 4, 
-    "pktime": 15, 
-    "threshold": 10
+  "asic_settings": {
+    "default": {
+      "gain": 4, 
+      "pktime": 15, 
+      "threshold": 10
+    }, 
+    "standby": {
+      "gain": 1, 
+      "pktime": 20, 
+      "threshold": 127
+    }
   }, 
   "global_settings": {
     "CHANNELS": 53, 
@@ -30,7 +37,7 @@
               "layer": 2, 
               "name": "0014", 
               "reverse_mapping": 1, 
-              "standby": 1, 
+              "standby": 0, 
               "tdc_connector": 1
             }, 
             {
@@ -44,7 +51,7 @@
               "layer": 2, 
               "name": "0013", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 2
             }, 
             {
@@ -120,7 +127,7 @@
           "addr": "0x0351", 
           "board": [
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0021.json", 
               "chamber": 0, 
               "fpc_a": 13, 
@@ -134,7 +141,7 @@
               "tdc_connector": 1
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0022.json", 
               "chamber": 0, 
               "fpc_a": 17, 
@@ -148,7 +155,7 @@
               "tdc_connector": 2
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0025.json", 
               "chamber": 0, 
               "fpc_a": 23, 
@@ -220,7 +227,7 @@
           "addr": "0x0352", 
           "board": [
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0026.json", 
               "chamber": 0, 
               "fpc_a": -1, 
@@ -234,7 +241,7 @@
               "tdc_connector": 1
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0027.json", 
               "chamber": 0, 
               "fpc_a": 27, 
@@ -248,7 +255,7 @@
               "tdc_connector": 2
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0008.json", 
               "chamber": 1, 
               "fpc_a": 13, 
@@ -320,7 +327,7 @@
           "addr": "0x0353", 
           "board": [
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0007.json", 
               "chamber": 0, 
               "fpc_a": 35, 
@@ -334,7 +341,7 @@
               "tdc_connector": 1
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0004.json", 
               "chamber": 0, 
               "fpc_a": 39, 
@@ -348,7 +355,7 @@
               "tdc_connector": 2
             }, 
             {
-              "active": 1, 
+              "active": 0, 
               "calib_file": "./boards/board_0002.json", 
               "chamber": 0, 
               "fpc_a": 31, 
