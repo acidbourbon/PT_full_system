@@ -73,7 +73,7 @@ def board_baseline_report(board_name,**kwargs):
 
 def dialog_board_list(**kwargs):
 
-  width = str(70)
+  width = str(80)
   height = str(30)
   menu_height = str(28)
   list_height = menu_height
@@ -96,8 +96,8 @@ def dialog_board_list(**kwargs):
     d.set_background_title("set boards to standby")
 
   choices = []
-  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}  {:>6s}"
-  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active")
+  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}  {:>6s}  {:>7s}"
+  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active","standby")
 
   if check_enable or check_standby:
     choices += [("board",info, False)]
@@ -126,23 +126,42 @@ def dialog_board_list(**kwargs):
     if board_info["active"]:
       active = "yes"
       active_bool = True
+
+    standby = " - "
+    standby_bool = False
+    if "standby" in board_info:
+      if board_info["standby"]:
+        standby = "yes"
+        standby_bool = True
   
-    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib, active       )
+    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib, active, standby       )
     if check_enable:
       choices += [(board_name,info, active_bool)]
+    elif check_standby:
+      choices += [(board_name,info, standby_bool)]
     else:
       choices += [(board_name,info)]
   
   
 
   if check_enable:
-    code, active_boards = d.checklist("enable/disable boards", choices= choices, width=width,height=height,list_height=list_height)
+    code, active_boards = d.checklist("enable/disable boards", choices=choices, width=width, height=height, list_height=list_height)
     if code == d.DIALOG_OK:
       for board_name in board_list:
         db.disable_board(board_name)
       for board_name in active_boards:
         if not(board_name == "board"):
           db.enable_board(board_name)
+
+  elif check_standby:
+    code, standby_boards = d.checklist("set board standby", choices= choices, width=width,height=height,list_height=list_height)
+    if code == d.DIALOG_OK:
+      for board_name in board_list:
+        db.unset_standby_board(board_name)
+      for board_name in standby_boards:
+        if not(board_name == "board"):
+          db.set_standby_board(board_name)
+
   else:
     code, tag = d.menu("select a board:",
                      choices= choices ,width=width,height=height,menu_height=menu_height)

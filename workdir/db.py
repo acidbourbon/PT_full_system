@@ -121,10 +121,10 @@ def enable_board(board_name):
 def disable_board(board_name):
   update_board_json_by_name(board_name,{"active":0})
 
-def standby_board(board_name):
+def set_standby_board(board_name):
   update_board_json_by_name(board_name,{"standby":1})
 
-def unstandby_board(board_name):
+def unset_standby_board(board_name):
   update_board_json_by_name(board_name,{"standby":0})
 
 
