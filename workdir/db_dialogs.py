@@ -73,7 +73,7 @@ def board_baseline_report(board_name,**kwargs):
 
 def dialog_board_list(**kwargs):
 
-  width = str(80)
+  width = str(100)
   height = str(30)
   menu_height = str(28)
   list_height = menu_height
@@ -96,8 +96,8 @@ def dialog_board_list(**kwargs):
     d.set_background_title("set boards to standby")
 
   choices = []
-  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}  {:>6s}  {:>7s}"
-  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active","standby")
+  info_format = "{:>6s}  {:>4s}  {:>7s}  {:>5}  {:>12s}  {:>6s}  {:>6s}  {:>6s}  {:>7s}"
+  info = info_format.format("TDC", "CONN","chamber","layer","FPC ABCD", "BL cal", "t1 cal", "active","standby")
 
   if check_enable or check_standby:
     choices += [("board",info, False)]
@@ -134,7 +134,16 @@ def dialog_board_list(**kwargs):
         standby = "yes"
         standby_bool = True
   
-    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib, active, standby       )
+    info = info_format.format(
+      board_info["tdc_addr"],
+      str(board_info["tdc_connector"]),
+      str(board_info["chamber"]),
+      str(board_info["layer"]),
+      str(board_info["fpc_a"]).rjust(2)+","+
+      str(board_info["fpc_b"]).rjust(2)+","+
+      str(board_info["fpc_c"]).rjust(2)+","+
+      str(board_info["fpc_d"]).rjust(2),
+      bl_calib, t1_calib, active, standby )
     if check_enable:
       choices += [(board_name,info, active_bool)]
     elif check_standby:
