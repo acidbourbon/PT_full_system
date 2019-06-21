@@ -40,6 +40,7 @@ while True:
                  ("m2","--- calibration ---"),
                  ("m3","--- config/view/edit ---"),
                  ("m4","--- housekeeping ---"),
+                 ("m5","--- test procedures ---"),
                  ("z","exit")] )
     if code == d.DIALOG_OK:
       mm_tag = tag
@@ -49,7 +50,7 @@ while True:
   if mm_tag == "m1":
     code, tag = d.menu("operation", height="30", menu_height="28",
     choices = [
-               ("1","enable/disable boards"),
+               ("1","view boards - enable/disable boards"),
                ("8","init ASICs (active boards)"),
                ("31","slow control test (active boards)"),
                ("13","get t1 and tot of board"),
@@ -62,6 +63,7 @@ while True:
     code, tag = d.menu("calibration", height="30", menu_height="28",
     choices = [
              ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
+             ("1","view boards - enable/disable boards"),
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
              ("16","view board baseline calib"),
@@ -78,6 +80,7 @@ while True:
   if mm_tag == "m3":
     code, tag = d.menu("edit/config", height="30", menu_height="28",
     choices = [
+             ("1","view boards - enable/disable boards"),
              ("7","edit default asic settings"),
              ("17","edit global settings"),
              ("2","view/edit board json"),
@@ -99,62 +102,18 @@ while True:
              ("22","add hub"),
              ("23","remove hub")
               ])
+  if mm_tag == "m5":
+    code, tag = d.menu("test procedures", height="30", menu_height="28",
+    choices = [
+               ("1","view boards - enable/disable boards"),
+               ("31","slow control test (active boards)"),
+               ("13","get t1 and tot of board"),
+               ("33","dummy calib baselines of board"),
+               ("34","view baseline dummy calib")
+              ])
+
+
   if code == d.DIALOG_OK:
-
-#######  old main menu ######
-#  code, tag = d.menu("main menu", height="30", menu_height="28",
-#    choices = [
-#               ("","--- operation ---"),
-#               ("1","enable/disable boards"),
-#               ("8","init ASICs (active boards)"),
-#               ("13","get t1 and tot of board"),
-#               ("14","reset board"),
-#               ("27","set min threshold"),
-#               ("28","set max threshold"),
-#               ("29","set threshold"),
-#               ("",""),
-#               ("","--- calibration ---"),
-#               ("9","auto calib baselines of board"),
-#               ("15","auto calib board baselines from noise"),
-#               ("30","  -||- for  all active boards"),
-#               ("12","auto calib t1 offsets of board"),
-#               ("18","clear t1 offsets of board"),
-#               ("20","clear t1 offsets of tdc"),
-#               ("",""),
-#               ("","--- edit ---"),
-#               ("7","edit default asic settings"),
-#               ("17","edit global settings"),
-#               ("2","view/edit board json"),
-#               ("21","view/edit board calib json"),
-#               ("19","view/edit tdc json"),
-#               ("16","view board baselines"),
-#               ("3","view/edit setup json"),
-#               ("",""),
-#               ("","--- housekeeping ---"),
-#               ("24","view board list"),
-#               ("25","view tdc list"),
-#               ("26","view hub list"),
-#               ("4","add board"),
-#               ("6","move board"),
-#               ("5","remove board"),
-#               ("10","add tdc"),
-#               ("11","remove tdc"),
-#               ("22","add hub"),
-#               ("23","remove hub"),
-#               ("",""),
-#               ("z","exit")] )
-#  
-#  if code == d.DIALOG_OK:
-
-
-
-
-
-
-
-
-
-
 
     ## enable/disable boards ##
     if tag == "1":

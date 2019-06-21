@@ -121,6 +121,12 @@ def enable_board(board_name):
 def disable_board(board_name):
   update_board_json_by_name(board_name,{"active":0})
 
+def standby_board(board_name):
+  update_board_json_by_name(board_name,{"standby":1})
+
+def unstandby_board(board_name):
+  update_board_json_by_name(board_name,{"standby":0})
+
 
 def find_board_by_tdc_channel(my_tdc, my_channel):
   setup = get_setup_json()

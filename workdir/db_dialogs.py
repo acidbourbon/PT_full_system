@@ -68,34 +68,44 @@ def board_baseline_report(board_name,**kwargs):
     d.msgbox("no baseline info, not calibrated")
 
 
-def dialog_enable_disable():
+
+
+
+def dialog_board_list(**kwargs):
+
+  width = str(70)
+  height = str(30)
+  menu_height = str(28)
+  list_height = menu_height
+  
+  checklist = kwargs.get("checklist","")
+
+  check_enable  = False
+  check_standby = False
+  if checklist == "enable":
+    check_enable = True
+  if checklist == "standby":
+    check_standby = True
+
 
   d = Dialog(dialog="dialog")
-  
-  d.set_background_title("Manage boards")
-  
-  choices = []
-  info_format = "{:>8s}  {:>8s}"
-  info = info_format.format("TDC", "CONN")
-  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}"
-  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal")
-  choices += [("board",info, False)]
+  d.set_background_title("view boards")
+  if check_enable:
+    d.set_background_title("enable/disable boards")
+  if check_standby:
+    d.set_background_title("set boards to standby")
 
+  choices = []
+  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}  {:>6s}"
+  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active")
+
+  if check_enable or check_standby:
+    choices += [("board",info, False)]
+  else:
+    choices += [("board",info)]
 
   board_list = db.board_list()
   
-#  for board_name in board_list:
-#    board_info = db.find_board_by_name(board_name)
-#    board_calib = db.get_calib_json_by_name(board_name)
-#    got_bl_calib = "-"
-#    if "baselines" in board_calib:
-#      got_bl_calib = "yes"
-#  
-#    active = board_info["active"]
-#  
-#    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]))
-#    choices += [(board_name,info, active)]
-
   for board_name in board_list:
     board_info = db.find_board_by_name(board_name)
     board_calib = db.get_calib_json_by_name(board_name)
@@ -111,25 +121,84 @@ def dialog_enable_disable():
     if board_info["t1_is_calibrated"]:
       t1_calib = "yes"
 
-    active =  board_info["active"]
+    active = " - "
+    active_bool = False
+    if board_info["active"]:
+      active = "yes"
+      active_bool = True
   
-    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib,      )
-#    choices += [(board_name,info)]
-    choices += [(board_name,info, active)]
+    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib, active       )
+    if check_enable:
+      choices += [(board_name,info, active_bool)]
+    else:
+      choices += [(board_name,info)]
   
   
-  
-  code, active_boards = d.checklist("enable/disable boards",
-                           choices= choices)
 
-  if code == d.DIALOG_OK:
-    for board_name in board_list:
-      #db.update_board_json_by_name(board_name,{"active":0})
-      db.disable_board(board_name)
-    for board_name in active_boards:
-      if not(board_name == "board"):
-        #db.update_board_json_by_name(board_name,{"active":1})
-        db.enable_board(board_name)
+  if check_enable:
+    code, active_boards = d.checklist("enable/disable boards", choices= choices, width=width,height=height,list_height=list_height)
+    if code == d.DIALOG_OK:
+      for board_name in board_list:
+        db.disable_board(board_name)
+      for board_name in active_boards:
+        if not(board_name == "board"):
+          db.enable_board(board_name)
+  else:
+    code, tag = d.menu("select a board:",
+                     choices= choices ,width=width,height=height,menu_height=menu_height)
+    return code, tag
+
+
+
+def dialog_enable_disable():
+  
+  return dialog_board_list(checklist="enable")
+#
+#  d = Dialog(dialog="dialog")
+#  
+#  d.set_background_title("enable/disable boards")
+#  
+#  choices = []
+#  info_format = "{:>8s}  {:>8s}"
+#  info = info_format.format("TDC", "CONN")
+#  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}"
+#  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal")
+#  choices += [("board",info, False)]
+#
+#
+#  board_list = db.board_list()
+#  
+#  for board_name in board_list:
+#    board_info = db.find_board_by_name(board_name)
+#    board_calib = db.get_calib_json_by_name(board_name)
+#    
+#    bl_calib = " - "
+#    if board_info["baseline_is_calibrated"] == 1:
+#      bl_calib = "yes"
+#    elif board_info["baseline_is_calibrated"] == -1:
+#      bl_calib = "err"
+#
+#
+#    t1_calib = " - "
+#    if board_info["t1_is_calibrated"]:
+#      t1_calib = "yes"
+#
+#    active =  board_info["active"]
+#  
+#    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib,      )
+#    choices += [(board_name,info, active)]
+#  
+#  
+#  
+#  code, active_boards = d.checklist("enable/disable boards",
+#                           choices= choices)
+#
+#  if code == d.DIALOG_OK:
+#    for board_name in board_list:
+#      db.disable_board(board_name)
+#    for board_name in active_boards:
+#      if not(board_name == "board"):
+#        db.enable_board(board_name)
     
 def dialog_tdc_list():
 
@@ -170,48 +239,6 @@ def dialog_connector_list(tdc_addr):
 
   
 
-def dialog_board_list():
-
-  d = Dialog(dialog="dialog")
-  d.set_background_title("view boards")
-
-  choices = []
-  info_format = "{:>6s}  {:>4s}  {:>6s}  {:>6s}  {:>6s}"
-  info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active")
-  choices += [("board",info)]
-
-  board_list = db.board_list()
-  
-  for board_name in board_list:
-    board_info = db.find_board_by_name(board_name)
-    board_calib = db.get_calib_json_by_name(board_name)
-    
-    bl_calib = " - "
-    if board_info["baseline_is_calibrated"] == 1:
-      bl_calib = "yes"
-    elif board_info["baseline_is_calibrated"] == -1:
-      bl_calib = "err"
-
-
-    t1_calib = " - "
-    if board_info["t1_is_calibrated"]:
-      t1_calib = "yes"
-
-    active = " - "
-    if board_info["active"]:
-      active = "yes"
-  
-    info = info_format.format(board_info["tdc_addr"], str(board_info["tdc_connector"]),  bl_calib, t1_calib, active       )
-    choices += [(board_name,info)]
-  
-  
-
-  code, tag = d.menu("select a board:",
-                     choices= choices )
-  #if code == d.DIALOG_OK:
-  #  return tag
-  #return 0
-  return code, tag
 
 def dialog_editbox(in_text):
 
