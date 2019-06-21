@@ -99,8 +99,15 @@ def enable_tdc_channels_of_active_boards():
     board_info = db.find_board_by_name(board_name)
     channels = board_info["channels"]
     tdc_addr = board_info["tdc_addr"]
+
+    standby = False
+    if "standby" in board_info:
+      if board_info["standby"]:
+        standby = True
+     
     if tdc_addr[0:2].lower() == "0x":
-      enable_channels(tdc_addr,channels)
+      if not(standby):
+        enable_channels(tdc_addr,channels)
   return
 
 

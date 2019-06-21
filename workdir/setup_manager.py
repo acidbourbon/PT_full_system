@@ -51,6 +51,7 @@ while True:
     code, tag = d.menu("operation", height="30", menu_height="28",
     choices = [
                ("1","view boards - enable/disable boards"),
+               ("35","set boards to standby"),
                ("8","init ASICs (active boards)"),
                ("31","slow control test (active boards)"),
                ("13","get t1 and tot of board"),
@@ -118,6 +119,11 @@ while True:
     ## enable/disable boards ##
     if tag == "1":
       dbd.dialog_enable_disable()
+      td.enable_tdc_channels_of_active_boards()
+
+    ## set boards to standby ##
+    if tag == "35":
+      dbd.dialog_standby()
       td.enable_tdc_channels_of_active_boards()
 
     ## edit board json tags ##
