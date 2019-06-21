@@ -32,15 +32,16 @@ mm_tag = ""
 
 while True:
 
+  menu_title_width = 20
 
   if mm_tag == "":
     code, tag = d.menu("main menu", height="30", menu_height="28",
       choices = [
-                 ("m1","--- operation ---"),
-                 ("m2","--- calibration ---"),
+                 ("m1","---    operation     ---"),
+                 ("m2","---   calibration    ---"),
                  ("m3","--- config/view/edit ---"),
-                 ("m4","--- housekeeping ---"),
-                 ("m5","--- test procedures ---"),
+                 ("m4","---   housekeeping   ---"),
+                 ("m5","--- test procedures  ---"),
                  ("z","exit")] )
     if code == d.DIALOG_OK:
       mm_tag = tag
@@ -72,7 +73,9 @@ while True:
              ("34","view baseline dummy calib"),
              ("21","view/edit board calib json"),
              ("12","auto calib t1 offsets of board"),
+             ("36","view t1 offsets of board"),
              ("18","clear t1 offsets of board"),
+             ("37","view t1 offsets of tdc"),
              ("20","clear t1 offsets of tdc"),
              (""," "),
              (""," --- experimental methods ---"),
@@ -234,7 +237,7 @@ while True:
         else:
           break
 
-    ## edit  asic settings ##
+    ## edit asic settings ##
     if tag == "7":
       code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["asic_settings"],indent=2,sort_keys=True))
       if code_7 == d.DIALOG_OK:
@@ -513,6 +516,20 @@ via AC coupling and 10k resistor.".format(board_name) )
         if code_17 == d.DIALOG_OK:
           calib_json = json.loads(text)
           db.write_calib_json_by_name(board,calib_json)
+
+    ## view board t1 offsets ##
+    if tag == "36":
+      code, board = dbd.dialog_board_list()
+      if code == d.DIALOG_OK: 
+        board_t1_offsets = db.get_t1_offsets_of_board(board)
+        code_17, text = dbd.dialog_editbox(json.dumps(board_t1_offsets,indent=2,sort_keys=True))
+
+    ## view tdc t1 offsets ##
+    if tag == "37":
+      code, tdc = dbd.dialog_tdc_list()
+      if code == d.DIALOG_OK: 
+        tdc_t1_offsets = db.get_t1_offsets(tdc)
+        code_17, text = dbd.dialog_editbox(json.dumps(tdc_t1_offsets,indent=2,sort_keys=True))
 
       
     if tag == "z":
