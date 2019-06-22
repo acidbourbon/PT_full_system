@@ -6,6 +6,69 @@ setup_file = "setup.json"
 
 
 
+def dump_everything_to_csv(outfile,**kwargs):
+
+  only_active_boards = kwargs.get("only_active_boards",False)
+
+
+  my_board_list = []
+
+  if only_active_boards:
+    my_board_list = active_board_list()
+  else:
+    my_board_list = board_list()
+
+  col_width = 32
+
+  with open(outfile,"w") as f:
+    
+  
+    for board in my_board_list:
+      print "dumping data of board: "+board
+      board_info = find_board_by_name(board)
+      board_calib = get_calib_json_by_name(board)
+      board_dummy_calib = get_calib_json_by_name(board,dummy_calib=True)
+     
+      #board_info.update(board_calib)
+      
+      list_type_keys = []
+      my_keys = []
+  
+      for key in board_info:
+        my_keys += [key]
+        if isinstance(board_info[key],list):
+          if len(board_info[key]) == 16:
+            list_type_keys += [key]
+  
+      if len(my_keys) > 0: 
+        my_keys.sort()
+        #print "my_keys:"
+        #print my_keys
+        
+        line = ""
+        for key in my_keys:
+          line += str(key).ljust(col_width)+","
+        #print line
+        f.write(line+"\n")
+  
+        for i in range(0,16):
+          line = ""
+          for key in my_keys:
+            if key in list_type_keys:
+              element = board_info[key][i]
+            else:
+              element = board_info[key]
+            if not(isinstance(element,str)):
+              element = str(element)
+            line += '"'+element.ljust(col_width)+'"'+","
+          f.write(line+"\n")
+          #print line
+             
+    f.close()
+        
+
+
+
 def write_go4_settings_h():
   with open("go4_settings.h","w") as f:
     f.write("//do not edit by hand, this is automatically generated/overwritten by db.py\n\n\n")
@@ -267,6 +330,7 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
             "t1_offsets" : t1_offsets,\
             "t1_is_calibrated" : t1_is_calibrated,\
             "baseline_is_calibrated" : baseline_is_calibrated,\
+            "board_chan" : range(0,16)
             })
             return board_defs
 
