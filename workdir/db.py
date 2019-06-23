@@ -21,45 +21,80 @@ def dump_everything_to_csv(outfile,**kwargs):
   col_width = 32
 
   with open(outfile,"w") as f:
-    
-  
+
+    list_type_keys = []
+    my_keys = []
+
+    # first collect keys
     for board in my_board_list:
-      print "dumping data of board: "+board
+      print "scanning keys of board: "+board
       board_info = find_board_by_name(board)
-      board_calib = get_calib_json_by_name(board)
-      board_dummy_calib = get_calib_json_by_name(board,dummy_calib=True)
-     
-      #board_info.update(board_calib)
-      
-      list_type_keys = []
-      my_keys = []
-  
+
+      calib_ = get_calib_json_by_name(board)
+      dummy_calib_ = get_calib_json_by_name(board,dummy_calib=True)
+
+      calib = {}
+      dummy_calib = {}
+
+      for key in calib_:
+        new_key = "calib_"+key
+        calib[new_key] = calib_[key]
+      board_info.update(calib)
+
+      for key in dummy_calib_:
+        new_key = "dummy_calib_"+key
+        dummy_calib[new_key] = dummy_calib_[key]
+      board_info.update(dummy_calib)
+
+
       for key in board_info:
-        my_keys += [key]
-        if isinstance(board_info[key],list):
-          if len(board_info[key]) == 16:
-            list_type_keys += [key]
+        if not( key in my_keys):
+          my_keys += [key]
+          if isinstance(board_info[key],list):
+            if len(board_info[key]) == 16:
+              list_type_keys += [key]
+
+    # generate report 
+    if len(my_keys) > 0: 
+      my_keys.sort()
+      line = ""
+      for key in my_keys:
+        line += str(key).ljust(col_width)+","
+      f.write(line+"\n")
+
+      for board in my_board_list:
+        print "dumping data of board: "+board
+        board_info = find_board_by_name(board)
+
+        calib_ = get_calib_json_by_name(board)
+        dummy_calib_ = get_calib_json_by_name(board,dummy_calib=True)
   
-      if len(my_keys) > 0: 
-        my_keys.sort()
-        #print "my_keys:"
-        #print my_keys
-        
-        line = ""
-        for key in my_keys:
-          line += str(key).ljust(col_width)+","
-        #print line
-        f.write(line+"\n")
+        calib = {}
+        dummy_calib = {}
   
+        for key in calib_:
+          new_key = "calib_"+key
+          calib[new_key] = calib_[key]
+        board_info.update(calib)
+  
+        for key in dummy_calib_:
+          new_key = "dummy_calib_"+key
+          dummy_calib[new_key] = dummy_calib_[key]
+        board_info.update(dummy_calib)
+
+       
+        # each channel individually
         for i in range(0,16):
           line = ""
           for key in my_keys:
-            if key in list_type_keys:
-              element = board_info[key][i]
-            else:
-              element = board_info[key]
-            if not(isinstance(element,str)):
-              element = str(element)
+            element = ""
+            if key in board_info:
+              if key in list_type_keys:
+                element = board_info[key][i]
+              else:
+                element = board_info[key]
+              if not(isinstance(element,str)):
+                element = str(element)
             line += '"'+element.ljust(col_width)+'"'+","
           f.write(line+"\n")
           #print line
