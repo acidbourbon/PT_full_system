@@ -17,13 +17,16 @@ def dump_db_to_csv(outfile,**kwargs):
   #  export_root = True
 
 
-  from ROOT import TFile, TTree
+  from ROOT import TFile, TTree, TH1, TH1F
   from array import array
+  import numpy as np
 
 
 
   root_dump = TFile(export_root_file,"RECREATE")
   dump_tree = TTree("dump_tree","dump_tree") 
+  calib_tree = TTree("calib_tree","calib_tree") 
+  dummy_calib_tree = TTree("dummy_calib_tree","dummy_calib_tree") 
 
   
 
@@ -81,7 +84,9 @@ def dump_db_to_csv(outfile,**kwargs):
       for j in range(0,len(my_keys)):
         key = my_keys[j]
         line += str(key).ljust(col_width)+","
-        dump_tree.Branch(key,root_vals[j],key+"/F")
+        dump_tree.Branch(key,root_vals[j],key)
+        calib_tree.Branch(key,root_vals[j],key)
+        dummy_calib_tree.Branch(key,root_vals[j],key)
       f.write(line+"\n")
 
       for board in my_board_list:
@@ -124,12 +129,31 @@ def dump_db_to_csv(outfile,**kwargs):
             except ValueError:
               float_element = -1.
             root_vals[j][0] = float_element
+
+            ## try putting the noise scan histogram in there ##
+
+            if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw":
+              if key in board_info:
+                hist_data = np.array(board_info[key][i])
+                hist_data = np.round(hist_data/float(sum(hist_data)) * 1000.)
+                x=range(-15,16)
+                for l in range(0,len(hist_data)):
+                  root_vals[j][0] = x[l]
+                  for m in range(0,int(hist_data[l])):
+                    if key == "calib_noise_scan_raw":
+                      calib_tree.Fill()
+                    elif key == "dummy_calib_noise_scan_raw":
+                      dummy_calib_tree.Fill()
+
+
           f.write(line+"\n")
           dump_tree.Fill()
           #print line
              
     f.close()
     dump_tree.Write()
+    calib_tree.Write()
+    dummy_calib_tree.Write()
     root_dump.Close()
 
 

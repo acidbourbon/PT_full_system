@@ -67,5 +67,6 @@ rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -
 # dump board database to tree and draw stuff
 ./dump_everything.py
 root dump.root
-dump_tree->Draw("wires","name == 14","")
-dump_tree->Draw("calib_baselines","name == 14","")
+dump_tree->Draw("wires","name == 0014","")
+dump_tree->Draw("calib_baselines","name == 0014","")
+dummy_calib_tree->Draw("dummy_calib_noise_scan_raw","name==0014 && board_chan == 0","")
