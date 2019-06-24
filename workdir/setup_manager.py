@@ -42,6 +42,7 @@ while True:
                  ("m3","--- config/view/edit ---"),
                  ("m4","---   housekeeping   ---"),
                  ("m5","--- test procedures  ---"),
+                 ("m6","---   export data    ---"),
                  ("z","exit")] )
     if code == d.DIALOG_OK:
       mm_tag = tag
@@ -114,6 +115,13 @@ while True:
                ("13","get t1 and tot of board"),
                ("33","dummy calib baselines of board"),
                ("34","view baseline dummy calib")
+              ])
+
+  if mm_tag == "m6":
+    code, tag = d.menu("export database", height="30", menu_height="28",
+    choices = [
+               ("38","export database to .csv"),
+               ("39","export database to .root"),
               ])
 
 
@@ -531,6 +539,18 @@ via AC coupling and 10k resistor.".format(board_name) )
         tdc_t1_offsets = db.get_t1_offsets(tdc)
         code_17, text = dbd.dialog_editbox(json.dumps(tdc_t1_offsets,indent=2,sort_keys=True))
 
+
+    ## dump database to csv ##
+    if tag == "38":
+      code, str = d.inputbox(text="dump database to <file name>",init="./dump.csv")
+      if code == d.DIALOG_OK: 
+        db.dump_db_to_csv(str)
+
+    ## dump database to root ##
+    if tag == "39":
+      code, str = d.inputbox(text="dump database to <file name>",init="./dump.root")
+      if code == d.DIALOG_OK: 
+        db.dump_db_to_root(str)
       
     if tag == "z":
       exit()
