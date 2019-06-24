@@ -129,26 +129,49 @@ def dump_db_to_csv(outfile,**kwargs):
             except ValueError:
               float_element = -1.
             root_vals[j][0] = float_element
-
-            ## try putting the noise scan histogram in there ##
-
-            if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw":
-              if key in board_info:
-                hist_data = np.array(board_info[key][i])
-                hist_data = np.round(hist_data/float(sum(hist_data)) * 1000.)
-                x=range(-15,16)
-                for l in range(0,len(hist_data)):
-                  root_vals[j][0] = x[l]
-                  for m in range(0,int(hist_data[l])):
-                    if key == "calib_noise_scan_raw":
-                      calib_tree.Fill()
-                    elif key == "dummy_calib_noise_scan_raw":
-                      dummy_calib_tree.Fill()
-
-
           f.write(line+"\n")
           dump_tree.Fill()
-          #print line
+
+        ## only for root export: ##
+        ## try putting the noise scan histogram in there ##
+        ## you need the above loop to have run already, to get the right combination with all other observables
+        if export_root_file != "/dev/null":
+          for i in range(0,16):
+            for j in range(0,len(my_keys)):
+              key = my_keys[j]
+              ### all the other keys still need to be updated
+              element = ""
+              if key in board_info:
+                if key in list_type_keys:
+                  element = board_info[key][i]
+                else:
+                  element = board_info[key]
+                if not(isinstance(element,str)):
+                  element = str(element)
+              line += '"'+element.ljust(col_width)+'"'+","
+              try:
+                float_element = float(element)
+              except ValueError:
+                float_element = -1.
+              root_vals[j][0] = float_element
+              
+              ### now we come to the special part for the noise scan raw data
+
+              if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw":
+                if key in board_info:
+                  hist_data = np.array(board_info[key][i])
+                  hist_data = np.round(hist_data/float(sum(hist_data)) * 1000.)
+                  x=range(-15,16)
+                  for l in range(0,len(hist_data)):
+                    for m in range(0,int(hist_data[l])):
+                      if key == "calib_noise_scan_raw":
+                        root_vals[j][0] = x[l]
+                        calib_tree.Fill()
+                      elif key == "dummy_calib_noise_scan_raw":
+                        root_vals[j][0] = x[l]
+                        dummy_calib_tree.Fill()
+
+
              
     f.close()
     dump_tree.Write()
