@@ -62,3 +62,10 @@ rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -
 
 # draw from root tree
  joint_tree->Draw("t1","wire==50") 
+
+
+# dump board database to tree and draw stuff
+./dump_everything.py
+root dump.root
+dump_tree->Draw("wires","name == 14","")
+dump_tree->Draw("calib_baselines","name == 14","")

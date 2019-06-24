@@ -18,6 +18,9 @@ def gen_baseline_report(board_name,**kwargs):
   calib_json = db.get_calib_json_by_name(board_name,**kwargs)
   if "baselines" in calib_json:
     baselines = calib_json["baselines"]
+    baseline_mean = baselines
+    if "baseline_mean" in calib_json:
+      baseline_mean = calib_json["baseline_mean"]
     baseline_stddev = calib_json["baseline_stddev"]
     ch_error = calib_json["ch_error"]
     bl_range = calib_json["bl_range"]
@@ -27,8 +30,8 @@ def gen_baseline_report(board_name,**kwargs):
     noise_scan_x = calib_json["bl_range"]
 
     df = pd.DataFrame(
-       np.transpose(np.array([baselines,baseline_stddev,ch_error])),
-      index= channels, columns=["baseline","stddev","error"]
+       np.transpose(np.array([baselines,baseline_mean,baseline_stddev,ch_error])),
+      index= channels, columns=["baseline","bl_mean","bl_stddev","error"]
     )
     report = df.to_string()
     report += "\n\n\n"

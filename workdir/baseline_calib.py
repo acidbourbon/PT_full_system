@@ -75,6 +75,7 @@ def baseline_calib_by_noise(board_name,**kwargs):
   db.update_calib_json_by_name(board_name,{
     "baselines"      : np.round(baselines).tolist(),
     "baseline_stddev"      : baseline_stddev.tolist(),
+    "baseline_mean"  : baselines.tolist(),
     "bl_range"       : x,
     "noise_scan_raw" : np.transpose(data).tolist(),
     "ch_error"       : ch_error.tolist()
