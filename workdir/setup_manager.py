@@ -71,6 +71,7 @@ while True:
              ("30"," ... for all active boards"),
              ("16","view board baseline calib"),
              ("33","dummy calib baselines of board"),
+             ("40"," ... for all active boards"),
              ("34","view baseline dummy calib"),
              ("21","view/edit board calib json"),
              ("12","auto calib t1 offsets of board"),
@@ -477,6 +478,13 @@ via AC coupling and 10k resistor.".format(board_name) )
         baseline_calib.baseline_calib_by_noise(board_name)
         print "done"
 
+    ## dummy calib board baselines of all active boards
+    if tag == "40":
+      import baseline_calib
+      for board_name in db.active_board_list():
+        print "calibrating board {:s}".format(board_name)
+        baseline_calib.baseline_calib_by_noise(board_name,dummy_calib=True)
+        print "done"
 
     ## view board baselines ##
     if tag == "16":

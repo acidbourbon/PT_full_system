@@ -59,11 +59,15 @@ def board_baseline_report(board_name,**kwargs):
   report_calib = gen_baseline_report(board_name)
   report_dummy = ""
   report = report_calib
-  if dummy_calib:
+  if dummy_calib and report_calib:
     report_dummy = gen_baseline_report(board_name,dummy_calib=True)
     report_calib = "\n  #####  calib  ##### \n\n\n" + report_calib
     report_dummy = "\n  #####  dummy  ##### \n\n\n" + report_dummy
     report = misc.side_by_side(report_calib,report_dummy,width=60)
+  elif dummy_calib:
+    report_dummy = gen_baseline_report(board_name,dummy_calib=True)
+    report_dummy = "\n  #####  dummy  ##### \n\n\n" + report_dummy
+    report = report_dummy
 
   if report: 
     code_21, text_21 = dialog_editbox(report)  

@@ -37,7 +37,7 @@
               "layer": 2, 
               "name": "0014", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 1
             }, 
             {
@@ -51,7 +51,7 @@
               "layer": 2, 
               "name": "0013", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 2
             }, 
             {
@@ -165,7 +165,7 @@
               "layer": 2, 
               "name": "0025", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 3
             }
           ], 
@@ -237,7 +237,7 @@
               "layer": 2, 
               "name": "0026", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 1
             }, 
             {
@@ -251,7 +251,7 @@
               "layer": 2, 
               "name": "0027", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 2
             }, 
             {
@@ -265,7 +265,7 @@
               "layer": 2, 
               "name": "0008", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 3
             }
           ], 
@@ -327,7 +327,7 @@
           "addr": "0x0353", 
           "board": [
             {
-              "active": 0, 
+              "active": 1, 
               "calib_file": "./boards/board_0007.json", 
               "chamber": 0, 
               "fpc_a": 35, 
@@ -337,11 +337,11 @@
               "layer": 2, 
               "name": "0007", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 1
             }, 
             {
-              "active": 0, 
+              "active": 1, 
               "calib_file": "./boards/board_0004.json", 
               "chamber": 0, 
               "fpc_a": 39, 
@@ -351,11 +351,11 @@
               "layer": 2, 
               "name": "0004", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 2
             }, 
             {
-              "active": 0, 
+              "active": 1, 
               "calib_file": "./boards/board_0002.json", 
               "chamber": 0, 
               "fpc_a": 31, 
@@ -365,7 +365,7 @@
               "layer": 2, 
               "name": "0002", 
               "reverse_mapping": 1, 
-              "standby": 0, 
+              "standby": 1, 
               "tdc_connector": 3
             }
           ], 

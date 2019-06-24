@@ -160,7 +160,10 @@ def dump_db_to_csv(outfile,**kwargs):
               if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw":
                 if key in board_info:
                   hist_data = np.array(board_info[key][i])
-                  hist_data = np.round(hist_data/float(sum(hist_data)) * 1000.)
+                  hist_sum = sum(hist_data)
+                  if hist_sum == 0:
+                    hist_sum = 1000
+                  hist_data = np.round(hist_data/float(hist_sum) * 1000.)
                   x=range(-15,16)
                   for l in range(0,len(hist_data)):
                     for m in range(0,int(hist_data[l])):
