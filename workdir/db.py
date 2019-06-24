@@ -4,12 +4,28 @@ import os
 root_dir   = "./db/"
 setup_file = "setup.json"
 
+def dump_db_to_root(outfile):
+  dump_db_to_csv("/dev/null",export_root_file=outfile)
 
-
-def dump_everything_to_csv(outfile,**kwargs):
+def dump_db_to_csv(outfile,**kwargs):
 
   only_active_boards = kwargs.get("only_active_boards",False)
 
+  export_root_file = kwargs.get("export_root_file","/dev/null")
+  #export_root = False
+  #if export_root_file != "":
+  #  export_root = True
+
+
+  from ROOT import TFile, TTree
+  from array import array
+
+
+
+  root_dump = TFile(export_root_file,"RECREATE")
+  dump_tree = TTree("dump_tree","dump_tree") 
+
+  
 
   my_board_list = []
 
@@ -54,12 +70,18 @@ def dump_everything_to_csv(outfile,**kwargs):
             if len(board_info[key]) == 16:
               list_type_keys += [key]
 
+    root_vals = []
+    for j in range(0,len(my_keys)):
+      root_vals.append(array('f',[0.]))
+
     # generate report 
     if len(my_keys) > 0: 
       my_keys.sort()
       line = ""
-      for key in my_keys:
+      for j in range(0,len(my_keys)):
+        key = my_keys[j]
         line += str(key).ljust(col_width)+","
+        dump_tree.Branch(key,root_vals[j],key+"/F")
       f.write(line+"\n")
 
       for board in my_board_list:
@@ -86,7 +108,8 @@ def dump_everything_to_csv(outfile,**kwargs):
         # each channel individually
         for i in range(0,16):
           line = ""
-          for key in my_keys:
+          for j in range(0,len(my_keys)):
+            key = my_keys[j]
             element = ""
             if key in board_info:
               if key in list_type_keys:
@@ -96,11 +119,18 @@ def dump_everything_to_csv(outfile,**kwargs):
               if not(isinstance(element,str)):
                 element = str(element)
             line += '"'+element.ljust(col_width)+'"'+","
+            try:
+              float_element = float(element)
+            except ValueError:
+              float_element = -1.
+            root_vals[j][0] = float_element
           f.write(line+"\n")
+          dump_tree.Fill()
           #print line
              
     f.close()
-        
+    dump_tree.Write()
+    root_dump.Close()
 
 
 
