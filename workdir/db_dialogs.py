@@ -9,6 +9,38 @@ import misc
 
 from dialog import Dialog
 
+def gen_noise_thresh_scan_report(board_name,**kwargs):
+
+  import pandas as pd
+  import numpy as np
+  calib_json = db.get_calib_json_by_name(board_name,**kwargs)
+  if "tsbl_mean" in calib_json:
+    tsbl_mean = calib_json["tsbl_mean"]
+    tsbl_stddev = calib_json["tsbl_stddev"]
+    ch_error = calib_json["ch_error"]
+    tsbl_range = calib_json["tsbl_range"]
+    board_info = db.find_board_by_name(board_name)
+    channels = board_info["channels"]
+    noise_scan_raw = calib_json["tsbl_scan_raw"]
+    noise_scan_x = calib_json["tsbl_range"]
+
+    df = pd.DataFrame(
+       np.transpose(np.array([board_info["board_chan"],tsbl_mean,tsbl_stddev])),
+      index= channels, columns=["board_chan","tsbl_mean","tsbl_stddev"]
+    )
+    report = df.to_string()
+    report += "\n\n\n"
+    report += df.describe().to_string()
+    report += "\n\n\n"
+    report += "\n\n\n"
+    board_chan = 0
+    for scan in noise_scan_raw:
+      report += misc.ascii_hist(scan,xdata=noise_scan_x,title="PT "+board_name+" ch "+str(board_chan).rjust(2))
+      report += "\n"*10
+      board_chan += 1
+    return report
+  else:
+    return 0
 
   
 def gen_baseline_report(board_name,**kwargs):
@@ -30,8 +62,8 @@ def gen_baseline_report(board_name,**kwargs):
     noise_scan_x = calib_json["bl_range"]
 
     df = pd.DataFrame(
-       np.transpose(np.array([baselines,baseline_mean,baseline_stddev,ch_error])),
-      index= channels, columns=["baseline","bl_mean","bl_stddev","error"]
+       np.transpose(np.array([board_info["board_chan"],baselines,baseline_mean,baseline_stddev,ch_error])),
+      index= channels, columns=["board_chan","baseline","bl_mean","bl_stddev","error"]
     )
     report = df.to_string()
     report += "\n\n\n"
@@ -46,6 +78,22 @@ def gen_baseline_report(board_name,**kwargs):
     return report
   else:
     return 0
+
+def board_noise_thresh_scan_report(board_name,**kwargs):
+
+  ### if you want to display the dummy baseline calib
+  ### use board_baseline_report(board_name,dummy_calib=True)
+
+  dummy_calib = kwargs.get("dummy_calib",False)
+
+  d = Dialog(dialog="dialog")
+
+  report = gen_noise_thresh_scan_report(board_name,**kwargs)
+
+  if report: 
+    code_21, text_21 = dialog_editbox(report)  
+  else:
+    d.msgbox("no thresh scan info, not scanned")
 
 def board_baseline_report(board_name,**kwargs):
 

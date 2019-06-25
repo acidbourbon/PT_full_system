@@ -115,7 +115,11 @@ while True:
                ("31","slow control test (active boards)"),
                ("13","get t1 and tot of board"),
                ("33","dummy calib baselines of board"),
-               ("34","view baseline dummy calib")
+               ("40"," ... for all active boards"),
+               ("34","view baseline dummy calib"),
+               ("41","charact. noise by thresh scan"),
+               ("43"," ... for all active boards"),
+               ("42","view noise thresh scan"),
               ])
 
   if mm_tag == "m6":
@@ -448,6 +452,15 @@ via AC coupling and 10k resistor.".format(board_name) )
         
         dbd.board_baseline_report(board_name,dummy_calib=True)
 
+    ## characterize noise by thresh scan ##
+    if tag == "41":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+        import baseline_calib
+        baseline_calib.char_noise_by_thresh_scan(board_name,dummy_calib=True)
+        
+
     ## view dummy calib ##
     if tag == "34":
       code_15, choice_15 = dbd.dialog_board_list()
@@ -455,6 +468,14 @@ via AC coupling and 10k resistor.".format(board_name) )
         board_name = choice_15
         
         dbd.board_baseline_report(board_name,dummy_calib=True)
+
+    ## view noise thresh scan ##
+    if tag == "42":
+      code_15, choice_15 = dbd.dialog_board_list()
+      if code_15 == d.DIALOG_OK:
+        board_name = choice_15
+        
+        dbd.board_noise_thresh_scan_report(board_name,dummy_calib=True)
 
     ## calib board baselines, individual channels ##
     if tag == "32":
@@ -484,6 +505,14 @@ via AC coupling and 10k resistor.".format(board_name) )
       for board_name in db.active_board_list():
         print "calibrating board {:s}".format(board_name)
         baseline_calib.baseline_calib_by_noise(board_name,dummy_calib=True)
+        print "done"
+
+    ## noise thresh scan for all active boards
+    if tag == "43":
+      import baseline_calib
+      for board_name in db.active_board_list():
+        print "calibrating board {:s}".format(board_name)
+        baseline_calib.char_noise_by_thresh_scan(board_name,dummy_calib=True)
         print "done"
 
     ## view board baselines ##

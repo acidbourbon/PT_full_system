@@ -22,6 +22,42 @@ no_events=1000
 
 #############   board name is the only thing that needs to be defined here, everythig else is loaded from db ################
 
+def char_noise_by_thresh_scan(board_name,**kwargs):
+
+  ### kwargs is passed through to read/write calib files
+  ### use baseline_calib_by_noise(board_name, dummy_calib=True) for test/dry run
+  ### dummy_calib = kwargs.get("dummy_calib",False)
+
+
+  x, matrix = threshold_noise_scan(board_name)
+
+  data = np.array(matrix)
+
+  baselines = np.zeros(16)
+  baseline_stddev = np.zeros(16)
+
+  for ch in range(0,16):
+    vals = data[:,ch]
+    sum  = float(np.sum(vals))
+    mean = 0
+    stddev  = -1
+    if (sum > 0):
+      weights = vals/float(sum)
+      mean    = np.dot(weights,x)
+      stddev    = np.sqrt(np.dot(weights,np.power(x-mean,2)))
+    max  = x[np.argmax(vals)]
+    baselines[ch] = mean
+    baseline_stddev[ch] = stddev
+
+  db.update_calib_json_by_name(board_name,{
+    "tsbl_stddev"      : baseline_stddev.tolist(),
+    "tsbl_mean"        : baselines.tolist(),
+    "tsbl_range"       : x,
+    "tsbl_scan_raw"    : np.transpose(data).tolist(),
+  },**kwargs)
+  ptc.init_board_by_name(board_name)
+
+  return baselines
 
 def baseline_calib_by_noise(board_name,**kwargs):
 
@@ -84,6 +120,36 @@ def baseline_calib_by_noise(board_name,**kwargs):
 
   return baselines
     
+
+def threshold_noise_scan(board_name):
+  
+  board_info = db.find_board_by_name(board_name)
+  channels   = board_info["channels"] # zero based 
+  TDC        = board_info["tdc_addr"]
+  connector  = board_info["tdc_connector"]
+
+  db.enable_board(board_name)
+  #ptc.init_active_boards()
+  ptc.init_board_by_name(board_name)
+
+  scan_time = 0.2
+  x = range(0,32)
+
+  ## set baselines to maximum, so we start scanning below the baseline
+  ## and hopefully capture the full noise
+  ptc.set_all_baselines(TDC,channels, [15]*len(channels) )
+  
+  result_matrix = []
+
+  for i in x:
+    print "threshold scan of board "+board_name
+    ptc.set_threshold_for_board(TDC,connector,i)
+    rates = tdc_daq.scaler_rate(TDC,channels,scan_time)
+    print "rates"
+    print rates
+    result_matrix.append(rates)
+
+  return (x, result_matrix)
 
 def baseline_noise_scan(board_name):
   

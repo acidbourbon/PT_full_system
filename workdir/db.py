@@ -27,6 +27,7 @@ def dump_db_to_csv(outfile,**kwargs):
   dump_tree = TTree("dump_tree","dump_tree") 
   calib_tree = TTree("calib_tree","calib_tree") 
   dummy_calib_tree = TTree("dummy_calib_tree","dummy_calib_tree") 
+  dummy_tsbl_tree = TTree("dummy_tsbl_tree","dummy_tsbl_tree") 
 
   
 
@@ -87,6 +88,7 @@ def dump_db_to_csv(outfile,**kwargs):
         dump_tree.Branch(key,root_vals[j],key)
         calib_tree.Branch(key,root_vals[j],key)
         dummy_calib_tree.Branch(key,root_vals[j],key)
+        dummy_tsbl_tree.Branch(key,root_vals[j],key)
       f.write(line+"\n")
 
       for board in my_board_list:
@@ -157,7 +159,7 @@ def dump_db_to_csv(outfile,**kwargs):
               
               ### now we come to the special part for the noise scan raw data
 
-              if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw":
+              if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw" or key == "dummy_calib_tsbl_scan_raw":
                 if key in board_info:
                   hist_data = np.array(board_info[key][i])
                   hist_sum = sum(hist_data)
@@ -173,6 +175,10 @@ def dump_db_to_csv(outfile,**kwargs):
                       elif key == "dummy_calib_noise_scan_raw":
                         root_vals[j][0] = x[l]
                         dummy_calib_tree.Fill()
+                      elif key == "dummy_calib_tsbl_scan_raw":
+                        x=range(0,32)
+                        root_vals[j][0] = x[l]
+                        dummy_tsbl_tree.Fill()
 
 
              
@@ -180,6 +186,7 @@ def dump_db_to_csv(outfile,**kwargs):
     dump_tree.Write()
     calib_tree.Write()
     dummy_calib_tree.Write()
+    dummy_tsbl_tree.Write()
     root_dump.Close()
 
 
