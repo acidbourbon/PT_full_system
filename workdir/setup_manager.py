@@ -67,6 +67,7 @@ while True:
     choices = [
              ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
              ("1","view boards - enable/disable boards"),
+             ("31","slow control test (active boards)"),
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
              ("16","view board baseline calib"),

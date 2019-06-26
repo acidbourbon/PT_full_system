@@ -162,21 +162,24 @@ def dump_db_to_csv(outfile,**kwargs):
               if key == "calib_noise_scan_raw" or key == "dummy_calib_noise_scan_raw" or key == "dummy_calib_tsbl_scan_raw":
                 if key in board_info:
                   hist_data = np.array(board_info[key][i])
-                  hist_sum = sum(hist_data)
+                  #hist_sum = sum(hist_data)
+                  hist_sum = 10e6
                   if hist_sum == 0:
                     hist_sum = 1000
-                  hist_data = np.round(hist_data/float(hist_sum) * 1000.)
-                  x=range(-15,16)
+                  hist_data = np.round(hist_data/float(hist_sum) * 100.)
+                  #x=range(-15,16)
                   for l in range(0,len(hist_data)):
                     for m in range(0,int(hist_data[l])):
                       if key == "calib_noise_scan_raw":
+                        x=board_info["calib_bl_range"]
                         root_vals[j][0] = x[l]
                         calib_tree.Fill()
                       elif key == "dummy_calib_noise_scan_raw":
+                        x=board_info["dummy_calib_bl_range"]
                         root_vals[j][0] = x[l]
                         dummy_calib_tree.Fill()
                       elif key == "dummy_calib_tsbl_scan_raw":
-                        x=range(0,32)
+                        x=board_info["dummy_calib_tsbl_range"]
                         root_vals[j][0] = x[l]
                         dummy_tsbl_tree.Fill()
 
