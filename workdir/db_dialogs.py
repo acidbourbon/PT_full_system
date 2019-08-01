@@ -137,10 +137,13 @@ def dialog_board_list(**kwargs):
 
   check_enable  = False
   check_standby = False
+  check_select = False
   if checklist == "enable":
     check_enable = True
   if checklist == "standby":
     check_standby = True
+  if checklist == "select":
+    check_select = True
 
 
   d = Dialog(dialog="dialog")
@@ -149,12 +152,14 @@ def dialog_board_list(**kwargs):
     d.set_background_title("enable/disable boards")
   if check_standby:
     d.set_background_title("set boards to standby")
+  if check_select:
+    d.set_background_title("select one or more boards")
 
   choices = []
   info_format = "{:>6s}  {:>4s}  {:>7s}  {:>5}  {:>12s}  {:>6s}  {:>6s}  {:>6s}  {:>7s}"
   info = info_format.format("TDC", "CONN","chamber","layer","FPC ABCD", "BL cal", "t1 cal", "active","standby")
 
-  if check_enable or check_standby:
+  if check_enable or check_standby or check_select:
     choices += [("board",info, False)]
   else:
     choices += [("board",info)]
@@ -203,6 +208,8 @@ def dialog_board_list(**kwargs):
       choices += [(board_name,info, active_bool)]
     elif check_standby:
       choices += [(board_name,info, standby_bool)]
+    elif check_select:
+      choices += [(board_name,info, False)]
     else:
       choices += [(board_name,info)]
   
@@ -225,6 +232,9 @@ def dialog_board_list(**kwargs):
       for board_name in standby_boards:
         if not(board_name == "board"):
           db.set_standby_board(board_name)
+  elif check_select:
+    code, selected_boards = d.checklist("select one or more boards", choices= choices, width=width,height=height,list_height=list_height)
+    return code, selected_boards
 
   else:
     code, tag = d.menu("select a board:",

@@ -444,9 +444,8 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "51":
       #test_results = ptc.slow_control_test_active_boards()
       #code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
-      code, board_name = dbd.dialog_board_list()
+      code, board_list = dbd.dialog_board_list( checklist="select"  )
       if code == d.DIALOG_OK:
-        board_list = [board_name]
         dbd.dialog_slow_control_test(board_list)
 
                  
