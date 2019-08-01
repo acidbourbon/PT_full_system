@@ -202,9 +202,9 @@ def get_tot(TDC, channels, no_events):
   
   my_tdc = str(TDC).replace("0x","")
   
-  print "my tdc: "+my_tdc
-  print "channels: "
-  print channels
+  print( "my tdc: "+my_tdc )
+  print( "channels: " )
+  print( channels )
 
   index=0
   for i in channels:

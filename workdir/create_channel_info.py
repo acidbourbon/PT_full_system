@@ -56,7 +56,7 @@ for tdc in tdc_list:
       #print("{:f}\t{:d}\t{:d}\t{:d}\t{:d}\n".format(offsets[i],chamber[i],layer[i],fpc[i],wire[i]))
       #f.write("{:f}\t{:d}\t{:d}\t{:d}\t{:d}\n".format(offsets[i],chamber[i],layer[i],fpc[i],wire[i]))
       f.write("{:f}\t{:d}\t{:d}\t{:d}\t{:d}\n".format( offsets[i], chamber[i],layer[i],fpc[i],wire[i] ))
-      #print wire[i]
+      #print( wire[i] )
     f.close()
   
 

@@ -60,7 +60,8 @@ while True:
                ("14","reset board"),
                ("27","set min threshold"),
                ("28","set max threshold"),
-               ("29","set threshold")
+               ("29","set threshold"),
+               ("50","set threshold of single board")
               ])
   if mm_tag == "m2":
     code, tag = d.menu("calibration", height="30", menu_height="28",
@@ -198,11 +199,11 @@ while True:
                                 fpc_d_no     = int(str_49)
                                 reverse_mapping = int(tag_455) 
 
-                                print "adding"
-                                print tdc_addr
-                                print conn_str
-                                print name_str
-                                print calib_file
+                                print( "adding" )
+                                print( tdc_addr )
+                                print( conn_str )
+                                print( name_str )
+                                print( calib_file )
                                 db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
                                     "chamber":chamber_no,\
                                     "layer":layer_no,\
@@ -296,11 +297,22 @@ while True:
         ptc.init_active_boards()
         setup["asic_settings"]["default"]["threshold"] = current_thresh
         db.write_setup_json(setup)
+
    
     if tag == "8":
       td.enable_tdc_channels_of_active_boards()
       ptc.init_active_boards()
       d.msgbox("initialized all active boards\nand enabled respective TDC channels")
+
+    ## set threshold of single board ##
+    if tag == "50":
+      setup = db.get_setup_json()
+      current_thresh = setup["asic_settings"]["default"]["threshold"]
+      code_9, board_name = dbd.dialog_board_list()
+      if code_9 == d.DIALOG_OK:
+        code, thresh_str = d.inputbox(text="enter temporary threshold (default={:d})".format(current_thresh),init=str(current_thresh))
+        if code == d.DIALOG_OK:
+          ptc.set_threshold_for_board_by_name(board_name,int(thresh_str))
       
     ## calib board baselines ##
     if tag == "9":
@@ -496,25 +508,25 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "30":
       import baseline_calib
       for board_name in db.active_board_list():
-        print "calibrating board {:s}".format(board_name)
+        print( "calibrating board {:s}".format(board_name) )
         baseline_calib.baseline_calib_by_noise(board_name)
-        print "done"
+        print( "done" )
 
     ## dummy calib board baselines of all active boards
     if tag == "40":
       import baseline_calib
       for board_name in db.active_board_list():
-        print "calibrating board {:s}".format(board_name)
+        print( "calibrating board {:s}".format(board_name) )
         baseline_calib.baseline_calib_by_noise(board_name,dummy_calib=True)
-        print "done"
+        print( "done" )
 
     ## noise thresh scan for all active boards
     if tag == "43":
       import baseline_calib
       for board_name in db.active_board_list():
-        print "calibrating board {:s}".format(board_name)
+        print( "calibrating board {:s}".format(board_name) )
         baseline_calib.char_noise_by_thresh_scan(board_name,dummy_calib=True)
-        print "done"
+        print( "done" )
 
     ## view board baselines ##
     if tag == "16":

@@ -47,7 +47,7 @@ def dump_db_to_csv(outfile,**kwargs):
 
     # first collect keys
     for board in my_board_list:
-      print "scanning keys of board: "+board
+      print( "scanning keys of board: "+board )
       board_info = find_board_by_name(board)
 
       calib_ = get_calib_json_by_name(board)
@@ -92,7 +92,7 @@ def dump_db_to_csv(outfile,**kwargs):
       f.write(line+"\n")
 
       for board in my_board_list:
-        print "dumping data of board: "+board
+        print( "dumping data of board: "+board )
         board_info = find_board_by_name(board)
 
         calib_ = get_calib_json_by_name(board)
@@ -258,7 +258,7 @@ def get_global_settings():
 
 
 def dump(obj):
-  print json.dumps(obj,indent=2,sort_keys=True)  
+  print( json.dumps(obj,indent=2,sort_keys=True)   )
 
 
 def get_setup_json():

@@ -18,7 +18,7 @@ def slow_control_test(board_name):
   init_board_by_name(board_name)
 
   
-  print "slow control test of board "+board_name
+  print( "slow control test of board "+board_name )
   set_threshold_for_board(TDC,connector,0)
   rates_lo_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
 
@@ -26,12 +26,12 @@ def slow_control_test(board_name):
   rates_hi_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
   state_hi_thr = tdc_daq.read_ch_state(TDC,channels)
  
-  print "rates low thr"
-  print rates_lo_thr
-  print "rates high thr"
-  print rates_hi_thr
-  print "state high thr"
-  print state_hi_thr
+  print( "rates low thr" )
+  print( rates_lo_thr )
+  print( "rates high thr" )
+  print( rates_hi_thr )
+  print( "state high thr" )
+  print( state_hi_thr )
 
   if state_hi_thr == [1]*len(channels) and rates_hi_thr == [0]*len(channels) and rates_lo_thr != [0]*len(channels):
     return 1
@@ -54,11 +54,23 @@ def set_threshold_for_board(TDC,conn,thresh):
   set_threshold(TDC,conn,0,thresh)
   set_threshold(TDC,conn,1,thresh)
 
+def set_threshold_for_board_by_name(board_name,thresh):
+  
+  setup     = db.get_setup_json()
+
+  board_info = db.find_board_by_name(board_name)
+  conn = board_info["tdc_connector"]
+  tdc_addr = board_info["tdc_addr"]
+  set_threshold_for_board(tdc_addr,conn,thresh)
+
+  return
+
+
 def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
   print("set baselines of the following channels")
-  print channels
+  print( channels )
   print("to the following values")
-  print values
+  print( values )
   index=0
   for i in channels:
     set_baseline(TDC,i,int(values[index]))
@@ -114,7 +126,7 @@ def slow_control_test_active_boards():
     answer = slow_control_test(board_name)
     test_results[board_name] = answer
 
-  print test_results
+  print( test_results )
   return test_results
 
 def init_active_boards():

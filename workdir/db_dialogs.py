@@ -283,7 +283,7 @@ def dialog_connector_list(tdc_addr):
 def dialog_editbox(in_text):
 
   dummy, temp_path = tempfile.mkstemp()
-  print temp_path
+  print( temp_path )
 
   f = open(temp_path, 'w')
   f.write( in_text)
