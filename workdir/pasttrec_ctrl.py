@@ -120,9 +120,9 @@ def init_board(TDC,conn,pktime,gain,thresh):
   return
  
 
-def slow_control_test_active_boards(): 
+def slow_control_test_boards(board_list): 
   test_results = {}
-  for board_name in db.active_board_list():
+  for board_name in board_list:
     answer = slow_control_test(board_name)
     test_results[board_name] = answer
 

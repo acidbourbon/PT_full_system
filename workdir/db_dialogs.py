@@ -298,7 +298,7 @@ def dialog_editbox(in_text):
   return (code, text)
 
 
-def dialog_slow_control_test():
+def dialog_slow_control_test(board_list):
 
   d = Dialog(dialog="dialog")
   d.set_background_title("view boards")
@@ -308,9 +308,8 @@ def dialog_slow_control_test():
   info = info_format.format("TDC", "CONN", "BL cal", "t1 cal", "active", "SloCon")
   choices += [("board",info)]
 
-  board_list = db.active_board_list()
 
-  test_results = ptc.slow_control_test_active_boards()
+  test_results = ptc.slow_control_test_boards(board_list)
   
   for board_name in board_list:
     board_info = db.find_board_by_name(board_name)

@@ -56,6 +56,7 @@ while True:
                ("35","set boards to standby"),
                ("8","init ASICs (active boards)"),
                ("31","slow control test (active boards)"),
+               ("51","slow control test selected boards"),
                ("13","get t1 and tot of board"),
                ("14","reset board"),
                ("27","set min threshold"),
@@ -69,6 +70,7 @@ while True:
              ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
              ("1","view boards - enable/disable boards"),
              ("31","slow control test (active boards)"),
+             ("51","slow control test selected boards"),
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
              ("16","view board baseline calib"),
@@ -115,6 +117,7 @@ while True:
     choices = [
                ("1","view boards - enable/disable boards"),
                ("31","slow control test (active boards)"),
+               ("51","slow control test selected boards"),
                ("13","get t1 and tot of board"),
                ("33","dummy calib baselines of board"),
                ("40"," ... for all active boards"),
@@ -434,7 +437,17 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "31":
       #test_results = ptc.slow_control_test_active_boards()
       #code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
-      dbd.dialog_slow_control_test()
+      board_list = db.active_board_list()
+      dbd.dialog_slow_control_test(board_list)
+
+    ## slow control test of selected boards ##
+    if tag == "51":
+      #test_results = ptc.slow_control_test_active_boards()
+      #code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
+      code, board_name = dbd.dialog_board_list()
+      if code == d.DIALOG_OK:
+        board_list = [board_name]
+        dbd.dialog_slow_control_test(board_list)
 
                  
       
