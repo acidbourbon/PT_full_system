@@ -134,6 +134,7 @@ def dialog_board_list(**kwargs):
   list_height = menu_height
   
   checklist = kwargs.get("checklist","")
+  selection = kwargs.get("selection","")
 
   check_enable  = False
   check_standby = False
@@ -144,6 +145,11 @@ def dialog_board_list(**kwargs):
     check_standby = True
   if checklist == "select":
     check_select = True
+
+  empty_selection = False
+  if selection == "none":
+    empty_selection = True
+  
 
 
   d = Dialog(dialog="dialog")
@@ -205,7 +211,10 @@ def dialog_board_list(**kwargs):
       str(board_info["fpc_d"]).rjust(2),
       bl_calib, t1_calib, active, standby )
     if check_enable:
-      choices += [(board_name,info, active_bool)]
+      if empty_selection:
+        choices += [(board_name,info, False)]
+      else:
+        choices += [(board_name,info, active_bool)]
     elif check_standby:
       choices += [(board_name,info, standby_bool)]
     elif check_select:
@@ -245,6 +254,9 @@ def dialog_board_list(**kwargs):
 
 def dialog_enable_disable():
   return dialog_board_list(checklist="enable")
+
+def dialog_enable_selected():
+  return dialog_board_list(checklist="enable",selection="none")
 
 def dialog_standby():
   return dialog_board_list(checklist="standby")

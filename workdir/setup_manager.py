@@ -53,10 +53,11 @@ while True:
     code, tag = d.menu("operation", height="30", menu_height="28",
     choices = [
                ("1","view boards - enable/disable boards"),
+               ("53","... enable only selected boards"),
                ("35","set boards to standby"),
                ("8","init ASICs (active boards)"),
-               ("31","slow control test (active boards)"),
-               ("51","slow control test selected boards"),
+               ("31","init + slow control test all active boards"),
+               ("51","init + slow control test selected boards"),
                ("13","get t1 and tot of board"),
                ("14","reset board"),
                ("27","set min threshold"),
@@ -69,8 +70,9 @@ while True:
     choices = [
              ##("9","auto calib baselines of board"), ## we don't use the tot method anymore
              ("1","view boards - enable/disable boards"),
-             ("31","slow control test (active boards)"),
-             ("51","slow control test selected boards"),
+             ("53","... enable only selected boards"),
+             ("31","init + slow control test all active boards"),
+             ("51","init + slow control test selected boards"),
              ("15","calib baselines (noise method) of board"),
              ("30"," ... for all active boards"),
              ("16","view board baseline calib"),
@@ -92,6 +94,7 @@ while True:
     code, tag = d.menu("edit/config", height="30", menu_height="28",
     choices = [
              ("1","view boards - enable/disable boards"),
+             ("53","... enable only selected boards"),
              ("7","edit default/standby  asic settings"),
              ("17","edit global settings"),
              ("2","view/edit board json"),
@@ -117,8 +120,9 @@ while True:
     code, tag = d.menu("test procedures", height="30", menu_height="28",
     choices = [
                ("1","view boards - enable/disable boards"),
-               ("31","slow control test (active boards)"),
-               ("51","slow control test selected boards"),
+               ("53","... enable only selected boards"),
+               ("31","init + slow control test all active boards"),
+               ("51","init + slow control test selected boards"),
                ("13","get t1 and tot of board"),
                ("33","dummy calib baselines of board"),
                ("40"," ... for all active boards"),
@@ -141,6 +145,11 @@ while True:
     ## enable/disable boards ##
     if tag == "1":
       dbd.dialog_enable_disable()
+      td.enable_tdc_channels_of_active_boards()
+
+    ## enable only selected boards ##
+    if tag == "53":
+      dbd.dialog_enable_selected()
       td.enable_tdc_channels_of_active_boards()
 
     ## set boards to standby ##
