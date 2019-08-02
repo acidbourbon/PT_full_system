@@ -79,6 +79,7 @@ while True:
              ("34","view baseline dummy calib"),
              ("21","view/edit board calib json"),
              ("12","auto calib t1 offsets of board"),
+             ("52","view board t1 calib efficiencies"),
              ("36","view t1 offsets of board"),
              ("18","clear t1 offsets of board"),
              ("37","view t1 offsets of tdc"),
@@ -593,6 +594,18 @@ via AC coupling and 10k resistor.".format(board_name) )
       if code == d.DIALOG_OK: 
         board_t1_offsets = db.get_t1_offsets_of_board(board)
         code_17, text = dbd.dialog_editbox(json.dumps(board_t1_offsets,indent=2,sort_keys=True))
+
+    ## view board t1 calib efficiencies ##
+    if tag == "52":
+      code, board = dbd.dialog_board_list()
+      if code == d.DIALOG_OK: 
+        calib = db.get_calib_json_by_name(board)
+        if "t1_calib_efficiency" in calib:
+          t1_calib_efficiency = calib["t1_calib_efficiency"]
+          code_17, text = dbd.dialog_editbox(json.dumps(t1_calib_efficiency,indent=2,sort_keys=True))
+        else:
+          d.msgbox("no efficiencies recorded, did you do a t1 calib yet?")
+          
 
     ## view tdc t1 offsets ##
     if tag == "37":
