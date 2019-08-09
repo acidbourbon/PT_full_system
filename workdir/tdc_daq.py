@@ -9,6 +9,8 @@ from time import sleep
 use_gausfit=0
 
 
+def reset_trb():
+  os.system("cd /conf; ./reset_and_conf_TRB.sh;sleep3")
 
 
 def read_memory(TDC,register,size):

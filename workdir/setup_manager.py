@@ -63,7 +63,8 @@ while True:
                ("27","set min threshold"),
                ("28","set max threshold"),
                ("29","set threshold"),
-               ("50","set threshold of single board")
+               ("50","set threshold of single board"),
+               ("54","reset + reconfigure entire TRB")
               ])
   if mm_tag == "m2":
     code, tag = d.menu("calibration", height="30", menu_height="28",
@@ -141,6 +142,10 @@ while True:
 
 
   if code == d.DIALOG_OK:
+
+    ## reset + reconfigure trb ##
+    if tag == "54":
+      td.reset_trb()
 
     ## enable/disable boards ##
     if tag == "1":
