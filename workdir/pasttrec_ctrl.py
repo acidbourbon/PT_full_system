@@ -33,6 +33,29 @@ def slow_control_test(board_name):
   print( "state high thr" )
   print( state_hi_thr )
 
+
+  ## restore threshold again - a bit dirty but faster than complete init again
+  setup     = db.get_setup_json()
+
+  #pktime    = setup["asic_settings"]["default"]["pktime"]
+  #gain      = setup["asic_settings"]["default"]["gain"]
+  threshold = setup["asic_settings"]["default"]["threshold"]
+
+  #standby_pktime    = setup["asic_settings"]["standby"]["pktime"]
+  #standby_gain      = setup["asic_settings"]["standby"]["gain"]
+  standby_threshold = setup["asic_settings"]["standby"]["threshold"]
+
+  standby = False
+  if "standby" in board_info:
+    if board_info["standby"]:
+      standby=True
+
+  if standby:
+    set_threshold_for_board(TDC,connector,standby_threshold)
+  else:
+    set_threshold_for_board(TDC,connector,threshold)
+  ## end of restore threshold
+
   if state_hi_thr == [1]*len(channels) and rates_hi_thr == [0]*len(channels) and rates_lo_thr != [0]*len(channels):
     return 1
   else:
@@ -147,6 +170,7 @@ def init_boards_by_name(board_list):
   
 
   for board_name in board_list:
+    print("init board "+board_name)
     board_info = db.find_board_by_name(board_name)
     conn = board_info["tdc_connector"]
     tdc_addr = board_info["tdc_addr"]

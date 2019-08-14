@@ -5,6 +5,7 @@ import numpy as np
 import db
 import re
 from time import sleep
+import pasttrec_ctrl as ptc
 
 use_gausfit=0
 
@@ -177,6 +178,7 @@ def calib_t1_offsets_of_board(board_name):
   
   # we clear old offsets of board first
   db.clear_t1_offsets_of_board(board_name)
+  ptc.init_board_by_name(board_name)
 
   no_pulses = 1000
   ## run record_tree_data() first ##
