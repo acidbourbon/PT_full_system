@@ -402,11 +402,21 @@ via AC coupling and 10k resistor.".format(board_name) )
       if code_9 == d.DIALOG_OK:
         board_name = choice_9
         board_info = db.find_board_by_name(board_name)
-        if board_info["baseline_is_calibrated"]:
-          d.msgbox("Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
-          td.calib_t1_offsets_of_board(board_name)
-        else:
-          d.msgbox("t1 calibration not possible. Please calibrate baselines first, or the walk effect might skew your t1 calibration.")
+        #if board_info["baseline_is_calibrated"]:
+        d.msgbox("1. Make sure DABC is running. 2. Supply the same pulse to all inputs of board {:s} simultaneously to calibrate t1 offsets".format(board_name) )
+        td.calib_t1_offsets_of_board(board_name)
+        #else:
+        #  d.msgbox("t1 calibration not possible. Please calibrate baselines first, or the walk effect might skew your t1 calibration.")
+
+        calib = db.get_calib_json_by_name(board_name)
+        board_t1_offsets = db.get_t1_offsets_of_board(board_name)
+        t1_calib_efficiency = calib["t1_calib_efficiency"]
+        code_17, text = dbd.dialog_editbox(
+          "## board t1 offsets:\n\n"+
+          json.dumps(board_t1_offsets,indent=2,sort_keys=True)+
+          "\n\n## board t1 calib efficiency:\n\n"+
+          json.dumps(t1_calib_efficiency,indent=2,sort_keys=True)
+        )
 
     ## clear t1 offsets ##
     if tag == "18":
