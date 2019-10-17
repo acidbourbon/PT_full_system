@@ -69,8 +69,8 @@ When starting analysis from the go4 gui, one should specify stream server with p
     <!-- Thread name="*" publ="true" prof="true"/ -->
     
     <MemoryPool name="Pool">
-       <BufferSize value="2000000"/>
-       <NumBuffers value="1000"/>
+       <BufferSize value="400000"/>
+       <NumBuffers value="100"/>
     </MemoryPool>
     
     <!-- these are default parameters for TDC calibration modules -->
@@ -118,7 +118,7 @@ When starting analysis from the go4 gui, one should specify stream server with p
 	urlopt="udpbuf=20000&mtu=64512&flush=3.0&observer=false&debug&resort"/>
    -->
    
-       <InputPort name="Input*" queue="30" urlopt="udpbuf=400000&mtu=64512&flush=1&observer=false&debug"/>
+       <InputPort name="Input*" queue="30" urlopt="udpbuf=400000&mtu=64512&flush=1&observer=false"/>
 
        <ExtraDebug value="false"/>
 
