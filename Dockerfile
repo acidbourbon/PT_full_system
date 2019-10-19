@@ -66,7 +66,7 @@ RUN perl -pi -e "s/-Dhttp=ON/-Dhttp=ON -DPYTHON_EXECUTABLE=\/usr\/bin\/python3/;
 
 RUN cd /trb3; \
   > /tmp/trb3_make_exit_value; \
-  { make -j6; echo $? > /tmp/trb3_make_exit_value; killall tail; }& \
+  { make -j2; echo $? > /tmp/trb3_make_exit_value; killall tail; }& \
   echo -e "\n\n---- display make log: ----\n\n"; \
   tail -F ./stream/makelog.txt & \
   tail -F ./go4/makelog.txt & \
@@ -117,13 +117,16 @@ ENV PATH=$PATH:/trbnettools/bin
 ##                   daqtools                   ##
 ##################################################
 
+
+RUN cpan File::chdir XML::LibXML Data::TreeDumper CGI::Carp
+
 # newest commit
 #ENV DAQTOOLS_COMMIT=master
 
 # newest commit from 2018-02-28
 ENV DAQTOOLS_COMMIT=4840d304ad9cce93ffe972ef8cff4c325d7ac198 
 
-##################################################
+#################################################
 
 RUN git clone git://jspc29.x-matter.uni-frankfurt.de/projects/daqtools.git && \
   cd /daqtools && \
@@ -139,11 +142,31 @@ COPY build_files/httpi /daqtools/web/httpi
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
+RUN apt-get update && \
+  apt-get -y install \
+  tmux \
+  lxpanel \
+  firefox \
+  gzip \
+  dialog \
+  isc-dhcp-server \
+  htop \
+  ncdu \
+  openbox
+
+RUN apt-get update && \
+  apt-get -y install \
+  vim \
+  tigervnc-standalone-server
+
+RUN pip install PrettyTable
+  
+
 ENV HOME=/workdir
 
-RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
-
-RUN echo "cd /workdir/; /bin/bash" >> entrypoint.sh
-
-
-ENTRYPOINT "/entrypoint.sh"
+#RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
+#
+#RUN echo "cd /workdir/; /bin/bash" >> entrypoint.sh
+#
+#
+#ENTRYPOINT "/entrypoint.sh"

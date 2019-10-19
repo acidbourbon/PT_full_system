@@ -7,7 +7,7 @@ import os
 import json
 
 
-from prettytable import PrettyTable
+#from prettytable import PrettyTable
 from dialog import Dialog
 import db_dialogs as dbd
 import tdc_daq as td

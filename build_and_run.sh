@@ -1,8 +1,11 @@
-docker build -t go4 . || exit
-#xhost +si:localuser:root
-docker run --net host -v $(pwd)/conf:/conf -v $(pwd)/workdir:/workdir --rm -it \
---name go4 \
-go4 /workdir/start.sh
+#!/bin/bash
 
-#-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY \
+#name=$(basename $(pwd))
+name=go4
 
+docker build -t $name . || exit
+
+docker run --net host -v $(pwd)/conf:/conf -v $(pwd)/workdir:/workdir \
+--name $name \
+--rm -it --user $(id -u) $name \
+ /workdir/start.sh
