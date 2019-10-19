@@ -1,90 +1,126 @@
-##################################################
-##        get minimal distro from cloud         ##
-##################################################
 
-FROM opensuse/leap:15.0
+# the following uncommented lines are the Dockerfile contents of
+# image acidbourbon/ubuntu_cernroot_python3
+# we're gonna save ourselves the effort of compiling root by using a prebuilt container
 
-
-
-##################################################
-##                prerequisites                 ##
-##################################################
-
-### install system packages with opensuse package manager
-RUN zypper ref && zypper --non-interactive in \
-  wget curl \
-  tar zlib \
-  cmake gcc gcc-c++ \
-  libX11-devel libXext-devel libXft-devel libXpm-devel\
-  git subversion \
-  libqt4-devel\
-  git bash cmake gcc-c++ gcc binutils \
-  xorg-x11-libX11-devel xorg-x11-libXpm-devel xorg-x11-devel \
-  xorg-x11-proto-devel xorg-x11-libXext-devel \
-  gcc-fortran libopenssl-devel \
-  pcre-devel Mesa glew-devel pkg-config libmysqlclient-devel \
-  fftw3-devel libcfitsio-devel graphviz-devel \
-  libdns_sd avahi-compat-mDNSResponder-devel openldap2-devel \
-  python-devel libxml2-devel krb5-devel gsl-devel libqt4-devel \
-  glu-devel \
-  xterm screen xvfb-run x11vnc openbox \
-  boost-devel \
-  vim \
-  dhcp-server\
-  rpcbind \
-  gnuplot \
-  ImageMagick \
-  perl-XML-LibXML \
-  glibc-locale \
-  tmux \
-  xorg-x11-Xvnc \
-  emacs \
-  htop \
-  ncdu \
-  psmisc \
-  python-pip \
-  firefox \
-  lxpanel \
-  libtirpc-devel \
-  perl-File-chdir \
-  perl-TimeDate \
-  gzip \
-  tig \
-  python-numpy \
-  dialog
-
-
-### install perl modules from cpan ###
-RUN cpan Data::TreeDumper CGI::Carp
-
-### install python modules from pip ###
-RUN pip install --upgrade pip && pip install prettytable python2-pythondialog
-
+# #---------------------------
+# 
 # ##################################################
-# ##                root + python3                ##
+# ##    intermediate stage to build CERN ROOT     ##
 # ##################################################
+# 
+# 
+# FROM ubuntu:18.04
+# 
+# USER root
+# 
+# ARG DEBIAN_FRONTEND=noninteractive
+# 
+# RUN apt-get update && \
+#   apt-get -y install \
+#   libgslcblas0 \
+#   python3-numpy \
+#   python3-scipy \
+#   python3-matplotlib \
+#   liblapack3 \
+#   libboost-all-dev \
+#   wget \
+#   git dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev \
+#   libxft-dev libxext-dev
 # 
 # RUN wget https://root.cern/download/root_v6.18.02.source.tar.gz && tar -zxvf root_v6.18.02.source.tar.gz && rm root_v6.18.02.source.tar.gz
 # 
-# RUN zypper ref && zypper --non-interactive in \
-#   python3-numpy python3-matplotlib python3-pip
-# 
 # # arguments for cmake to use python3 for pyROOT
-# RUN mkdir /root-build && cd /root-build; \
-#   cmake \
-#   -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-#   -DPYTHON_LIBRARY=/usr/lib64/python3.6 \
-#   -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m \
-#   ../root-6.18.02
-#   
-# #  -DPYTHON_LIBRARIES=/usr/lib/x86_64-linux-gnu/libpython3.6m.so \
-# #  -DPYTHON_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")  \
-# #   -Dpython_version=3.6 \
-#   
+# RUN mkdir /root-build && cd /root-build; cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 ../root-6.18.02
 # 
 # RUN cd /root-build; make -j6
 # 
+# ##################################################
+# ##        build actual working container        ##
+# ##################################################
+# 
+# # leave some 500 MB of root source files behind
+# 
+# FROM ubuntu:18.04
+# 
+# USER root
+# 
+# ARG DEBIAN_FRONTEND=noninteractive
+# 
+# RUN apt-get update && \
+#   apt-get -y install \
+#   vim \
+#   nano \
+#   libgslcblas0 \
+#   python3-numpy \
+#   python3-scipy \
+#   python3-matplotlib \
+#   bc \
+#   liblapack3 \
+#   libboost-all-dev 
+# 
+# 
+# COPY --from=0 /root-build /root-build 
+# 
+# 
 
+# FROM acidbourbon/ubuntu_cernroot_python3:2019-09-29
+FROM ubuntu:18.04
+
+USER root
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+  apt-get -y install \
+  gv ghostscript xterm x11-utils \
+  dialog \
+  libgfortran3 \
+  libgslcblas0 \
+  wine-stable \
+  iputils-ping \
+  curl \
+  perl \
+  git \
+  python3-pip \
+  liblapack3 \
+  libboost-all-dev \
+  libgslcblas0 \
+  python3-numpy \
+  python3-scipy \
+  python3-matplotlib \
+  wget \
+  psmisc \
+  git dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev \
+  libxft-dev libxext-dev \
+  gfortran libssl-dev libpcre3-dev \
+  xlibmesa-glu-dev libglew1.5-dev libftgl-dev \
+  libmysqlclient-dev libfftw3-dev libcfitsio-dev \
+  graphviz-dev libavahi-compat-libdnssd-dev \
+  libldap2-dev python-dev libxml2-dev libkrb5-dev \
+  libgsl0-dev libqt4-dev \
+  subversion
+  
+  
+RUN pip3 install --upgrade pip
+RUN pip3 install setuptools && \
+  pip3 install pythondialog python-vxi11
+
+# for garfield to feel at home make symlink to som gsl libs
+RUN ln -s /usr/lib/x86_64-linux-gnu/libgslcblas.so.0.0.0 /usr/lib/libgsl.so.0 
+
+# this will create /LTspiceXVII with all the 
+# windows binaries and libraries you'll need
+#ADD ./build/LTspiceXVII.tgz /
+
+ENV HOME=/workdir
+
+RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
+
+RUN echo "cd /workdir/; /bin/bash" >> entrypoint.sh
+
+
+ENTRYPOINT "/entrypoint.sh"
 
 
 ##################################################
@@ -101,8 +137,11 @@ ENV DABC_TRB3_REV=4242
 
 RUN svn checkout -r $DABC_TRB3_REV https://subversion.gsi.de/dabc/trb3  
 
+# Patch Makefile to enable python3 in root compilation
+
 ### patch the makefile, so root is compiled against python3 not python2
 RUN perl -pi -e "s/-Dhttp=ON/-Dhttp=ON -DPYTHON_EXECUTABLE=\/usr\/bin\/python3/;" /trb3/Makefile
+  
 
 RUN cd /trb3; \
   > /tmp/trb3_make_exit_value; \
@@ -115,6 +154,8 @@ RUN cd /trb3; \
   wait; \
   echo -e "\n\n---- end of make log: ----\n\n"; \
   $( exit $(cat /tmp/trb3_make_exit_value) )
+
+
 
 
 
@@ -174,81 +215,7 @@ COPY build_files/httpi /daqtools/web/httpi
 
 
 
-
-
-RUN zypper ref && zypper --non-interactive install python-numpy python-pandas python-scipy python-matplotlib
-RUN zypper ref && zypper --non-interactive install python3-numpy python3-pandas python3-scipy python3-matplotlib
-RUN zypper ref && zypper --non-interactive install iproute2 iputils 
-RUN zypper ref && zypper --non-interactive install -t pattern network_admin
-RUN zypper ref && zypper --non-interactive install python3-pip
-RUN zypper ref && zypper --non-interactive install python3-curses
-
 RUN pip3 install setuptools visidata pypng
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
-
-RUN zypper ref && zypper --non-interactive install nano
-
-
-
-
-
-
-
-
-##################################################
-##          additional changes/updates          ##
-##################################################
-
-# go ahead, customize your container 
-# delete/comment out changes to revert them again and return
-# to a previous state
-
-### install additional perl modules from cpan ###
-#RUN cpan ExamplePerlModule
-
-### install python modules from pip ###
-#RUN pip install --upgrade pip && pip install example_python_module
-
-### install additional system packages with opensuse package manager
-#RUN zypper refresh && zypper --non-interactive in \
-#  example_package_1 \
-#  example_package_2 \
-#  example_package_3
-
-
-##################################################
-## update dabc/stream/go4 to the newest version ##
-##################################################
-
-#RUN cd /trb3/; . /trb3/trb3login;  make -j4 update
-
-
-
-##################################################
-##               update daqtools                ##
-##################################################
-
-#RUN cd /daqtools; git checkout master; git pull &&\
-#  cd /daqtools/xml-db && \
-# ./xml-db.pl
-
-### overwrite httpi again with a custom version so it can run as root
-#COPY build_files/httpi /daqtools/web/httpi 
-
-
-##################################################
-##              update trbnettools              ##
-##################################################
-
-#RUN  cd /trbnettools &&\
-#  git checkout master &&\
-#  git pull &&\
-#  cd /trbnettools/libtrbnet_perl && \
-#  perl Makefile.PL && \
-#  cd /trbnettools && \
-#  make clean && \
-#  make TRB3=1 && \
-#  make TRB3=1 install && \
-#  ldconfig -v
