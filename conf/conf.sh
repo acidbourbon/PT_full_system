@@ -75,6 +75,8 @@ fi
 
 if [ $provide_vnc == "yes" ]; then
   mkdir -p $HOME/.vnc/
+  cp /conf/xstartup $HOME/.vnc/xstartup
+  chmod +x $HOME/.vnc/xstartup
   echo $vnc_password | vncpasswd -f > $HOME/.vnc/passwd
   tmux new-session -d -s vnc -n vnc "echo starting vnc server on port $vnc_port for display $DISPLAY; vncserver $DISPLAY -rfbauth $HOME/.vnc/passwd -rfbport $vnc_port -geometry $vnc_geometry ;/bin/bash"
   

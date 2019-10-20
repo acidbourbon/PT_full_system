@@ -134,8 +134,6 @@ RUN git clone git://jspc29.x-matter.uni-frankfurt.de/projects/daqtools.git && \
   cd /daqtools/xml-db && \
  ./xml-db.pl
 
-### replace httpi with a modified version, because the httpi in daqtools won't run as root
-COPY build_files/httpi /daqtools/web/httpi
 
 
 
@@ -159,10 +157,17 @@ RUN apt-get update && \
   vim \
   tigervnc-standalone-server
 
-RUN pip install PrettyTable
+RUN apt-get update && \
+  apt-get -y install \
+  rpcbind \
+  gnuplot
   
 
-ENV HOME=/workdir
+### replace httpi with a modified version, because the httpi in daqtools won't run as root
+COPY build_files/httpi /daqtools/web/httpi
+  
+
+#ENV HOME=/workdir
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #

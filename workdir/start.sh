@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# set home to workdir
+if [ $(whoami) != "root" ]; then export HOME=/workdir ;fi
+
 echo "container started"
 
 echo "create main tmux session"
@@ -37,7 +40,7 @@ tmux new-window -t main -n "new" "/bin/bash"
 tmux new-window -t main -n "new" "/bin/bash"
 tmux new-window -t main -n "new" "/bin/bash"
 # open CTS GUI and GO4 Web interface in firefox (running in VNC)
-tmux new-window -t main -n "x11_apps" "lxpanel& sleep 5 && firefox -new-tab -url localhost:$CTS_GUI_PORT -new-tab -url localhost:$GO4_WEB_PORT& /bin/bash"
+tmux new-window -t main -n "x11_apps" "sleep 5 && firefox -new-tab -url localhost:$CTS_GUI_PORT -new-tab -url localhost:$GO4_WEB_PORT& /bin/bash"
 tmux select-window -t main:info
 
 
