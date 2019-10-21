@@ -20,9 +20,7 @@ rm $(find /conf -iname "*swo*")
 rm $(find /conf -iname "*swp*")
 rm $(find /conf -iname "*swa*")
 
-cp web_hack/tdc.htm /daqtools/web/htdocs/tdc/tdc.htm
-cp web_hack/jquery-3.4.1.min.js /daqtools/web/htdocs/tdc/jquery-3.4.1.min.js
-
+/workdir/web_hack/web_hack.sh
 
 # create new tmux session named "main"
 tmux new -d -s main
