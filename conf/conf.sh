@@ -44,9 +44,13 @@ vnc_geometry=1500x1024
 
 if [ $provide_dhcp == "yes" ]; then
   echo starting dhcp server
-  cp dhcpd.conf /etc/dhcpd.conf
+  # for opensuse
+  #cp dhcpd.conf /etc/dhcpd.conf
+  # for ubuntu
+  cp dhcpd.conf /etc/dhcp/dhcpd.conf
+
   > /tmp/dhcp_leasefile
-  dhcpd -lf /tmp/dhcp_leasefile
+  dhcpd -lf /tmp/dhcp_leasefile >> conf_log.txt 2>&1
   echo ... >> conf_log.txt
   echo dhcp server started >> conf_log.txt
   echo using config file /conf/dhcpd.conf >> conf_log.txt

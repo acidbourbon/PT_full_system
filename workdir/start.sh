@@ -16,7 +16,8 @@ cd /workdir
 rm $(find . -iname ".*.sw*")
 rm $(find /conf -iname ".*.sw*")
 
-BROWSER="chromium-browser --no-sandbox"
+#BROWSER="chromium-browser --no-sandbox"
+BROWSER="midori"
 
 /workdir/web_hack/web_hack.sh
 
@@ -55,7 +56,7 @@ tmux new-window -t main -n "tdc_web" "sleep 5 && $BROWSER http://localhost:$CTS_
 tmux new-window -t main -n "ana_web" "sleep 5 && $BROWSER http://localhost:$GO4_WEB_PORT"
 tmux select-window -t main:info
 
-
+## finally attach your screen to the main session that you prepared
 tmux a -t main
 
 

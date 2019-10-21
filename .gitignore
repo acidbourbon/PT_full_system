@@ -1,7 +1,8 @@
-*.swp
+*.sw*
 *.pyc
 *.pcm
 *.d
 *.so
 *.hld
+*.log
 *~
