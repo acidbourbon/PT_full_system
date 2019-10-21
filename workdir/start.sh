@@ -13,12 +13,10 @@ echo "run /conf/conf.sh"
 cd /workdir
 
 # remove vim swap files 
-rm $(find . -iname "*swo*")
-rm $(find . -iname "*swp*")
-rm $(find . -iname "*swa*")
-rm $(find /conf -iname "*swo*")
-rm $(find /conf -iname "*swp*")
-rm $(find /conf -iname "*swa*")
+rm $(find . -iname ".*.sw*")
+rm $(find /conf -iname ".*.sw*")
+
+BROWSER="chromium-browser --no-sandbox"
 
 /workdir/web_hack/web_hack.sh
 
@@ -51,10 +49,10 @@ tmux new-window -t main -n "new" "/bin/bash"
 tmux new-window -t main -n "new" "/bin/bash"
 # open CTS GUI and GO4 Web interface in firefox (running in VNC)
 #tmux new-window -t main -n "x11_apps" "sleep 5 && firefox -new-tab -url localhost:$CTS_GUI_PORT -new-tab -url localhost:$GO4_WEB_PORT& /bin/bash"
-tmux new-window -t main -n "sc_web"  "sleep 5  && midori http://localhost:$CTS_GUI_PORT & /bin/bash"
-tmux new-window -t main -n "cts_web" "sleep 5 && midori -a http://localhost:$CTS_GUI_PORT/cts/cts.htm & /bin/bash"
-tmux new-window -t main -n "tdc_web" "sleep 5 && midori -a http://localhost:$CTS_GUI_PORT/tdc/tdc.htm & /bin/bash"
-tmux new-window -t main -n "ana_web" "sleep 5 && midori -a http://localhost:$GO4_WEB_PORT& /bin/bash"
+tmux new-window -t main -n "sc_web"  "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT "
+tmux new-window -t main -n "cts_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/cts/cts.htm "
+tmux new-window -t main -n "tdc_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/tdc/tdc.htm "
+tmux new-window -t main -n "ana_web" "sleep 5 && $BROWSER http://localhost:$GO4_WEB_PORT"
 tmux select-window -t main:info
 
 

@@ -186,6 +186,15 @@ make && \
 make install
 
 
+
+##################################################
+##               chromium browser               ##
+##################################################
+
+RUN apt-get update && \
+  apt-get -y install \
+  chromium-browser
+
   
 
 #ENV HOME=/workdir
