@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 import db
@@ -44,7 +44,7 @@ while True:
                  ("m5","--- test procedures  ---"),
                  ("m6","---   export data    ---"),
                  ("z","exit")] )
-    if code == d.DIALOG_OK:
+    if code == d.OK:
       mm_tag = tag
 
 
@@ -141,7 +141,7 @@ while True:
               ])
 
 
-  if code == d.DIALOG_OK:
+  if code == d.OK:
 
     ## reset + reconfigure trb ##
     if tag == "54":
@@ -166,10 +166,10 @@ while True:
     if tag == "2":
       while True:
         code2, choice2 = dbd.dialog_board_list()
-        if code2 == d.DIALOG_OK: 
+        if code2 == d.OK: 
           board_json = db.get_board_json_by_name(choice2)
           code_21, text_21 = dbd.dialog_editbox(json.dumps(board_json,indent=2,sort_keys=True))  
-          if code_21 == d.DIALOG_OK:
+          if code_21 == d.OK:
             db.write_board_json_by_name(choice2,json.loads(text_21))
         else:
           break
@@ -177,38 +177,38 @@ while True:
     ## edit complete setup json ##
     if tag == "3":
       code_3, text = dbd.dialog_editbox(json.dumps(db.get_setup_json(),indent=2,sort_keys=True))
-      if code_3 == d.DIALOG_OK:
+      if code_3 == d.OK:
         db.write_setup_json(json.loads(text))
      
     ## add board ##
     if tag == "4":
       code_4, tdc_addr = dbd.dialog_tdc_list()
-      if code_4 == d.DIALOG_OK:
+      if code_4 == d.OK:
 
         while True:
           code_41, conn_str = dbd.dialog_connector_list(tdc_addr)
-          if code_41 == d.DIALOG_OK:
+          if code_41 == d.OK:
             conn = int(conn_str)
             if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
               code_42, name_str = d.inputbox(text="enter board name",init="0000")
-              if code_42 == d.DIALOG_OK:
+              if code_42 == d.OK:
                 code_43, calib_file = d.inputbox(text="enter calib file name",init="./boards/board_"+name_str+".json")
-                if code_43 == d.DIALOG_OK:
+                if code_43 == d.OK:
                   code_44, str_44 = d.inputbox(text="enter drift chamber number",init="0")
-                  if code_44 == d.DIALOG_OK:
+                  if code_44 == d.OK:
                     code_45, str_45 = d.inputbox(text="enter sense wire layer",init="0")
-                    if code_45 == d.DIALOG_OK:
+                    if code_45 == d.OK:
                       code_455, tag_455 = d.menu("wire to channel mapping",\
                         choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
-                      if code_455 == d.DIALOG_OK:
+                      if code_455 == d.OK:
                         code_46, str_46 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn A (PT chan 1-4)",init="")
-                        if code_46 == d.DIALOG_OK:
+                        if code_46 == d.OK:
                           code_47, str_47 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn B (PT chan 5-8)",init="")
-                          if code_47 == d.DIALOG_OK:
+                          if code_47 == d.OK:
                             code_48, str_48 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn C (PT chan 9-12)",init="")
-                            if code_48 == d.DIALOG_OK:
+                            if code_48 == d.OK:
                               code_49, str_49 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn D (PT chan 13-16)",init="")
-                              if code_49 == d.DIALOG_OK:
+                              if code_49 == d.OK:
                                 chamber_no = int(str_44)
                                 layer_no   = int(str_45)
                                 fpc_a_no     = int(str_46)
@@ -239,7 +239,7 @@ while True:
     if tag == "5":
       while True:
         code_5, choice_5 = dbd.dialog_board_list()
-        if code_5 == d.DIALOG_OK: 
+        if code_5 == d.OK: 
           db.remove_board(choice_5)
         else:
           break
@@ -248,14 +248,14 @@ while True:
     if tag == "6":
       while True:
         code_6, board_name = dbd.dialog_board_list()
-        if code_6 == d.DIALOG_OK: 
+        if code_6 == d.OK: 
           code_61, tdc_addr = dbd.dialog_tdc_list()
-          if code_61 == d.DIALOG_OK:
+          if code_61 == d.OK:
             while True:
               code_62, conn_str = dbd.dialog_connector_list(tdc_addr)
-              if code_62 == d.DIALOG_OK:
+              if code_62 == d.OK:
                 if not db.find_board_by_tdc_connector(tdc_addr,int(conn_str)):
-                  if code_62 == d.DIALOG_OK:
+                  if code_62 == d.OK:
                     board_json = db.get_board_json_by_name(board_name)
                     db.remove_board(board_name)
                     board_json["tdc_connector"] = int(conn_str)
@@ -273,14 +273,14 @@ while True:
     ## edit asic settings ##
     if tag == "7":
       code_7, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["asic_settings"],indent=2,sort_keys=True))
-      if code_7 == d.DIALOG_OK:
+      if code_7 == d.OK:
         setup = db.get_setup_json()
         _asic_settings = json.loads(text)
         setup["asic_settings"] = _asic_settings;
         db.write_setup_json(setup)
 
         code = d.yesno("do you wish to reprogram ASICs with the new settings?")
-        if code == d.DIALOG_OK:
+        if code == d.OK:
           ptc.init_active_boards()
           d.msgbox("initialized all active boards\nand enabled respective TDC channels")
 
@@ -309,7 +309,7 @@ while True:
       setup = db.get_setup_json()
       current_thresh = setup["asic_settings"]["default"]["threshold"]
       code, thresh_str = d.inputbox(text="enter temporary threshold (default={:d})".format(current_thresh),init=str(current_thresh))
-      if code == d.DIALOG_OK:
+      if code == d.OK:
         setup["asic_settings"]["default"]["threshold"] = int(thresh_str)
         db.write_setup_json(setup)
         ptc.init_active_boards()
@@ -327,15 +327,15 @@ while True:
       setup = db.get_setup_json()
       current_thresh = setup["asic_settings"]["default"]["threshold"]
       code_9, board_name = dbd.dialog_board_list()
-      if code_9 == d.DIALOG_OK:
+      if code_9 == d.OK:
         code, thresh_str = d.inputbox(text="enter temporary threshold (default={:d})".format(current_thresh),init=str(current_thresh))
-        if code == d.DIALOG_OK:
+        if code == d.OK:
           ptc.set_threshold_for_board_by_name(board_name,int(thresh_str))
       
     ## calib board baselines ##
     if tag == "9":
       code_9, choice_9 = dbd.dialog_board_list()
-      if code_9 == d.DIALOG_OK:
+      if code_9 == d.OK:
         board_name = choice_9
         d.msgbox("Supply standard test pulse to all inputs of board {:s} simultaneously:\n-2V, negative polarity, duration 10 ns, supplied to input\
 via AC coupling and 10k resistor.".format(board_name) )
@@ -347,7 +347,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "11":
       while True:
         code, choice = dbd.dialog_tdc_list()
-        if code == d.DIALOG_OK: 
+        if code == d.OK: 
           db.remove_tdc(choice)
         else:
           break
@@ -355,30 +355,30 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## add tdc ##
     if tag == "10":
       code, hub_addr = dbd.dialog_hub_list()
-      if code == d.DIALOG_OK:
+      if code == d.OK:
         code, tdc_addr = d.inputbox(text="enter tdc addr",init="")
-        if code == d.DIALOG_OK:
+        if code == d.OK:
           code, tdc_name = d.inputbox(text="enter tdc name",init=tdc_addr)
-          if code == d.DIALOG_OK:
+          if code == d.OK:
             code, channels_str = d.inputbox(text="enter number of channels",init="48")
-            if code == d.DIALOG_OK:
+            if code == d.OK:
               code, connectors_str = d.inputbox(text="enter number of connectors",init="{:d}".format(int(channels_str)/16))
-              if code == d.DIALOG_OK:
+              if code == d.OK:
                 db.insert_tdc(hub_addr,tdc_addr,tdc_name,int(channels_str),int(connectors_str))
 
     ## add hub ##
     if tag == "22":
       code, hub_addr = d.inputbox(text="enter hub addr",init="")
-      if code == d.DIALOG_OK:
+      if code == d.OK:
         code, hub_name = d.inputbox(text="enter hub name",init=hub_addr)
-        if code == d.DIALOG_OK:
+        if code == d.OK:
           db.insert_hub(hub_addr,hub_name)
 
     ## remove hub ##
     if tag == "23":
       while True:
         code, choice = dbd.dialog_hub_list()
-        if code == d.DIALOG_OK: 
+        if code == d.OK: 
           db.remove_hub(choice)
         else:
           break
@@ -399,7 +399,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## calib t1 offsets ##
     if tag == "12":
       code_9, choice_9 = dbd.dialog_board_list()
-      if code_9 == d.DIALOG_OK:
+      if code_9 == d.OK:
         board_name = choice_9
         board_info = db.find_board_by_name(board_name)
         #if board_info["baseline_is_calibrated"]:
@@ -421,7 +421,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## clear t1 offsets ##
     if tag == "18":
       code_9, choice_9 = dbd.dialog_board_list()
-      if code_9 == d.DIALOG_OK:
+      if code_9 == d.OK:
         board_name = choice_9
         db.clear_t1_offsets_of_board(board_name)
         d.msgbox("cleared" )
@@ -430,9 +430,9 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## read t1 tot of board ##
     if tag == "13":
       code, board_name = dbd.dialog_board_list()
-      if code == d.DIALOG_OK:
+      if code == d.OK:
         code, no_pulses_str = d.inputbox(text="enter number of pulses to record",init="100")
-        if code == d.DIALOG_OK:
+        if code == d.OK:
           no_pulses = int(no_pulses_str)
           td.record_tree_data(no_pulses)
 
@@ -470,7 +470,7 @@ via AC coupling and 10k resistor.".format(board_name) )
       #test_results = ptc.slow_control_test_active_boards()
       #code_21, text_21 = dbd.dialog_editbox(json.dumps(test_results, indent=2, sort_keys=True))
       code, board_list = dbd.dialog_board_list( checklist="select"  )
-      if code == d.DIALOG_OK:
+      if code == d.OK:
         dbd.dialog_slow_control_test(board_list)
 
                  
@@ -478,13 +478,13 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## reset board ##
     if tag == "14":
       code, board_name = dbd.dialog_board_list()
-      if code == d.DIALOG_OK:
+      if code == d.OK:
         ptc.reset_board_by_name(board_name)
       
     ## calib board baselines ##
     if tag == "15":
       code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
+      if code_15 == d.OK:
         board_name = choice_15
         d.msgbox("Disconnect board {:s} from detector or cut voltage of detector to measure pure electronic noise".format(board_name) )
         import baseline_calib
@@ -495,7 +495,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## dummy calib / scan board baselines ##
     if tag == "33":
       code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
+      if code_15 == d.OK:
         board_name = choice_15
         import baseline_calib
         baseline_calib.baseline_calib_by_noise(board_name,dummy_calib=True)
@@ -505,7 +505,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## characterize noise by thresh scan ##
     if tag == "41":
       code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
+      if code_15 == d.OK:
         board_name = choice_15
         import baseline_calib
         baseline_calib.char_noise_by_thresh_scan(board_name,dummy_calib=True)
@@ -514,7 +514,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## view dummy calib ##
     if tag == "34":
       code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
+      if code_15 == d.OK:
         board_name = choice_15
         
         dbd.board_baseline_report(board_name,dummy_calib=True)
@@ -522,7 +522,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## view noise thresh scan ##
     if tag == "42":
       code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
+      if code_15 == d.OK:
         board_name = choice_15
         
         dbd.board_noise_thresh_scan_report(board_name,dummy_calib=True)
@@ -530,7 +530,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## calib board baselines, individual channels ##
     if tag == "32":
       code_15, choice_15 = dbd.dialog_board_list()
-      if code_15 == d.DIALOG_OK:
+      if code_15 == d.OK:
         board_name = choice_15
         d.msgbox("Disconnect board {:s} from detector or cut voltage of detector to measure pure electronic noise".format(board_name) )
         import baseline_calib
@@ -569,7 +569,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     if tag == "16":
       while True:
         code_15, choice_15 = dbd.dialog_board_list()
-        if code_15 == d.DIALOG_OK:
+        if code_15 == d.OK:
           board_name = choice_15
           dbd.board_baseline_report(board_name)
             
@@ -579,7 +579,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## edit global settings ##
     if tag == "17":
       code_17, text = dbd.dialog_editbox(json.dumps(db.get_setup_json()["global_settings"],indent=2,sort_keys=True))
-      if code_17 == d.DIALOG_OK:
+      if code_17 == d.OK:
         setup = db.get_setup_json()
         global_settings = json.loads(text)
         setup["global_settings"] = global_settings;
@@ -588,41 +588,41 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## edit tdc json ##
     if tag == "19":
       code, tdc_addr = dbd.dialog_tdc_list()
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         tdc_json = db.get_tdc_json(str(tdc_addr))
         code_17, text = dbd.dialog_editbox(json.dumps(tdc_json,indent=2,sort_keys=True))
-        if code_17 == d.DIALOG_OK:
+        if code_17 == d.OK:
           tdc_json = json.loads(text)
           db.write_tdc_json(str(tdc_addr),tdc_json)
 
     ## clear t1 offsets of tdc ##
     if tag == "20":
       code, tdc_addr = dbd.dialog_tdc_list()
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         db.clear_t1_offsets_of_tdc(tdc_addr)
         d.msgbox("cleared" )
 
     ## edit board calib ##
     if tag == "21":
       code, board = dbd.dialog_board_list()
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         calib_json = db.get_calib_json_by_name(board)
         code_17, text = dbd.dialog_editbox(json.dumps(calib_json,indent=2,sort_keys=True))
-        if code_17 == d.DIALOG_OK:
+        if code_17 == d.OK:
           calib_json = json.loads(text)
           db.write_calib_json_by_name(board,calib_json)
 
     ## view board t1 offsets ##
     if tag == "36":
       code, board = dbd.dialog_board_list()
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         board_t1_offsets = db.get_t1_offsets_of_board(board)
         code_17, text = dbd.dialog_editbox(json.dumps(board_t1_offsets,indent=2,sort_keys=True))
 
     ## view board t1 calib efficiencies ##
     if tag == "52":
       code, board = dbd.dialog_board_list()
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         calib = db.get_calib_json_by_name(board)
         if "t1_calib_efficiency" in calib:
           t1_calib_efficiency = calib["t1_calib_efficiency"]
@@ -634,7 +634,7 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## view tdc t1 offsets ##
     if tag == "37":
       code, tdc = dbd.dialog_tdc_list()
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         tdc_t1_offsets = db.get_t1_offsets(tdc)
         code_17, text = dbd.dialog_editbox(json.dumps(tdc_t1_offsets,indent=2,sort_keys=True))
 
@@ -642,13 +642,13 @@ via AC coupling and 10k resistor.".format(board_name) )
     ## dump database to csv ##
     if tag == "38":
       code, str = d.inputbox(text="dump database to <file name>",init="./dump.csv")
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         db.dump_db_to_csv(str)
 
     ## dump database to root ##
     if tag == "39":
       code, str = d.inputbox(text="dump database to <file name>",init="./dump.root")
-      if code == d.DIALOG_OK: 
+      if code == d.OK: 
         db.dump_db_to_root(str)
       
     if tag == "z":

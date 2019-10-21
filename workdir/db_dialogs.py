@@ -226,7 +226,7 @@ def dialog_board_list(**kwargs):
 
   if check_enable:
     code, active_boards = d.checklist("enable/disable boards", choices=choices, width=width, height=height, list_height=list_height)
-    if code == d.DIALOG_OK:
+    if code == d.OK:
       for board_name in board_list:
         db.disable_board(board_name)
       for board_name in active_boards:
@@ -235,7 +235,7 @@ def dialog_board_list(**kwargs):
 
   elif check_standby:
     code, standby_boards = d.checklist("set board standby", choices= choices, width=width,height=height,list_height=list_height)
-    if code == d.DIALOG_OK:
+    if code == d.OK:
       for board_name in board_list:
         db.unset_standby_board(board_name)
       for board_name in standby_boards:

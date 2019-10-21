@@ -427,11 +427,11 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
             wires = []
 
             if( reverse_mapping ):
-              wires =  range((fpc_a+1)*4-1,fpc_a*4-1, -1) + range((fpc_b+1)*4-1,fpc_b*4-1, -1) + range((fpc_c+1)*4-1,fpc_c*4-1, -1) + range((fpc_d+1)*4-1,fpc_d*4-1, -1) 
+              wires =  list(range((fpc_a+1)*4-1,fpc_a*4-1, -1)) + list(range((fpc_b+1)*4-1,fpc_b*4-1, -1)) + list(range((fpc_c+1)*4-1,fpc_c*4-1, -1)) + list(range((fpc_d+1)*4-1,fpc_d*4-1, -1)) 
             else:
-              wires =  range(fpc_a*4,(fpc_a+1)*4) + range(fpc_b*4,(fpc_b+1)*4) + range(fpc_c*4,(fpc_c+1)*4) + range(fpc_d*4,(fpc_d+1)*4)
+              wires =  list(range(fpc_a*4,(fpc_a+1)*4)) + list(range(fpc_b*4,(fpc_b+1)*4)) + list(range(fpc_c*4,(fpc_c+1)*4)) + list(range(fpc_d*4,(fpc_d+1)*4))
            
-            channels =  range((conn-1)*16,conn*16)
+            channels =  list(range((conn-1)*16,conn*16))
             
             t1_offsets = []
             for ch in channels:
@@ -455,7 +455,7 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
             "t1_offsets" : t1_offsets,\
             "t1_is_calibrated" : t1_is_calibrated,\
             "baseline_is_calibrated" : baseline_is_calibrated,\
-            "board_chan" : range(0,16)
+            "board_chan" : list(range(0,16))
             })
             return board_defs
 
@@ -536,7 +536,7 @@ def active_tdc_list():
 
 def ref_chan_tdc():
   refchan = get_global_settings()["reference_channel"]
-  return "0x{:04d}".format(refchan /100)
+  return "0x{:04d}".format(int(refchan /100))
     
 
 def board_list():

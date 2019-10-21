@@ -165,6 +165,27 @@ RUN apt-get update && \
 
 ### replace httpi with a modified version, because the httpi in daqtools won't run as root
 COPY build_files/httpi /daqtools/web/httpi
+
+
+
+##################################################
+##                    midori                    ##
+##################################################
+
+RUN apt-get update && \
+  apt-get -y install \
+  cmake valac libwebkit2gtk-4.0-dev libgcr-3-dev libpeas-dev libsqlite3-dev libjson-glib-dev libarchive-dev intltool libxml2-utils
+
+RUN git clone https://github.com/midori-browser/core.git; mv /core /midori
+
+RUN cd /midori && \
+mkdir _build && \
+cd _build && \
+cmake -DCMAKE_INSTALL_PREFIX=/usr .. && \
+make && \
+make install
+
+
   
 
 #ENV HOME=/workdir

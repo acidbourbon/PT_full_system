@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link href="../layout/styles.css" rel="stylesheet" type="text/css"/>
+<script src="../scripts/scripts.js" type="text/javascript"></script>
+<title>TDC Registers</title>
+</head>
+<body>
+
+<script src="./jquery-3.4.1.min.js" type="text/javascript"></script>
+
+<script> 
+$( function() {
+  setTimeout(function(){
+    $("#form_board").val("fe4c");
+    $("#form_split").prop("checked",true);
+    $("#form_diff").prop("checked",true);
+    $("#form_status").prop("checked",true);
+    $("#form_enable").prop("checked",true);
+    $("#form_hitrate").prop("checked",true);
+	
+  }, 1000);
+
+})
+</script>
+
+
+<h2><a href="../">Hit Counters &amp; TDC Registers</a></h2>
+<form acion="">
+<table class="form"><tr class="head"><th colspan=4>Configuration
+<tr title="4-digit hex board address for data query"><td>Board
+    <td><input onChange="setValues()" type="text" id="form_board" name="board" maxlength="4" value="fe48">
+<tr title="list of 4-digit hex addresses of boards to show"><td>Filter
+    <td><input onChange="setValues()" type="text" id="form_filter" name="filter"  value="" >
+<tr title="Number of TDC channels to show"><td># of Channels
+    <td><input onChange="setValues()" type="text" id="form_channels" name="channels" maxlength="3" value="65">
+<tr title="Update interval in milliseconds, separate for first and second table"><td>Update Interval (ms)
+    <td><input onChange="setValues()" type="text" id="form_rate" name="rate" maxlength="5" value="2000">
+        <input onChange="setValues()" type="text" id="form_rate2" name="rate2" maxlength="5" value="5000">
+
+<tr><td title="For huge set-ups, enable this to split data queries in several smaller chunks">Split Table
+    <td title="For huge set-ups, enable this to split data queries in several smaller chunks"><input onChange="setValues()" type="checkbox" id="form_split" name="split" value="4">
+    <td title="Show only the difference of input signal counters since the last read-out, not absolute value">Differences
+    <td title="Show only the difference of input signal counters since the last read-out, not absolute value"><input onChange="setValues()" type="checkbox" id="form_diff" name="diff" value="1">
+
+
+<tr><td title="Enable display of current input status.">Input Status
+    <td title="Enable display of current input status."><input onChange="setValues()" type="checkbox" id="form_status" name="status" value="1">&nbsp;
+    <td title="Show control buttons for channel enable/disable">Enable
+    <td title="Show control buttons for channel enable/disable"><input onChange="setValues()" type="checkbox" id="form_enable" name="enable" value="1">
+
+<tr><td title="Enable display of hit rates for deactive channels.">Hit Rate Status
+    <td title="Enable display of hit rates for deactive channels."><input onChange="setValues()" type="checkbox" id="form_hitrate" name="hitrate" value="1">&nbsp;
+
+<tr><td><td title="Just for your convenience, you actually don't need this button..."><input type="button" onClick="setValues()" value="OK">
+        <td title="Reset TDC counters"><input type="button" onClick="resetCounters()" value="RESET">
+
+</table>
+</form>
+
+<div style="float:left"><table class="content" id="content"><tr><th>Channel<th>Value</table></div>
+<div style="float:left"><table class="content" id="contentstat"><tr><th>Register<th>Values</table></div>
+<div style="float:left"><table class="content" id="contentctrl"><tr><th>Register<th>Values</table></div>
+
+
+<script language="javascript">
+var updaterate  = document.getElementById("form_rate").value;
+var updaterate2 = document.getElementById("form_rate2").value;
+var filter      = document.getElementById("form_filter").value;
+var board       = document.getElementById("form_board").value;
+var channels    = document.getElementById("form_channels").value;
+var split       = document.getElementById("form_split").checked?"-4":"";
+var differences = document.getElementById("form_diff").checked;
+var showstatus  = document.getElementById("form_status").checked;
+var showenable  = document.getElementById("form_enable").checked;
+var showhitrate = document.getElementById("form_hitrate").checked;
+var oldvalues = {};
+
+var regstatus = "c100-19";
+var regctrl = "c800-7";
+
+var regstatusnames = new Array("tdc version<br>channels<br>ref input","","","",
+                         "valid trg","valid tmg trg","valid notmg","invalid trg","multi trg",
+                         "spurious trg","wrong rdo","spikes","idle time","wait time","",
+                         "releases","rdo time","timeout number","data finished number");
+var regctrlnames = new Array("Logic Anal.<br>Debug Mode<br>Calib. Prescaler",
+       "window en.<br>window bef.<br>window aft.","act chan 1","act chan 2","data limit","inv chan 1","inv chan 2");                         
+
+var tooltipstatus      = "\"Green\tpositive pulse \nRed\t\tnegative pulse\"";
+       
+
+var updateTask;
+var updateStatRegsTask;
+var updateCtrlRegsTask;
+var enableGroup = new Array();
+for(i=0;i<1000;i++) enableGroup[i] = new Array();
+
+function settimers(time1,time2) {
+
+  if(time1 != -1) {
+    if(!time1) time1 = updaterate;
+    clearTimeout(updateTask);
+    updateTask = setTimeout("getdata('../commands/get.pl?"+board+"-c000-"+channels+split+"',update)",time1);
+    }
+    
+  if(time2 != -1) {
+    if(!time2) time2 = updaterate2;
+    clearTimeout(updateStatRegsTask);
+    clearTimeout(updateCtrlRegsTask);
+    updateStatRegsTask = setTimeout("getdata('../commands/get.pl?"+board+"-"+regstatus+"',updatestatregs)",time2);
+    updateCtrlRegsTask = setTimeout("getdata('../commands/get.pl?"+board+"-"+regctrl+"',updatectrlregs)",time2);
+    }
+  }
+
+
+function update(data) {
+  if(!document.getElementById("content").innerHTML) return;
+  var b = data.split("&");
+  var c = {};
+  var isShown = new Array();
+  o = "<tr class=\"head\"><th>Reg<th>Channel";
+
+  for(j=0;j<b.length-1;j++) {
+    c[j] = b[j].split(" ");
+    if(!oldvalues[j]) oldvalues[j] = c[j];
+    if(filter == "" || filter.indexOf(c[j][0]) != -1)
+      isShown[j] = 1;
+    else
+      isShown[j] = 0;
+    if(isShown[j])
+      o += "<th>"+c[j][0];
+    } 
+  if(showenable) {
+    o += "<tr><td><td>Channel group";
+    for(j=0;j<b.length-1;j++) {
+      if(isShown[j]) {
+        o += "<th>";
+        for(k=0;k<=3;k++) {
+          o += "<span style=\"display:block;float:right;width:22px;font-size:80%\">"+k+"</span>";
+          }
+        o+="<br>";
+        for(k=3;k>=0;k--) {
+          o += "<input class=\"onoffbutton\" type=\"button\" onClick=\"setEnableBlock(this,'"+c[j][0]+"',"+k+",1)\" value=\"on\">";
+          }
+        o += "<br>";
+        for(k=3;k>=0;k--) {
+          o += "<input class=\"onoffbutton\" type=\"button\" onClick=\"setEnableBlock(this,'"+c[j][0]+"',"+k+",0)\" value=\"off\">";
+          }
+        }
+      }
+    }
+  for(i = 1; i <= channels; i++) {
+    o += "<tr><th>"+(i-1+0xc000).toString(16)+"<th>"+(i-1);
+    for(j=0;j<b.length-1;j++) {
+      if(isShown[j]) {
+        enabled = (enableGroup[j][Math.floor((i-2)/32)]&1<<(i-2)%32)?"checked":"";
+//        if(showhitrate == 0 && enabled == 0 && i != 1) 
+//          val = 0x0;
+//        else {
+          if(differences) {
+            val = (c[j][i] & 0x7FFFFFFF)- ((oldvalues[j][i]||0) & 0x7FFFFFFF);
+            if (val < 0) {
+              val += 0x80000000;
+              }
+            }
+          else {
+            val = c[j][i] & 0x7FFFFFFF;
+            }
+//          }
+        if(showstatus && enabled)
+          o += "<td title="+tooltipstatus+" class=\""+((c[j][i] &0x80000000)?"over":"under")+"\">";
+        else
+          o += "<td>";
+        o += (val);
+        if(showenable && i!=1) {
+          checked = (enableGroup[j][Math.floor((i-2)/32)]&1<<(i-2)%32)?"checked":"";
+          o += "<input class=\"checkbox\" type=\"checkbox\" onClick=\"setEnable(this,'"+c[j][0]+"',"+(i-2)+")\" "+checked+">";
+          }
+        }
+      }
+    }
+  oldvalues = c;
+  document.getElementById("content").innerHTML  = o;
+  settimers(0,-1);
+  delete isShown;
+  
+  }
+  
+function setValues() {
+  updaterate  = document.getElementById("form_rate").value;
+  updaterate2 = document.getElementById("form_rate2").value;
+  board       = document.getElementById("form_board").value;
+  filter      = document.getElementById("form_filter").value;
+  split       = document.getElementById("form_split").checked?"-4":"";
+  differences = document.getElementById("form_diff").checked;
+  showstatus  = document.getElementById("form_status").checked;
+  channels    = document.getElementById("form_channels").value;
+  showenable  = document.getElementById("form_enable").checked;
+  showhitrate = document.getElementById("form_hitrate").checked;
+  settimers(200,50);
+  
+  }
+
+function setEnable(e,board,channel) {
+  reg = Math.floor(channel/32) + 0xc802;
+  op  = e.checked?"set":"clr";
+  getdata("../commands/putbit.pl?"+board+"-"+reg.toString(16)+"-"+op+"-"+((0xffffffff+(1<<(channel%32))+1)%0x100000000).toString(16),0);
+  settimers(200,50);
+  }
+
+function setEnableBlock(e,board,channel,val) {
+  reg = Math.floor(channel/2) + 0xc802;
+  op  = val?"set":"clr";
+  value = channel%2?0xffff0000:0xffff;
+  getdata("../commands/putbit.pl?"+board+"-"+reg.toString(16)+"-"+op+"-"+value.toString(16),0);
+  settimers(200,50);
+  }  
+  
+function setRunMode(e,board,val) {
+   reg = 0xc800;
+   op  = val?"set":"clr";
+   value = 0x1000;
+   getdata("../commands/putbit.pl?"+board+"-"+reg.toString(16)+"-"+op+"-"+value.toString(16),0);
+  settimers(200,50);
+  }
+
+function setCalibPrescaler(e,board) {
+  reg = 0xc800;
+  value = e.value;
+  getdata("../commands/putbitrange.pl?"+board+"-"+reg.toString(16)+"-F0000000-"+(value*1.).toString(16)+"0000000",0);
+  settimers(200,50);
+  }
+
+function resetCounters() {
+   reg = 0xc800;
+   value = 0x100;
+   getdata("../commands/putbit.pl?"+board+"-"+reg.toString(16)+"-"+"set"+"-"+value.toString(16),0);
+  settimers(200,50);
+   getdata("../commands/putbit.pl?"+board+"-"+reg.toString(16)+"-"+"clr"+"-"+value.toString(16),0);
+  settimers(200,50);
+  }
+
+function setEnableWindow(e,board,val) {
+   reg = 0xc801;
+   op  = val?"set":"clr";
+   value = 0x80000000;
+   getdata("../commands/putbit.pl?"+board+"-"+reg.toString(16)+"-"+op+"-"+value.toString(16),0);
+  settimers(200,50);
+  }
+
+function setDataLimit(e,board) {
+   reg = 0xc804;
+   value = e.value;
+   getdata("../commands/put.pl?"+board+"-"+reg.toString(16)+"-"+(value*1.).toString(16),0);
+   settimers(200,50);
+  }  
+  
+function setInvert(e,board,n) {
+   reg = 0xc805+n;
+   value = e.value;
+   getdata("../commands/put.pl?"+board+"-"+reg.toString(16)+"-"+(value*1.).toString(16),0);
+   settimers(200,50);
+  }  
+  
+function setTriggerWindow(e,board,val) {
+   reg = 0xc801;
+   preTrigger = 0x7FF;
+   postTrigger = 0x7FF0000;
+   value = (e.value)/5;
+   if(val==0)
+     getdata("../commands/putbitrange.pl?"+board+"-"+reg.toString(16)+"-"+preTrigger.toString(16)+"-"+(value*1.).toString(16),0);
+   else {
+      if (value < 0) { 
+        var value_twos = (value)+1;
+        if (value_twos < 0){
+          getdata("../commands/putbitrange.pl?"+board+"-"+reg.toString(16)+"-"+postTrigger.toString(16)+"-"+((0xfFF+(value_twos))*65536.).toString(16),0);
+        }
+      } else {
+        getdata("../commands/putbitrange.pl?"+board+"-"+reg.toString(16)+"-"+postTrigger.toString(16)+"-"+(value*65536.).toString(16),0);
+      }
+   }
+   settimers(200,50);   
+  }  
+  
+  
+function updatestatregs(data) {
+  if(!document.getElementById("contentstat").innerHTML) return;
+  var b = data.split("&");
+  var c = {};
+  var isShown = new Array();
+  o = "<tr class=\"head\"><th>Reg<th>Content";
+
+  for(j=0;j<b.length-1;j++) {
+    c[j] = b[j].split(" ");
+    if(filter == "" || filter.indexOf(c[j][0]) != -1)
+      isShown[j] = 1;
+    else
+      isShown[j] = 0;
+    if(isShown[j])
+      o += "<th>"+c[j][0];
+    } 
+ 
+  for(i = 0; i < 19; i++) {
+    if(regstatusnames[i]=="") continue;
+    o += "<tr><th>"+(0xc100+i).toString(16)+"<td>"+regstatusnames[i];
+
+    
+    for(j=0;j<b.length-1;j++) {
+        if(isShown[j]) {
+        val = c[j][i+1];
+        o += "<td>";
+        if(i==0) {
+          o += ((val&0x0e000000)>>25)+"."+((val&0x1e00000)>>21)+"."+((val&0x1e0000)>>17)+"<br>"+((val&0xff00)>>8)+"<br>";
+
+          if((val>>16 & 1)) 
+            o += "<span class=\"over\" style=\"background:#faa;display:block;width:100%;float:right\">";
+          if((val>>16 & 1))
+            o += "<font color=#ff0000> <strong>polarity wrong</strong> </font> ";
+          else
+            o += "<font color=#007f00> <strong>polarity correct</strong> </font> ";
+          if((val>>16 & 1)) 
+            o += "</span>";
+          }
+
+        else {
+          o += val;
+          }
+        }
+      }
+    }
+  document.getElementById("contentstat").innerHTML  = o;
+  settimers(-1,0);
+  delete isShown;
+  }
+  
+
+function updatectrlregs(data) {
+  if(!document.getElementById("contentctrl").innerHTML) return;
+  var b = data.split("&");
+  var c = {};
+  var isShown = new Array();
+  o = "<tr class=\"head\"><th>Reg<th>Content";
+
+  for(j=0;j<b.length-1;j++) {
+    c[j] = b[j].split(" ");
+    if(filter == "" || filter.indexOf(c[j][0]) != -1)
+      isShown[j] = 1;
+    else
+      isShown[j] = 0;
+    if(isShown[j])
+      o += "<th>"+c[j][0];
+    }   
+  
+  for(i = 0; i < 7; i++) {
+    o += "<tr><th>"+(0xc800+i).toString(16)+"<td>"+regctrlnames[i];
+    
+    for(j=0;j<b.length-1;j++) {
+        if(isShown[j]) {
+        val = c[j][i+1];
+        o += "<td>";
+        if(i==0) {
+          o += (val&0xF)+"<br>"+((val&0x10)>>4)+"<br>";
+          o += "<input onChange=\"setCalibPrescaler(this,'"+c[j][0]+"')\" type=\"text\" id=\"calibprescaler\" name=\"calibprescaler\" class=\"small\" maxlength=\"4\" value=\""+(val>>28 & 0xF)+"\">";
+        }
+        else if(i==1) {
+          if ((val&0x80000000))
+            o += "Enabled ";
+          else
+            o += "Disabled ";
+          o += "<input class=\"onoffbutton\" type=\"button\" onClick=\"setEnableWindow(this,'"+c[j][0]+"',1)\" value=\"on\">";
+          o += "<input class=\"onoffbutton\" type=\"button\" onClick=\"setEnableWindow(this,'"+c[j][0]+"',0)\" value=\"off\">";
+          preWindow = (val&0x7FF)*5;
+          postWindow = ((val&0x7FF0000)>>16)*5;
+          o += "<br>"+"<input onChange=\"setTriggerWindow(this,'"+c[j][0]+"',0)\"type=\"text\" id=\"prewindow\"name=\"prewindow\" class=\"smaller\"maxlength=\"5\" value=\""+preWindow+"\"ns>"+"ns"+
+               "<br>"+"<input onChange=\"setTriggerWindow(this,'"+c[j][0]+"',1)\"type=\"text\" id=\"postwindow\"name=\"postwindow\" class=\"smaller\"maxlength=\"5\" value=\""+postWindow+"\"ns>"+"ns";
+          }
+        else if(i==2 || i==3) {
+          o += "0x"+(val*1.).toString(16);
+          if(i==2) enableGroup[j][0] = val*1.;
+          if(i==3) enableGroup[j][1] = val*1.;
+          }
+        else if(i==4) {
+          o += "<input onChange=\"setDataLimit(this,'"+c[j][0]+"')\" type=\"text\" id=\"datalimit\" name=\"datalimit\" class=\"small\" ";
+          if((val&0xFF)==0x0)
+            o += "style =\"background-color: #fecccb;\" ";
+          o += "maxlength=\"4\" value=\""+val+"\">";
+          if((val&0xFF)>0x7c)
+            o += "<font color=#ff0000> <strong><br>The maximium buffer size may be 124</strong> </font> ";
+          }
+        else if(i==5) {
+          o += "<input onChange=\"setInvert(this,'"+c[j][0]+"',0)\" type=\"text\" id=\"invert0\" name=\"invert0\" class=\"small\" ";
+          o += "maxlength=\"10\" value=\"0x"+(val*1.).toString(16)+"\">";
+          }          
+        else if(i==6) {
+          o += "<input onChange=\"setInvert(this,'"+c[j][0]+"',1)\" type=\"text\" id=\"invert1\" name=\"invert1\" class=\"small\" ";
+          o += "maxlength=\"10\" value=\"0x"+(val*1.).toString(16)+"\">";
+          }  
+        else {
+          o += val;
+          }
+        }
+      }
+    }
+  
+  document.getElementById("contentctrl").innerHTML  = o;
+  settimers(-1,0);
+  delete isShown;
+  }
+  
+  
+  
+settimers(200,50);
+  
+</script>
+</body></html>
