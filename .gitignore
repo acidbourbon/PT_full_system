@@ -6,3 +6,9 @@
 *.hld
 *.log
 *~
+/workdir/.*
+/conf/.*
+.*
+*.svg
+*.pickle
+.ipynb_checkpoints

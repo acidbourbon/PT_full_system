@@ -1,0 +1,16 @@
+TDC=0x0350 CONN=1 ./init_asics      
+TDC=0x0350 CONN=1 ./threshold_all 20
+TDC=0x0350 CONN=1 ./threshold_all 127
+TDC=0x0350 CONN=2 ./threshold_all 127
+TDC=0x0350 CONN=2 ./init_asics 
+
+TDC=0x0350 CONN=1 CHIP=0 ./threshold 50
+TDC=0x0350 CONN=1 CHIP=0 pktime=15 gain=1 ./set_gain_pktime
+
+
+TDC=0x0350 CONN=1 CHIP=0 ./init_pkt15_g4_thr10.sh
+TDC=0x0350 CONN=1 CHIP=1 ./init_pkt15_g4_thr10.sh
+TDC=0x0350 CONN=1 ./reset
+TDC=0x0350 CONN=2 ./threshold_all 100
+
+TDC=0x0350 ./init_pkt15_g4_thr10.sh

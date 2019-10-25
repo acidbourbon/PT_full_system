@@ -197,7 +197,11 @@ RUN apt-get update && \
 
   
 
-#ENV HOME=/workdir
+ENV HOME=/workdir
+
+RUN pip3 install jupyter
+
+RUN cd /opt; git clone https://github.com/lambdalisue/jupyter-vim-binding
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #

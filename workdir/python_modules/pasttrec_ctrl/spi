@@ -1,0 +1,53 @@
+#!/bin/bash
+
+function usage {
+  echo 'usage:     TDC=<TDC> CONN=<CONN> CHIP=<0|1>./spi <data_file>'
+  echo "            CONN can be 1..16"
+  echo 
+  echo 'example:   TDC=0x0351 CONN=1 CHIP=0 ./spi chip0_settings.txt' 
+  exit
+}
+
+
+if [ -z $CONN ]; then
+  echo 'error: $CONN not set'
+  usage
+fi
+
+if [ -z $TDC ]; then
+  echo 'error: $TDC not set'
+  usage
+fi
+
+if [ -z $CHIP ]; then
+  echo 'error: $CHIP not set'
+  usage
+fi
+
+if [ -z $1 ]; then
+  echo 'error: no data file given'
+  usage
+fi
+
+
+
+prefix="0x"
+
+if [ $CHIP == "0" ]; then
+prefix="0x52"
+elif [ $CHIP == "1" ]; then
+prefix="0x54"
+else
+	echo 'error: wrong $CHIP setting'
+	usage
+fi
+
+
+# now parse the data word file line by line
+while read line; do
+
+# writing one data word
+echo "${prefix}${line}" >/dev/ttyACM0
+
+
+done < $1

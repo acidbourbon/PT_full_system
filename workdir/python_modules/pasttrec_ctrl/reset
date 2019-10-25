@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+echo -e "r\n\r\n\r" > /dev/ttyACM0

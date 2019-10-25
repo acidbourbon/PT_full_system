@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+thresh=$1
+
+
+./spi <(echo "3"$(printf "%02x" $thresh) )
+

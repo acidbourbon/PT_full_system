@@ -3,6 +3,8 @@
 # set home to workdir
 if [ $(whoami) != "root" ]; then export HOME=/workdir ;fi
 
+export PYTHONPATH=\$PYTHONPATH:/workdir/python_modules
+
 echo "container started"
 
 echo "create main tmux session"
@@ -54,6 +56,7 @@ tmux new-window -t main -n "sc_web"  "sleep 5 && $BROWSER http://localhost:$CTS_
 tmux new-window -t main -n "cts_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/cts/cts.htm "
 tmux new-window -t main -n "tdc_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/tdc/tdc.htm "
 tmux new-window -t main -n "ana_web" "sleep 5 && $BROWSER http://localhost:$GO4_WEB_PORT"
+tmux new-window -t main -n "jupyter" "cd jupyter && ./start_jupyter.sh"
 tmux select-window -t main:info
 
 ## finally attach your screen to the main session that you prepared
