@@ -203,6 +203,13 @@ RUN pip3 install jupyter
 
 RUN cd /opt; git clone https://github.com/lambdalisue/jupyter-vim-binding
 
+RUN apt-get update && \
+  apt-get -y install \
+  picocom
+
+RUN pip3 install pyserial
+RUN pip3 install pandas
+
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #
 #RUN echo "cd /workdir/; /bin/bash" >> entrypoint.sh

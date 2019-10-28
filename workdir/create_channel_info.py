@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import db
 import os
@@ -6,7 +6,10 @@ import shutil
 
 tdc_list = db.tdc_list();
 
-shutil.rmtree("unify_channel_info")
+try:
+  shutil.rmtree("unify_channel_info")
+except:
+  pass
 
 os.mkdir("unify_channel_info")  
 
