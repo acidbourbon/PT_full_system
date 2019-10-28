@@ -9,4 +9,4 @@ kill -s SIGINT $go4pid # send termination signal to go4analysis
 wait # wait for go4analysis to finish
 
 # optional: display data in tbrowser
-root -b -l unify.C -q; ./rbrowse joint_tree.root
+#root -b -l unify.C -q; ./rbrowse joint_tree.root
