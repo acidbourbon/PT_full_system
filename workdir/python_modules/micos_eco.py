@@ -14,9 +14,12 @@ def send_cmd(cmd,**kwargs):
     ser.write(str.encode(cmd)+b"\r\n")
     line = ser.readline().decode()
     ser.close()
-    line.replace("\r","")
-    line.replace("\n","")
+    line = line.replace("\r","")
+    line = line.replace("\n","")
     return line 
+
+def cal():
+  send_cmd("cal")
 
 def pos():
   pattern =  re.compile("([0-9E+\-.]+)\s+([0-9E+\-.]+)\s+([0-9E+\-.]+)")
@@ -41,6 +44,9 @@ def move(**kwargs):
   print("done")
 
 
+
 #enable axis 1,2
 send_cmd("1 1 setaxis")
 send_cmd("1 2 setaxis")
+send_cmd("2.0 1 setpitch")
+send_cmd("2.0 2 setpitch")

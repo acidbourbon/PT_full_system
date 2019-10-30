@@ -15,8 +15,8 @@ def send_cmd(cmd,**kwargs):
     ser.write(str.encode(cmd)+b"\r\n")
     line = ser.readline().decode()
     ser.close()
-    line.replace("\r","")
-    line.replace("\n","")
+    line = line.replace("\r","")
+    line = line.replace("\n","")
     return line 
 
 def read_line(**kwargs):
@@ -24,8 +24,8 @@ def read_line(**kwargs):
   with serial.Serial(device, baudrate, timeout=timeout) as ser:
     line = ser.readline().decode()
     ser.close()
-    line.replace("\r","")
-    line.replace("\n","")
+    line = line.replace("\r","")
+    line = line.replace("\n","")
     return line 
 
 def set_angle(deg):
