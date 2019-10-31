@@ -42,7 +42,7 @@ tmux new-window -t main -n "dabc" "dabc_exe TdcEventBuilder_noHLD.xml;/bin/bash"
 
 
 GO4_WEB_PORT=8080
-tmux new-window -t main -n "go4_ana" "rm *.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:$GO4_WEB_PORT;/bin/bash"
+#tmux new-window -t main -n "go4_ana" "rm *.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:$GO4_WEB_PORT;/bin/bash"
 
 #tmux new-window -t main -n "PT_ctrl" "cd /workdir/pasttrec_ctrl; /bin/bash"
 tmux new-window -t main -n "new" "/bin/bash"
@@ -53,9 +53,9 @@ tmux new-window -t main -n "new" "/bin/bash"
 # open CTS GUI and GO4 Web interface in firefox (running in VNC)
 #tmux new-window -t main -n "x11_apps" "sleep 5 && firefox -new-tab -url localhost:$CTS_GUI_PORT -new-tab -url localhost:$GO4_WEB_PORT& /bin/bash"
 tmux new-window -t main -n "sc_web"  "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT "
-tmux new-window -t main -n "cts_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/cts/cts.htm "
-tmux new-window -t main -n "tdc_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/tdc/tdc.htm "
-tmux new-window -t main -n "ana_web" "sleep 5 && $BROWSER http://localhost:$GO4_WEB_PORT"
+#tmux new-window -t main -n "cts_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/cts/cts.htm "
+#tmux new-window -t main -n "tdc_web" "sleep 5 && $BROWSER http://localhost:$CTS_GUI_PORT/tdc/tdc.htm "
+#tmux new-window -t main -n "ana_web" "sleep 5 && $BROWSER http://localhost:$GO4_WEB_PORT"
 tmux new-window -t main -n "jupyter" "cd jupyter && ./start_jupyter.sh"
 tmux select-window -t main:info
 

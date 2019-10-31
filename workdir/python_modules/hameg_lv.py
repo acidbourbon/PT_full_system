@@ -3,7 +3,9 @@ import time
 
 import serial
 
-device = '/dev/ttyUSB_HAMEG_TRB'
+from hameg_trb import *
+
+device = '/dev/ttyUSB_HAMEG_LV'
 baudrate = 9600
 
 

@@ -32,5 +32,5 @@ def set_angle(deg):
   send_cmd(str(deg))
   time.sleep(4)
 
-def read_angle():
+def get_angle():
   return float(read_line().replace("pos degree ",""))

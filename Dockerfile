@@ -209,6 +209,7 @@ RUN apt-get update && \
 
 RUN pip3 install pyserial
 RUN pip3 install pandas
+RUN pip3 install trbnet
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #

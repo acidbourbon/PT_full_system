@@ -14,10 +14,11 @@
   "global_settings": {
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
-    "reference_channel": 35049,
+    "reference_channel": 35106,
     "spike_rejection": 15,
     "spike_rejection_refchan": 10,
-    "threshold_noise_scan_limit": 64
+    "threshold_noise_scan_limit": 64,
+    "uncommented_reference_channel": 35049
   },
   "hub": [
     {
