@@ -44,3 +44,12 @@ def get_state(channel):
 
 def set_state(channel,state):
   send_cmd("INST OUT{:d}\nOUTP:STATE {:d}".format(channel,state))
+
+def report():
+  print("device: {:s}".format(device))
+  for i in range(1,5):
+    print("volt {:f} curr {:f} state {:d}".format( get_volt(i), get_curr(i), get_state(i))) 
+    
+    
+    
+    
