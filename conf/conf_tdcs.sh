@@ -4,9 +4,6 @@ for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503; do
 	# invert the first 32 channels
 	#trbcmd w $TDC 0xc805 0xFFFFFFFF
 
-	# invert the first 48 channels 
-	trbcmd w $TDC 0xc805 0xFFFFFFFF
-	trbcmd w $TDC 0xc806 0xFFFF
 
 	# enable trigger windows +-1000 ns
 	trbcmd w $TDC 0xc801 0x814000c8
@@ -31,15 +28,21 @@ for TDC in 0x0350 0x0351; do
 done
 
 
-### reference time TDC ###
+# PASTTREC TDC #
 
 for TDC in 0x0350; do
+	# invert the first 48 channels 
+	trbcmd w $TDC 0xc805 0xFFFFFFFF
+	trbcmd w $TDC 0xc806 0xFFFF
 
 	# non- invert the first channel 
 	#trbcmd clearbit $TDC 0xc805 0x1
 	
 	# enable the first channel
 	#trbcmd setbit $TDC 0xc802 0x1
+
+	# enable the first two PASTTRECS
+	trbcmd setbit $TDC 0xc802 0xFFFFFFFF
 
 	# enable the 49th channel
 	trbcmd setbit $TDC 0xc803 0x10000
@@ -58,5 +61,24 @@ for TDC in 0x0350; do
 	# stretcher on, five cycles
 	#trbcmd setbit $TDC 0xe200 0x10005
         echo " --- "
+
+done
+
+for TDC in 0x0351; do
+
+
+	# enable the first two CONNS for PADIWA and Scintis
+	#trbcmd setbit $TDC 0xc802 0xFFFFFFFF
+
+	# enable the PADIWA chans and the scintillators
+	trbcmd w $TDC 0xc802 $(perl -e "printf(\"0x%X\", 0b01010000000010010000000000001100 )")
+	#trbcmd w $TDC 0xc802 0x5009000C
+
+	# invert the si_strip
+	trbcmd w $TDC 0xc805 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
+
+	# set trigger on the horizontal scintillator
+	trbcmd w $TDC 0xdf00 $(perl -e "printf(\"0x%X\", 0b01000000000000000000000000000000 )")
+	trbcmd w $TDC 0xdf01 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000000 )")
 
 done

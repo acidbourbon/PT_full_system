@@ -1,5 +1,5 @@
 # CTS Configuration dump
-#  generated:        2019-04-12 13:24
+#  generated:        2019-11-05 12:47
 #  CTS Compile time: 2019-01-21 14:47
 #
 # trbcmd Dev.   Reg.   Value
@@ -8,7 +8,7 @@ trbcmd w 0xc035 0xa008 0xffffffff  # cts_fsm_limits: ro=65535, td=65535
 trbcmd w 0xc035 0xa009 0x00000001  # cts_readout_config: 
                             # channel_cnt=false, idle_dead_cnt=false, input_cnt=true
                             # timestamp=false, trg_cnt=false
-trbcmd w 0xc035 0xa00c 0x80000400  # cts_throttle: enable=true, stop=false, threshold=0
+trbcmd w 0xc035 0xa00c 0x80000000  # cts_throttle: enable=false, stop=false, threshold=0
 trbcmd w 0xc035 0xa00d 0x00000001  # cts_eventbuilder: 
                             # cal_eb=0, mask=0000 0000 0000 0001, rr_interval=0
                             # use_cal_eb=false
@@ -41,11 +41,11 @@ trbcmd w 0xc035 0xa14a 0x00000004  # trg_addon_output_mux4: input=itc[4]
 trbcmd w 0xc035 0xa14b 0x00000005  # trg_addon_output_mux5: input=itc[5]
 trbcmd w 0xc035 0xa14c 0x00000006  # trg_addon_output_mux6: input=itc[6]
 trbcmd w 0xc035 0xa14d 0x00000007  # trg_addon_output_mux7: input=itc[7]
-trbcmd w 0xc035 0xa14f 0x00000002  # trg_periph_config0: mask=0000 0000 0000 0000 0010
+trbcmd w 0xc035 0xa14f 0x00000040  # trg_periph_config0: mask=0000 0000 0000 0100 0000
 trbcmd w 0xc035 0xa150 0x00000000  # trg_periph_config1: mask=0000 0000 0000 0000 0000
 trbcmd w 0xc035 0xa151 0x00000000  # trg_periph_config2: mask=0000 0000 0000 0000 0000
 trbcmd w 0xc035 0xa152 0x00000000  # trg_periph_config3: mask=0000 0000 0000 0000 0000
-trbcmd w 0xc035 0xa154 0x000061a7  # trg_pulser_config0: low_duration=24999
+trbcmd w 0xc035 0xa154 0xffffffff  # trg_pulser_config0: low_duration=4294967295
 trbcmd w 0xc035 0xa155 0x00000003  # trg_pulser_config1: low_duration=3
 trbcmd w 0xc035 0xa157 0x00000000  # trg_random_pulser_config0: threshold=0
 trbcmd w 0xc035 0xa159 0x1111111d  # _trg_trigger_types0: 
