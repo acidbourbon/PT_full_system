@@ -1,5 +1,5 @@
 # CTS Configuration dump
-#  generated:        2019-11-05 12:47
+#  generated:        2019-11-05 16:49
 #  CTS Compile time: 2019-01-21 14:47
 #
 # trbcmd Dev.   Reg.   Value
@@ -8,7 +8,7 @@ trbcmd w 0xc035 0xa008 0xffffffff  # cts_fsm_limits: ro=65535, td=65535
 trbcmd w 0xc035 0xa009 0x00000001  # cts_readout_config: 
                             # channel_cnt=false, idle_dead_cnt=false, input_cnt=true
                             # timestamp=false, trg_cnt=false
-trbcmd w 0xc035 0xa00c 0x80000000  # cts_throttle: enable=false, stop=false, threshold=0
+trbcmd w 0xc035 0xa00c 0x80000400  # cts_throttle: enable=true, stop=false, threshold=0
 trbcmd w 0xc035 0xa00d 0x00000001  # cts_eventbuilder: 
                             # cal_eb=0, mask=0000 0000 0000 0001, rr_interval=0
                             # use_cal_eb=false

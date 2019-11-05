@@ -5,7 +5,14 @@ import re
 from time import sleep
 
 
+def trbcmd_write(TDC,register,data):
+  os.system("trbcmd w {:s} 0x{:x} 0x{:x}".format(TDC,register,data))
+  #print("trbcmd w {:s} 0x{:x} 0x{:x}".format(TDC,register,data))
 
+def padiwa_thresh(TDC,chan,thresh):
+  #print("PERL5LIB=/daqtools/perllibs /daqtools/tools/padiwa.pl {:s} 0 pwm {:d} 0x{:x}".format(TDC,chan,thresh))
+  os.system("PERL5LIB=/daqtools/perllibs /daqtools/tools/padiwa.pl {:s} 0 pwm {:d} 0x{:x}".format(TDC,chan,thresh))
+    
 
 
 def read_memory(TDC,register,size):

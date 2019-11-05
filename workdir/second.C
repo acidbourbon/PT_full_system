@@ -29,8 +29,8 @@
 
 
 // Muentz-Torte
-#define t1_L -400 // EE
-#define t1_R 400 // EE
+#define t1_L -800 // EE
+#define t1_R 800 // EE
 #define tot_L -10 // EE
 #define tot_R 2000 // EE
 
