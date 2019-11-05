@@ -71,6 +71,7 @@ def scaler_rate(TDC,channels,time):
   return diff.tolist()
 
 def enable_channels(TDC,channels):
+    pass
 #  mask = 0;
 #  for chan in channels:
 #    mask += 1<<chan
@@ -81,6 +82,7 @@ def enable_channels(TDC,channels):
 
 
 def disable_channels(TDC,channels):
+    pass
 #  mask = 0;
 #  for chan in channels:
 #    mask += 1<<chan
