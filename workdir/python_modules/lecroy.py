@@ -20,7 +20,7 @@ import vxi11
 
 #lecroy = rm.open_resource('TCPIP0::192.168.43.20::INSTR') ## if you use this, set lofirst to False
 
-lecroy = vxi11.Instrument('TCPIP0::192.168.43.20::INSTR')
+lecroy = vxi11.Instrument('TCPIP0::192.168.4.20::INSTR')
 
 ovrride_lofirst = False ## needed if you use lxi
 ovrride_lofirst_val = False ## needed if you use lxi

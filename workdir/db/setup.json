@@ -14,7 +14,7 @@
   "global_settings": {
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
-    "reference_channel": 35106,
+    "reference_channel": 35131,
     "spike_rejection": 15,
     "spike_rejection_refchan": 10,
     "threshold_noise_scan_limit": 64,
@@ -43,7 +43,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0013.json",
               "chamber": 0,
               "fpc_a": 7,
@@ -129,7 +129,7 @@
           "addr": "0x0351",
           "board": [
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0022.json",
               "chamber": 0,
               "fpc_a": 17,
@@ -157,7 +157,7 @@
               "tdc_connector": 3
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0003.json",
               "chamber": 0,
               "fpc_a": 13,
