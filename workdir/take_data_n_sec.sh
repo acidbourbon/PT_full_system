@@ -2,7 +2,7 @@
 
 sec=$1 
 rm *.root
-tree_out=true go4analysis -number 0 -stream localhost:6790 &
+tree_out=true go4analysis -number 0 -stream localhost:6789 &
 go4pid=$!
 sleep $sec # wait $sec seconds
 kill -s SIGINT $go4pid # send termination signal to go4analysis
