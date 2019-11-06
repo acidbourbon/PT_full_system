@@ -8,3 +8,13 @@ def take_data(**kwargs):
     else:
       os.system("cd /workdir; ./take_data_n_evt.sh {:d}".format(events))
     os.system("cd /workdir; root -b -l unify.C -q")
+
+    
+
+def trigger_scinti():
+  import os
+  os.system("cd /conf; ./trigger_scinti.sh")
+    
+def trigger_ufsd():
+  import os
+  os.system("cd /conf; ./trigger_ufsd.sh")
