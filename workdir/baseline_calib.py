@@ -133,12 +133,12 @@ def threshold_noise_scan(board_name):
   ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
-  x = range(0,32)
+  x = list(range(0,32))
 
   global_settings = db.get_global_settings()
   if "threshold_noise_scan_limit" in global_settings:
     threshold_noise_scan_limit = global_settings["threshold_noise_scan_limit"]
-    x = range(0,threshold_noise_scan_limit)
+    x = list(range(0,threshold_noise_scan_limit))
 
   ## set baselines to maximum, so we start scanning below the baseline
   ## and hopefully capture the full noise
@@ -173,7 +173,7 @@ def baseline_noise_scan(board_name):
   ptc.set_threshold_for_board(TDC,connector,0)
   
   result_matrix = []
-  x = range(-15,16)
+  x = list(range(-15,16))
 
   for i in x:
     print( "threshold scan of board "+board_name )
@@ -203,7 +203,7 @@ def individual_channel_baseline_noise_scan(board_name):
   ptc.set_threshold_for_board(TDC,connector,0)
   
   result_matrix = []
-  x = range(-15,16)
+  x = list(range(-15,16))
 
   for i in x:
     print( "threshold scan of board "+board_name )

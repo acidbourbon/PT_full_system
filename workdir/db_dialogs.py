@@ -105,7 +105,7 @@ def board_baseline_report(board_name,**kwargs):
   d = Dialog(dialog="dialog")
 
   report_calib = gen_baseline_report(board_name)
-  report_dummy = ""
+  report_dummy = str("")
   report = report_calib
   if dummy_calib and report_calib:
     report_dummy = gen_baseline_report(board_name,dummy_calib=True)

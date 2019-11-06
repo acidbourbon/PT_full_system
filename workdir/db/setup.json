@@ -1,7 +1,7 @@
 {
   "asic_settings": {
     "default": {
-      "gain": 4,
+      "gain": 1,
       "pktime": 15,
       "threshold": 30
     },
