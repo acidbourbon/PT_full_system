@@ -78,27 +78,33 @@ void correlation(void){
         Int_t hit_b_wire = this_event->hits[hit_no_b].wire;
 
           coinc_matrix->Fill(hit_a_chan,hit_b_chan);
-          if(hit_a_wire &&  hit_b_wire ){
+//           if(hit_a_wire &&  hit_b_wire ){
              Float_t t1_a = this_event->hits[hit_no_a].t1;
              Float_t t1_b = this_event->hits[hit_no_b].t1;
              meta_fish->Fill(t1_a +t1_b, t1_a -t1_b);	
                 
-             if(this_event->hits[hit_no_a].t1 < t1_L && this_event->hits[hit_no_b].t1 < t1_L) {
+             if(this_event->hits[hit_no_a].t1 > t1_L && this_event->hits[hit_no_b].t1 > t1_L) {
     
                if(this_event->hits[hit_no_a].layer == this_event->hits[hit_no_b].layer) {
                  // do not correlate stuff from the same layer
-               } else if( this_event->hits[hit_no_a].chamber ==  this_event->hits[hit_no_b].chamber ){   // same chamber!
-                   if(this_event->hits[hit_no_a].tot >100 && this_event->hits[hit_no_a].tot < 250 ){
+               } else if(
+                   this_event->hits[hit_no_a].chamber == chamber_a &&  this_event->hits[hit_no_b].chamber == chamber_b  &&
+                   this_event->hits[hit_no_a].layer == layer_a     &&  this_event->hits[hit_no_b].layer == layer_b  &&
+                   this_event->hits[hit_no_a].wire == wire_a     &&  this_event->hits[hit_no_b].wire == wire_b                    
+                        ){  
+                   if(this_event->hits[hit_no_a].tot >tot_L && this_event->hits[hit_no_a].tot < tot_R ){
+                    if(this_event->hits[hit_no_b].tot >tot_L && this_event->hits[hit_no_b].tot < tot_R ){
                      coinc_matrix_wire_cut->Fill(hit_a_wire,hit_b_wire);
 
                      // this_event->hits[hit_no_a].t1
                      // so kriegst du auch andere Groessen (chan, trig_no, tot, wire, layer, fpc, chamber ...)
 
                      meta_fish_cut->Fill(t1_a +t1_b, t1_a -t1_b);
+                    }
                    } else coinc_matrix_wire->Fill(hit_a_wire,hit_b_wire);
                }
              } 
-        }
+//         }
 
       }
     }
@@ -108,11 +114,11 @@ void correlation(void){
   out_file->Write();
 //~ 
 TCanvas * can_conic = new TCanvas("can_conic","can_conic",1000,600);
-can_conic->Divide(2,1);
-can_conic->cd(1);
-coinc_matrix_wire->Draw("colz");
-//~ meta_fish->Draw("colz");
-can_conic->cd(2);
-coinc_matrix_wire_cut->Draw("colz");
-//~ meta_fish_cut->Draw("colz");
+// can_conic->Divide(2,1);
+// can_conic->cd(1);
+// coinc_matrix_wire->Draw("colz");
+// //~ meta_fish->Draw("colz");
+// can_conic->cd(2);
+// coinc_matrix_wire_cut->Draw("colz");
+  meta_fish_cut->Draw("colz");
 }

@@ -14,7 +14,7 @@
   "global_settings": {
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
-    "reference_channel": 35131,
+    "reference_channel": 35103,
     "spike_rejection": 15,
     "spike_rejection_refchan": 10,
     "t1_L": -200,
