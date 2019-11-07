@@ -1,3 +1,3 @@
 #!/bin/bash
 
-root -l correlation.C
+root -l correlation.C -b -q
