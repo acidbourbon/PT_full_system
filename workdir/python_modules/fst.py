@@ -9,6 +9,15 @@ def take_data(**kwargs):
       os.system("cd /workdir; ./take_data_n_evt.sh {:d}".format(events))
     #os.system("cd /workdir; root -b -l unify.C -q")
 
+
+def take_raw_data(**kwargs):
+    import os
+    time = float(kwargs.get("time",10))
+    label = kwargs.get("label","")
+    os.system("cd /workdir; ./take_raw_data_n_sec.sh {:f} {:s}".format(time,label))
+
+
+
     
 
 def trigger_scinti():

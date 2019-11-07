@@ -1,7 +1,7 @@
 import json
 import os
 
-root_dir   = "./db/"
+root_dir   = "/workdir/db/"
 setup_file = "setup.json"
 
 def dump_db_to_root(outfile):

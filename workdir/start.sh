@@ -42,7 +42,7 @@ tmux new-window -t main -n "dabc" "dabc_exe TdcEventBuilder_noHLD.xml;/bin/bash"
 
 
 GO4_WEB_PORT=8080
-tmux new-window -t main -n "go4_ana" "rm *.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:$GO4_WEB_PORT;/bin/bash"
+tmux new-window -t main -n "go4_ana" "rm Go4AutoSave.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:$GO4_WEB_PORT;/bin/bash"
 
 #tmux new-window -t main -n "PT_ctrl" "cd /workdir/pasttrec_ctrl; /bin/bash"
 tmux new-window -t main -n "new" "/bin/bash"
