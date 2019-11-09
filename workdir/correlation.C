@@ -65,14 +65,49 @@ void correlation(void){
 
   TH2F* meta_fish = new TH2F("meta_fish","meta_fish", 125, -250, 250, 125, -250, 250);
   TH2F* meta_fish_cut = new TH2F("meta_fish_cut","meta_fish_cut", 125, -250, 250, 125, -250, 250);
+  
+  TH1F* wire_a_t1_scinti_cut = new TH1F("wire_a_t1_scinti_cut","wire_a_t1_scinti_cut", 200, -100, 100);
+  TH1F* wire_a_tot_scinti_cut = new TH1F("wire_a_tot_scinti_cut","wire_a_tot_scinti_cut", 900, -100, 800);
+  TH1F* wire_b_t1_scinti_cut = new TH1F("wire_b_t1_scinti_cut","wire_b_t1_scinti_cut", 200, -100, 100);
+  TH1F* wire_b_tot_scinti_cut = new TH1F("wire_b_tot_scinti_cut","wire_b_tot_scinti_cut", 900, -100, 800);
+  
+  TH1F* scinti_t1_scinti_cut = new TH1F("scinti_t1_scinti_cut","scinti_t1_scinti_cut", 200, -100, 100);
+  TH1F* scinti_tot_scinti_cut = new TH1F("scinti_tot_scinti_cut","scinti_tot_scinti_cut", 900, -100, 800);
+  TH1F* scinti_t1 = new TH1F("scinti_t1","scinti_t1", 200, -100, 100);
+  TH1F* scinti_tot = new TH1F("scinti_tot","scinti_tot", 900, -100, 800);
+  
 
   for (Int_t evt_no = 0; evt_no < joint_tree->GetEntries(); evt_no++){
 
     joint_tree->GetEntry(evt_no);
+    
+    Float_t wire_a_t1_candidate  = -1000;
+    Float_t wire_b_t1_candidate  = -1000;
+    Float_t wire_a_tot_candidate = -1000;
+    Float_t wire_b_tot_candidate = -1000;
+    Float_t my_scinti_t1 = -1000;
+    Float_t my_scinti_tot = -1000;
 
     for (Int_t hit_no_a = 0; hit_no_a < this_event->hits.size(); hit_no_a++){
       Int_t hit_a_chan = this_event->hits[hit_no_a].chan;
       Int_t hit_a_wire = this_event->hits[hit_no_a].wire;
+      
+      if (         this_event->hits[hit_no_a].chamber == chamber_a &&
+                   this_event->hits[hit_no_a].layer == layer_a && 
+                   this_event->hits[hit_no_a].wire == wire_a     ){
+         // we have wire a hit
+        wire_a_t1_candidate  = this_event->hits[hit_no_a].t1;
+        wire_a_tot_candidate = this_event->hits[hit_no_a].tot;
+      }
+      if (  this_event->hits[hit_no_a].chan == scinti_chan ){
+        my_scinti_t1   = this_event->hits[hit_no_a].t1;
+        my_scinti_tot  = this_event->hits[hit_no_a].tot;
+      }
+        
+      
+      
+                     
+      
       for (Int_t hit_no_b = hit_no_a; hit_no_b < this_event->hits.size(); hit_no_b++){
         Int_t hit_b_chan = this_event->hits[hit_no_b].chan;
         Int_t hit_b_wire = this_event->hits[hit_no_b].wire;
@@ -108,6 +143,27 @@ void correlation(void){
 
       }
     }
+    
+    /////////////   filling the cleaned histos
+    if (my_scinti_t1 > -1000){
+      scinti_t1->Fill(my_scinti_t1);
+      scinti_tot->Fill(my_scinti_tot);
+    }
+    if (my_scinti_t1 > scinti_cut_L && my_scinti_t1 < scinti_cut_R){
+      scinti_t1_scinti_cut->Fill(my_scinti_t1);
+      scinti_tot_scinti_cut->Fill(my_scinti_tot);
+      
+      if (wire_a_t1_candidate > -1000 ){
+        wire_a_t1_scinti_cut->Fill(wire_a_t1_candidate);
+        wire_a_tot_scinti_cut->Fill(wire_a_tot_candidate);
+      }
+      if (wire_b_t1_candidate > -1000 ){
+        wire_b_t1_scinti_cut->Fill(wire_b_t1_candidate);
+        wire_b_tot_scinti_cut->Fill(wire_b_tot_candidate);
+      }
+    }
+    
+    
 
   }
   

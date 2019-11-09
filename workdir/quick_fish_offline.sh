@@ -1,6 +1,6 @@
 #!/bin/bash
 
-number=1000
+number=5000
 data_dir=$1
 if [ -e $data_dir/joint_tree_prev$number.root ]; then
 echo "was already unpacked"

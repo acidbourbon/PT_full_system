@@ -42,6 +42,7 @@ def archive(**kwargs):
     
   os.system("cp {:s} {:s}/".format(notebook,archive_dir))
   os.system("cp -R {:s} {:s}/".format(data_dir,archive_dir))
+  print("archived to {:s}".format(archive_dir))
 
 
 
