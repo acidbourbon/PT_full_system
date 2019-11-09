@@ -65,6 +65,7 @@ void correlation(void){
 
   TH2F* meta_fish = new TH2F("meta_fish","meta_fish", 125, -250, 250, 125, -250, 250);
   TH2F* meta_fish_cut = new TH2F("meta_fish_cut","meta_fish_cut", 125, -250, 250, 125, -250, 250);
+  TH2F* meta_fish_scinti_cut = new TH2F("meta_fish_scinti_cut","meta_fish_scinti_cut", 125, -250, 250, 125, -250, 250);
   
   TH1F* wire_a_t1_scinti_cut = new TH1F("wire_a_t1_scinti_cut","wire_a_t1_scinti_cut", 200, -100, 100);
   TH1F* wire_a_tot_scinti_cut = new TH1F("wire_a_tot_scinti_cut","wire_a_tot_scinti_cut", 900, -100, 800);
@@ -99,14 +100,22 @@ void correlation(void){
         wire_a_t1_candidate  = this_event->hits[hit_no_a].t1;
         wire_a_tot_candidate = this_event->hits[hit_no_a].tot;
       }
+      if (         this_event->hits[hit_no_a].chamber == chamber_b &&
+                   this_event->hits[hit_no_a].layer == layer_b && 
+                   this_event->hits[hit_no_a].wire == wire_b     ){
+         // we have wire b hit
+        wire_b_t1_candidate  = this_event->hits[hit_no_a].t1;
+        wire_b_tot_candidate = this_event->hits[hit_no_a].tot;
+      }
+      
+      
+      
+      
       if (  this_event->hits[hit_no_a].chan == scinti_chan ){
         my_scinti_t1   = this_event->hits[hit_no_a].t1;
         my_scinti_tot  = this_event->hits[hit_no_a].tot;
       }
         
-      
-      
-                     
       
       for (Int_t hit_no_b = hit_no_a; hit_no_b < this_event->hits.size(); hit_no_b++){
         Int_t hit_b_chan = this_event->hits[hit_no_b].chan;
@@ -160,6 +169,9 @@ void correlation(void){
       if (wire_b_t1_candidate > -1000 ){
         wire_b_t1_scinti_cut->Fill(wire_b_t1_candidate);
         wire_b_tot_scinti_cut->Fill(wire_b_tot_candidate);
+      }
+      if (wire_a_t1_candidate > -1000  && wire_b_t1_candidate > -1000 ){
+        meta_fish_scinti_cut->Fill(wire_a_t1_candidate + wire_b_t1_candidate, wire_a_t1_candidate - wire_b_t1_candidate );
       }
     }
     
