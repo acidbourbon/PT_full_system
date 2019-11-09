@@ -28,10 +28,10 @@ def trigger_ufsd():
   import os
   os.system("cd /conf; ./trigger_ufsd.sh")
     
-def wait_for_spill():
+def wait_for_spill(**kwargs):
  # untested
- import scaler
- trigger_rate_threshold = 4000
+ import scalers
+ trigger_rate_threshold = kwargs.get("threshold_rate",4000)
  poll_acq_time = 1
  ### wait for spill start
  trig_chan = 30
@@ -39,10 +39,26 @@ def wait_for_spill():
    curr_rates = scalers.scaler_rate("0x0351",[trig_chan],poll_acq_time)
    scint_rate = curr_rates[0]
    if scint_rate > trigger_rate_threshold*poll_acq_time:
-     print("## spill start ##")
+     print("\n## spill start ##")
      break
    else:
-     print(".", end=" ")
+     print("br", end=" ")
+        
+def wait_for_spill_break(**kwargs):
+ # untested
+ import scalers
+ trigger_rate_threshold = kwargs.get("threshold_rate",4000)
+ poll_acq_time = 1
+ ### wait for spill start
+ trig_chan = 30
+ while True:
+   curr_rates = scalers.scaler_rate("0x0351",[trig_chan],poll_acq_time)
+   scint_rate = curr_rates[0]
+   if scint_rate < trigger_rate_threshold*poll_acq_time:
+     print("\n## spill break ##")
+     break
+   else:
+     print("sp", end=" ")
         
 #    ### wait for spill break
 #    while True:
