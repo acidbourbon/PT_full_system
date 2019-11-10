@@ -135,7 +135,7 @@ def pickle_this(this,name):
     
 def unpickle(name):
   import pickle
-  picklefile = "{:s}.pickle".format(name)
+  picklefile = "{:s}".format(name)
   print("loading from "+picklefile)
   return pickle.load(open(picklefile,"rb"))
 

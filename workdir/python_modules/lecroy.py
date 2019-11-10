@@ -137,7 +137,7 @@ def trigger_n_times(n,**kwargs):
     lecroy.write(r"""vbs 'app.ClearSweeps ' """)
     
   for i in range(0,n):
-    r = lecroy.ask(r"""vbs? 'return=app.acquisition.acquire( 0.1 , True )' """)
+    r = lecroy.ask(r"""vbs? 'return=app.acquisition.acquire( 10 , True )' """)
     r = lecroy.ask(r"""vbs? 'return=app.WaitUntilIdle(5)' """)
     if r==0:
       print ("Time out from WaitUntilIdle, return = {0}".format(r))
