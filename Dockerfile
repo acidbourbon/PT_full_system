@@ -214,7 +214,8 @@ RUN pip3 install trbnet
 RUN apt-get update && \
   apt-get -y install \
   nano \
-  parallel
+  parallel \
+  imagemagick
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #
