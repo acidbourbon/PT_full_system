@@ -211,6 +211,11 @@ RUN pip3 install pyserial
 RUN pip3 install pandas
 RUN pip3 install trbnet
 
+RUN apt-get update && \
+  apt-get -y install \
+  nano \
+  parallel
+
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #
 #RUN echo "cd /workdir/; /bin/bash" >> entrypoint.sh

@@ -14,10 +14,10 @@
   "global_settings": {
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
-    "reference_channel": 35131,
+    "reference_channel": 35103,
     "spike_rejection": 15,
     "spike_rejection_refchan": 10,
-    "t1_L": -200,
+    "t1_L": -10,
     "t1_R": 800,
     "threshold_noise_scan_limit": 64,
     "tot_L": -10,

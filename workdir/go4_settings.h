@@ -3,10 +3,10 @@
 
 #define CHANNELS 53
 #define max_baseline_stddev 2.5
-#define reference_channel 35131
+#define reference_channel 35103
 #define spike_rejection 15
 #define spike_rejection_refchan 10
-#define t1_L -200
+#define t1_L -10
 #define t1_R 800
 #define threshold_noise_scan_limit 64
 #define tot_L -10
