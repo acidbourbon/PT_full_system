@@ -69,8 +69,10 @@ void correlation(void){
   
   TH1F* wire_a_t1_scinti_cut = new TH1F("wire_a_t1_scinti_cut","wire_a_t1_scinti_cut", 200, -100, 100);
   TH1F* wire_a_tot_scinti_cut = new TH1F("wire_a_tot_scinti_cut","wire_a_tot_scinti_cut", 900, -100, 800);
+  TH2F* wire_a_potato_scinti_cut = new TH2F("wire_a_potato_scinti_cut","wire_a_potato_scinti_cut",200, -100, 100, 200, 0, 400);
   TH1F* wire_b_t1_scinti_cut = new TH1F("wire_b_t1_scinti_cut","wire_b_t1_scinti_cut", 200, -100, 100);
   TH1F* wire_b_tot_scinti_cut = new TH1F("wire_b_tot_scinti_cut","wire_b_tot_scinti_cut", 900, -100, 800);
+  TH2F* wire_b_potato_scinti_cut = new TH2F("wire_b_potato_scinti_cut","wire_b_potato_scinti_cut",200, -100, 100, 200, 0, 400);
   
   TH1F* scinti_t1_scinti_cut = new TH1F("scinti_t1_scinti_cut","scinti_t1_scinti_cut", 200, -100, 100);
   TH1F* scinti_tot_scinti_cut = new TH1F("scinti_tot_scinti_cut","scinti_tot_scinti_cut", 900, -100, 800);
@@ -165,10 +167,12 @@ void correlation(void){
       if (wire_a_t1_candidate > -1000 ){
         wire_a_t1_scinti_cut->Fill(wire_a_t1_candidate);
         wire_a_tot_scinti_cut->Fill(wire_a_tot_candidate);
+        wire_a_potato_scinti_cut->Fill(wire_a_t1_candidate,wire_a_tot_candidate);
       }
       if (wire_b_t1_candidate > -1000 ){
         wire_b_t1_scinti_cut->Fill(wire_b_t1_candidate);
         wire_b_tot_scinti_cut->Fill(wire_b_tot_candidate);
+        wire_b_potato_scinti_cut->Fill(wire_b_t1_candidate,wire_b_tot_candidate);
       }
       if (wire_a_t1_candidate > -1000  && wire_b_t1_candidate > -1000 ){
         meta_fish_scinti_cut->Fill(wire_a_t1_candidate + wire_b_t1_candidate, wire_a_t1_candidate - wire_b_t1_candidate );

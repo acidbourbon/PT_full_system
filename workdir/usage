@@ -78,3 +78,6 @@ dummy_tsbl_tree->Draw("dummy_calib_tsbl_scan_raw:wires>>noise_scan(140,0,140,32,
 # reload one or more TDCs and properly address and configure them again, also enable formerly active tdc channels:
 #
 ./GUReset.sh 0x0350 0x0353
+
+
+./recorrelate_id.sh id062
