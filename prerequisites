@@ -1,0 +1,10 @@
+sudo apt-get install rpcbind docker.io openssh-server
+
+sudo usermod -a -G docker [user]
+
+reboot
+
+sudo service docker start
+sudo service rpcbind start
+
+./build_and_run_root.sh

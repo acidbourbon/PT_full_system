@@ -12,3 +12,4 @@
 *.svg
 *.pickle
 .ipynb_checkpoints
+conf/conf_log.txt
