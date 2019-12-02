@@ -1,3 +1,4 @@
+docker kill fst
 docker build -t fst . || exit
 #xhost +si:localuser:root
 docker run --net host -v $(pwd)/conf:/conf -v $(pwd)/workdir:/workdir --rm -it \

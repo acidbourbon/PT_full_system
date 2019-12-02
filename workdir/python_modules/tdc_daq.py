@@ -71,25 +71,25 @@ def scaler_rate(TDC,channels,time):
   return diff.tolist()
 
 def enable_channels(TDC,channels):
-    pass
-#  mask = 0;
-#  for chan in channels:
-#    mask += 1<<chan
-#  upper_mask = (mask & 0xFFFFFFFF00000000)>>32
-#  lower_mask = mask & 0x00000000FFFFFFFF
-#  os.system("trbcmd setbit {:s} 0xc802 {:d}".format(TDC,lower_mask))
-#  os.system("trbcmd setbit {:s} 0xc803 {:d}".format(TDC,upper_mask))
+#    pass
+  mask = 0
+  for chan in channels:
+    mask += 1<<chan
+  upper_mask = (mask & 0xFFFFFFFF00000000)>>32
+  lower_mask = mask & 0x00000000FFFFFFFF
+  os.system("trbcmd setbit {:s} 0xc802 {:d}".format(TDC,lower_mask))
+  os.system("trbcmd setbit {:s} 0xc803 {:d}".format(TDC,upper_mask))
 
 
 def disable_channels(TDC,channels):
-    pass
-#  mask = 0;
-#  for chan in channels:
-#    mask += 1<<chan
-#  upper_mask = (mask & 0xFFFFFFFF00000000)>>32
-#  lower_mask = mask & 0x00000000FFFFFFFF
-#  os.system("trbcmd clearbit {:s} 0xc802 {:d}".format(TDC,lower_mask))
-#  os.system("trbcmd clearbit {:s} 0xc803 {:d}".format(TDC,upper_mask))
+#    pass
+  mask = 0
+  for chan in channels:
+    mask += 1<<chan
+  upper_mask = (mask & 0xFFFFFFFF00000000)>>32
+  lower_mask = mask & 0x00000000FFFFFFFF
+  os.system("trbcmd clearbit {:s} 0xc802 {:d}".format(TDC,lower_mask))
+  os.system("trbcmd clearbit {:s} 0xc803 {:d}".format(TDC,upper_mask))
 
 
 def enable_tdc_channels_of_active_boards():

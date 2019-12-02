@@ -16,14 +16,11 @@ done
 
 ### tdcs with pasttrec attached ###
 
-for TDC in 0x0350 0x0351; do
+for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503; do
 
-	# enable the first 16 channels (CONN1)
-	 #trbcmd setbit $TDC 0xc802 0x0000FFFF
-
-	# enable the second 16 channels (CONN2)
-	#trbcmd setbit $TDC 0xc802 0xFFFF0000
-       echo "do nothing here"
+	# invert the first 48 channels 
+	trbcmd w $TDC 0xc805 0xFFFFFFFF
+	trbcmd w $TDC 0xc806 0xFFFF
 
 done
 
@@ -42,7 +39,7 @@ for TDC in 0x0350; do
 	#trbcmd setbit $TDC 0xc802 0x1
 
 	# enable the first two PASTTRECS
-	trbcmd setbit $TDC 0xc802 0xFFFFFFFF
+	#trbcmd setbit $TDC 0xc802 0xFFFFFFFF
 
 	# enable the 49th channel
 	trbcmd setbit $TDC 0xc803 0x10000
@@ -64,26 +61,26 @@ for TDC in 0x0350; do
 
 done
 
-for TDC in 0x0351; do
-
-
-	# enable the first two CONNS for PADIWA and Scintis
-	#trbcmd setbit $TDC 0xc802 0xFFFFFFFF
-
-	# enable the PADIWA chans and the scintillators
-	trbcmd w $TDC 0xc802 $(perl -e "printf(\"0x%X\", 0b01010000000010010000000000001100 )")
-	#trbcmd w $TDC 0xc802 0x5009000C
-
-	# invert the si_strip
-	trbcmd w $TDC 0xc805 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
-
-	# set trigger on the horizontal scintillator
-	trbcmd w $TDC 0xdf00 $(perl -e "printf(\"0x%X\", 0b01000000000000000000000000000000 )")
-	trbcmd w $TDC 0xdf01 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000000 )")
-
-	# trigger stretch
-	trbcmd w $TDC 0xdf20 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
-	# trigger invert
-	trbcmd w $TDC 0xdf24 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
-
-done
+#for TDC in 0x0351; do
+#
+#
+#	# enable the first two CONNS for PADIWA and Scintis
+#	#trbcmd setbit $TDC 0xc802 0xFFFFFFFF
+#
+#	# enable the PADIWA chans and the scintillators
+#	trbcmd w $TDC 0xc802 $(perl -e "printf(\"0x%X\", 0b01010000000010010000000000001100 )")
+#	#trbcmd w $TDC 0xc802 0x5009000C
+#
+#	# invert the si_strip
+#	trbcmd w $TDC 0xc805 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
+#
+#	# set trigger on the horizontal scintillator
+#	trbcmd w $TDC 0xdf00 $(perl -e "printf(\"0x%X\", 0b01000000000000000000000000000000 )")
+#	trbcmd w $TDC 0xdf01 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000000 )")
+#
+#	# trigger stretch
+#	trbcmd w $TDC 0xdf20 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
+#	# trigger invert
+#	trbcmd w $TDC 0xdf24 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
+#
+#done
