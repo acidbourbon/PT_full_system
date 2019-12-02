@@ -14,10 +14,10 @@
 #define uncommented_reference_channel 35049
 #define HUBRANGE_START 0xc035
 #define HUBRANGE_STOP 0xc035
-#define TDCRANGE_START 0x0350
+#define TDCRANGE_START 0x0351
 #define TDCRANGE_STOP 0x0351
 
 
 // second processes in second.C:
-#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_0351", "TDC_0351");
+#define SECOND_PROCESS_TDCs new SecondProc("Sec_0351", "TDC_0351");
 

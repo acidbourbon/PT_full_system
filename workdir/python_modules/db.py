@@ -377,7 +377,7 @@ def write_board_json_by_name(board_name,board_json):
     for tdc in hub["tdc"]:
       for board in tdc["board"]:
         if board_name ==  board["name"]:
-          for key in board.keys():
+          for key in list(board.keys()):
             del board[key]
           board.update( board_json)
   write_setup_json(setup)
@@ -597,7 +597,7 @@ def write_tdc_json(my_tdc,tdc_json):
   for hub in setup["hub"]:
     for tdc in hub["tdc"]:
       if tdc["addr"].lower() == my_tdc.lower():
-        for key in tdc.keys():
+        for key in list(tdc.keys()):
           del tdc[key]
         tdc.update(tdc_json)
   write_setup_json(setup)
