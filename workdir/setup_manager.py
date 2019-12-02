@@ -234,6 +234,8 @@ while True:
               break
             else:
               d.msgbox("this connector is already occupied :(")
+          else:
+            break
 
     ## remove board ##
     if tag == "5":
