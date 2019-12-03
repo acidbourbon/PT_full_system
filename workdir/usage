@@ -73,7 +73,8 @@ dummy_calib_tree->Draw("dummy_calib_noise_scan_raw","name==0014 && board_chan ==
 ### view it all against wire number!
 dummy_calib_tree->Draw("dummy_calib_noise_scan_raw:wires>>noise_scan(140,0,140,31,-15,15)","","colz")
 dummy_tsbl_tree->Draw("dummy_calib_tsbl_scan_raw:wires>>noise_scan(140,0,140,32,0,32)","","colz")
-
+dummy_calib_tree->Draw("dummy_calib_noise_scan_raw:wires>>noise_scan(140,0,140,31,-15,15)","chamber == 0 && layer == 3 && name == 0017","colz")
+dummy_tsbl_tree->Draw("dummy_calib_tsbl_scan_raw:wires>>noise_scan(140,0,140,32,0,32)","chamber == 0 && layer == 3 && name == 0017","colz")
 
 # reload one or more TDCs and properly address and configure them again, also enable formerly active tdc channels:
 #
