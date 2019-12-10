@@ -4,6 +4,138 @@ import db
 import tdc_daq
 from time import sleep
 
+from trbnet import TrbNet
+
+lib = '/trbnettools/trbnetd/libtrbnet.so'
+host = os.getenv("DAQOPSERVER")
+
+t = TrbNet(libtrbnet=lib, daqopserver=host)
+
+
+black_settings_pt15_g1_thr127 = [
+  0x019,
+  0x11e,
+  0x215,
+  0x37f,
+  0x40f,
+  0x50f,
+  0x60f,
+  0x70f,
+  0x80f,
+  0x90f,
+  0xa0f,
+  0xb0f
+]
+
+black_settings_pt20_g1_thr127 = [
+  0x01a,
+  0x11e,
+  0x215,
+  0x37f,
+  0x40f,
+  0x50f,
+  0x60f,
+  0x70f,
+  0x80f,
+  0x90f,
+  0xa0f,
+  0xb0f
+]
+
+blue_settings_pt10_g1_thr127 = [
+  0x018,
+  0x11e,
+  0x215,
+  0x37f,
+  0x40f,
+  0x50f,
+  0x60f,
+  0x70f,
+  0x80f,
+  0x90f,
+  0xa0f,
+  0xb0f
+]
+
+
+def spi(TDC_str,CONN,CHIP, data_list):
+  # works
+  TDC = int(TDC_str,16)
+  
+  header = 0x52000
+  if( CHIP == 1 ):
+    header = 0x54000
+    
+  # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+  t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+
+  # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
+  t.trb_register_write(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) )
+
+  # override: (chip-) select all ports!!
+  #trbcmd w $TDC 0xd410 0xFFFF
+
+  # override: (chip-) select nothing !!
+  #trbcmd w $TDC 0xd410 0x0000
+
+  # disable all SDO outputs but output $CONN
+  t.trb_register_write(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) )
+
+  # disable all SCK outputs but output $CONN
+  t.trb_register_write(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) )
+
+  # override: disable all SDO and SCK lines
+  #trbcmd w $TDC 0xd415 0xFFFF
+  #trbcmd w $TDC 0xd416 0xFFFF
+
+  for data in data_list:
+    # writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
+    t.trb_register_write(TDC, 0xd400, (header+data)<<4 )
+    
+    # write 1 to length register to trigger sending
+    t.trb_register_write(TDC, 0xd411, 0x0001)
+    
+
+def reset_board(TDC_str,CONN):
+  # does not work
+  
+  TDC = int(TDC_str,16)
+
+  # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+  # ergo enable CS, because we need it for the reset
+  #trbcmd w $TDC 0xd417 0x00000000
+
+  # make selection mask from $CONN 
+  sel_mask= 0xFFFF & (1<<(CONN-1))
+
+  # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+  t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+
+  # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
+  #trbcmd w $TDC 0xd410 0x0000$sel_mask
+
+  # bring CS low for sel mask, i.e. invert CS for sel mask, keep CS disabled
+  t.trb_register_write(TDC, 0xd417, (sel_mask<<16) + 0xFFFF)
+
+  for i in range(1, 26):
+    # generate 25 clock cycles
+    # invert SCK for selection mask
+
+    # upper four nibbles: invert SCK, lower four nibbles disable SCK
+    t.trb_register_write(TDC, 0xd416, sel_mask<<16)
+
+    # restore SCK to default state
+    t.trb_register_write(TDC, 0xd416, 0x00000000)
+
+  # bring CS to standard position (HI) again, keep CS disabled
+  t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+ 
+
+
+def set_threshold(TDC,CONN,CHIP,THR):
+  spi(TDC,CONN,CHIP, [ 0x300 + (0xFF & THR)])
+
+
 
 def slow_control_test(board_name):
   
@@ -61,21 +193,24 @@ def slow_control_test(board_name):
   else:
     return 0
 
-def set_baseline( TDC, channel,val):
+def set_baseline( TDC, channel,value):
 
   chip = db.calc_chip_from_channel(channel)
   conn = db.calc_connector_from_channel(channel)
   chip_chan=channel%8
-  os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./baseline {:d} {:d}".format(conn,chip, chip_chan ,val))
+
+  val  = value + 15 
+  chan = chip_chan + 4 
+
+  spi(TDC,conn, chip, [ ((0xF & chan)<<8) + val] )
 
   return
 
-def set_threshold(TDC,conn,chip,thresh):
-  os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./threshold {:d}".format(conn,chip,thresh))
 
 def set_threshold_for_board(TDC,conn,thresh):
   set_threshold(TDC,conn,0,thresh)
   set_threshold(TDC,conn,1,thresh)
+  
 
 def set_threshold_for_board_by_name(board_name,thresh):
   
@@ -101,26 +236,48 @@ def set_all_baselines( TDC, channels, values): # channels and values have to hav
     
   return
 
-def init_chip(TDC,conn,chip,pktime,gain,thresh):
+
+def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
   
   if( pktime == 10 ):
-    os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./spi blue_settings_pt10_g1_thr127".format(conn,chip))
+    spi(TDC,CONN,CHIP,blue_settings_pt10_g1_thr127)
+    if(GAIN == 4):
+      spi(TDC,CONN,CHIP, [0x010])
+    if(GAIN == 2):
+      spi(TDC,CONN,CHIP, [0x014])
+    if(GAIN == 1):
+      spi(TDC,CONN,CHIP, [0x018])
+      
   if( pktime == 15 ):
-    os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./spi black_settings_pt15_g1_thr127".format(conn,chip))
+    spi(TDC,CONN,CHIP,black_settings_pt15_g1_thr127)
+    if(GAIN == 4):
+      spi(TDC,CONN,CHIP, [0x011])
+    if(GAIN == 2):
+      spi(TDC,CONN,CHIP, [0x015])
+    if(GAIN == 1):
+      spi(TDC,CONN,CHIP, [0x019])
+      
   if( pktime == 20 ):
-    os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./spi black_settings_pt20_g1_thr127".format(conn,chip))
+    spi(TDC,CONN,CHIP,black_settings_pt20_g1_thr127)
+    if(GAIN == 4):
+      spi(TDC,CONN,CHIP, [0x012])
+    if(GAIN == 2):
+      spi(TDC,CONN,CHIP, [0x016])
+    if(GAIN == 1):
+      spi(TDC,CONN,CHIP, [0x01a])
 
-  os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} pktime={:d} gain={:d} ./set_gain_pktime".format(conn,chip,pktime,gain))
-  os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} CHIP={:d} ./threshold {:d}".format(conn,chip,thresh))
-  board_info = db.find_board_by_tdc_connector(TDC,conn)
+  set_threshold(TDC,CONN,CHIP,thresh)
+  
+  board_info = db.find_board_by_tdc_connector(TDC,CONN)
   board_name = board_info["name"] 
   board_channels = board_info["channels"] 
   calib = db.get_calib_json_by_name(board_name)
+  
   if ("baselines" in calib):
     board_baselines = calib["baselines"]
     channels = board_channels[0:9]
     values   = board_baselines[0:9]
-    if chip == 1:
+    if CHIP == 1:
       channels = board_channels[8:17]
       values   = board_baselines[8:17]
     set_all_baselines(TDC,channels,values)
@@ -133,8 +290,6 @@ def reset_board_by_name(board_name):
   if tdc_addr[0:2].lower() == "0x":
     reset_board(tdc_addr,conn)
 
-def reset_board(TDC,conn):
-  os.system("cd /workdir/pasttrec_ctrl; TDC="+TDC+" CONN={:d} ./reset ".format(conn))
 
 def init_board(TDC,conn,pktime,gain,thresh):
   reset_board(TDC,conn)
