@@ -161,6 +161,8 @@ while True:
     if tag == "35":
       dbd.dialog_standby()
       td.enable_tdc_channels_of_active_boards()
+      ptc.init_active_boards()
+      d.msgbox("initialized all active boards\nand enabled respective TDC channels")
 
     ## edit board json tags ##
     if tag == "2":

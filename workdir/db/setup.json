@@ -42,7 +42,7 @@
               "layer": 2,
               "name": "0014",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 3
             },
             {
@@ -56,7 +56,7 @@
               "layer": 2,
               "name": "0021",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 2
             },
             {
@@ -70,7 +70,7 @@
               "layer": 1,
               "name": "0005",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 1
             }
           ],

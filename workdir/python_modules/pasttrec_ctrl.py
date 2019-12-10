@@ -57,43 +57,62 @@ blue_settings_pt10_g1_thr127 = [
   0xb0f
 ]
 
+spi_queue = 0
+spi_mem = {}
 
-def spi(TDC_str,CONN,CHIP, data_list):
-  # works
+def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
+  
   TDC = int(TDC_str,16)
   
-  header = 0x52000
-  if( CHIP == 1 ):
-    header = 0x54000
+  
+  if ( not( TDC in spi_mem ) ):
+    spi_mem[TDC] = {}
+  if ( not( CONN in spi_mem[TDC] ) ):
+    spi_mem[TDC][CONN] = {}
+  if ( not( CHIP in spi_mem[TDC][CONN] ) ):
+    spi_mem[TDC][CONN][CHIP] = []
+  
+  if spi_queue:
     
-  # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
-  t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+    spi_mem[TDC][CONN][CHIP] += data_list
+  
+  else:
+ 
+    my_data_list = spi_mem[TDC][CONN][CHIP] + data_list
+    spi_mem[TDC][CONN][CHIP].clear() # empty queue
+ 
+    header = 0x52000
+    if( CHIP == 1 ):
+      header = 0x54000
+      
+    # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+    t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
 
-  # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
-  t.trb_register_write(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) )
+    # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
+    t.trb_register_write(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) )
 
-  # override: (chip-) select all ports!!
-  #trbcmd w $TDC 0xd410 0xFFFF
+    # override: (chip-) select all ports!!
+    #trbcmd w $TDC 0xd410 0xFFFF
 
-  # override: (chip-) select nothing !!
-  #trbcmd w $TDC 0xd410 0x0000
+    # override: (chip-) select nothing !!
+    #trbcmd w $TDC 0xd410 0x0000
 
-  # disable all SDO outputs but output $CONN
-  t.trb_register_write(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) )
+    # disable all SDO outputs but output $CONN
+    t.trb_register_write(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) )
 
-  # disable all SCK outputs but output $CONN
-  t.trb_register_write(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) )
+    # disable all SCK outputs but output $CONN
+    t.trb_register_write(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) )
 
-  # override: disable all SDO and SCK lines
-  #trbcmd w $TDC 0xd415 0xFFFF
-  #trbcmd w $TDC 0xd416 0xFFFF
+    # override: disable all SDO and SCK lines
+    #trbcmd w $TDC 0xd415 0xFFFF
+    #trbcmd w $TDC 0xd416 0xFFFF
 
-  for data in data_list:
-    # writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
-    t.trb_register_write(TDC, 0xd400, (header+data)<<4 )
-    
-    # write 1 to length register to trigger sending
-    t.trb_register_write(TDC, 0xd411, 0x0001)
+    for data in my_data_list:
+      # writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
+      t.trb_register_write(TDC, 0xd400, (header+data)<<4 )
+      
+      # write 1 to length register to trigger sending
+      t.trb_register_write(TDC, 0xd411, 0x0001)
     
 
 def reset_board(TDC_str,CONN):
@@ -238,6 +257,8 @@ def set_all_baselines( TDC, channels, values): # channels and values have to hav
 
 
 def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
+  # begin queueing
+  spi_queue = 1
   
   if( pktime == 10 ):
     spi(TDC,CONN,CHIP,blue_settings_pt10_g1_thr127)
@@ -282,6 +303,11 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
       values   = board_baselines[8:17]
     set_all_baselines(TDC,channels,values)
   return
+
+  # send all at once
+  spi_queue = 0
+  spi(TDC,CONN,CHIP,[])
+  
 
 def reset_board_by_name(board_name):
   board_info = db.find_board_by_name(board_name)
