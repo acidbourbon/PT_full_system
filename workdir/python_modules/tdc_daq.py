@@ -68,7 +68,21 @@ def scaler_rate(TDC,channels,time):
   diff = b-a
   ## add overflow
   diff += (diff < 0)*(2**31)
+  diff = diff/time
   return diff.tolist()
+
+
+def scaler_rate_of_board(board_name,scan_time):
+  
+  board_info = db.find_board_by_name(board_name)
+  channels   = board_info["channels"] # zero based 
+  TDC        = board_info["tdc_addr"]
+  connector  = board_info["tdc_connector"]
+
+  rates = scaler_rate(TDC,channels,scan_time)
+
+  return(rates)
+
 
 def enable_channels(TDC,channels):
 #    pass
