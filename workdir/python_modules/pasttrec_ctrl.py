@@ -244,10 +244,10 @@ def set_threshold_for_board_by_name(board_name,thresh):
 
 
 def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
-  print("set baselines of the following channels")
-  print( channels )
-  print("to the following values")
-  print( values )
+  #print("set baselines of the following channels")
+  #print( channels )
+  #print("to the following values")
+  #print( values )
   index=0
   for i in channels:
     set_baseline(TDC,i,int(values[index]))
@@ -336,13 +336,16 @@ def slow_control_test_boards(board_list):
 def init_active_boards():
   return init_boards_by_name(db.active_board_list())
 
-def init_boards_by_name(board_list):
+def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
   
   setup     = db.get_setup_json()
-
-  pktime    = setup["asic_settings"]["default"]["pktime"]
-  gain      = setup["asic_settings"]["default"]["gain"]
-  threshold = setup["asic_settings"]["default"]["threshold"]
+   
+  if(pktime == -1): 
+    pktime    = setup["asic_settings"]["default"]["pktime"]
+  if(gain == -1):
+    gain      = setup["asic_settings"]["default"]["gain"]
+  if(threshold == -1):
+    threshold = setup["asic_settings"]["default"]["threshold"]
 
   standby_pktime    = setup["asic_settings"]["standby"]["pktime"]
   standby_gain      = setup["asic_settings"]["standby"]["gain"]
@@ -351,7 +354,7 @@ def init_boards_by_name(board_list):
   
 
   for board_name in board_list:
-    print("init board "+board_name)
+    #print("init board "+board_name)
     board_info = db.find_board_by_name(board_name)
     conn = board_info["tdc_connector"]
     tdc_addr = board_info["tdc_addr"]
@@ -368,5 +371,5 @@ def init_boards_by_name(board_list):
         init_board(tdc_addr,conn,pktime,gain,threshold)
   return
 
-def init_board_by_name(board_name):
-  return init_boards_by_name([board_name])
+def init_board_by_name(board_name,pktime=-1,gain=-1,threshold=-1):
+  return init_boards_by_name([board_name],pktime=-1,gain=-1,threshold=-1)

@@ -1,7 +1,7 @@
 {
   "asic_settings": {
     "default": {
-      "gain": 4,
+      "gain": 2,
       "pktime": 15,
       "threshold": 10
     },
@@ -19,7 +19,7 @@
     "spike_rejection_refchan": 10,
     "t1_L": -400,
     "t1_R": 800,
-    "threshold_noise_scan_limit": 64,
+    "threshold_noise_scan_limit": 100,
     "tot_L": -10,
     "tot_R": 2000
   },
@@ -42,7 +42,7 @@
               "layer": 2,
               "name": "0014",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 3
             },
             {
@@ -70,7 +70,7 @@
               "layer": 1,
               "name": "0005",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 1
             }
           ],
@@ -156,7 +156,7 @@
               "layer": 2,
               "name": "0025",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 3
             },
             {

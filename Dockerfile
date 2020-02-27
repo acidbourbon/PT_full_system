@@ -217,6 +217,11 @@ RUN apt-get update && \
   parallel \
   imagemagick
 
+RUN apt-get update && \
+  apt-get -y install \
+  texlive-xetex
+    
+
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
 #
 #RUN echo "cd /workdir/; /bin/bash" >> entrypoint.sh

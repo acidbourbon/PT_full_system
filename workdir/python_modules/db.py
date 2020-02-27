@@ -7,11 +7,16 @@ setup_file = "setup.json"
 def dump_db_to_root(outfile):
   dump_db_to_csv("/dev/null",export_root_file=outfile)
 
+def dump_db_to_root_board(outfile,board_name):
+  dump_db_to_csv("/dev/null",export_root_file=outfile,only_board=board_name)
+
 def dump_db_to_csv(outfile,**kwargs):
 
   only_active_boards = kwargs.get("only_active_boards",False)
-
+  only_nostandby_boards = kwargs.get("only_nostandby_boards",False)
+  only_board = kwargs.get("only_board",False)   
   export_root_file = kwargs.get("export_root_file","/dev/null")
+
   #export_root = False
   #if export_root_file != "":
   #  export_root = True
@@ -32,12 +37,17 @@ def dump_db_to_csv(outfile,**kwargs):
   
 
   my_board_list = []
-
+    
+  if only_nostandby_boards:
+    my_board_list = nostandby_board_list()
   if only_active_boards:
     my_board_list = active_board_list()
+  if only_board:
+    my_board_list = [ only_board ]
   else:
     my_board_list = board_list()
-
+#     my_board_list = nostandby_board_list()
+    
   col_width = 32
 
   with open(outfile,"w") as f:
@@ -560,7 +570,16 @@ def active_board_list():
 
   return boards
 
+def nostandby_board_list():
+  setup = get_setup_json()
+  boards = []
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board["standby"] == 0 :
+          boards += [board["name"]]
 
+  return boards
 
 def calc_chip_from_channel(my_channel):
   return int((my_channel%16)/8)
