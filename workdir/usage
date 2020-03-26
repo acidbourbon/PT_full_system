@@ -82,3 +82,8 @@ dummy_tsbl_tree->Draw("dummy_calib_tsbl_scan_raw:wires>>noise_scan(140,0,140,32,
 
 
 ./recorrelate_id.sh id062
+
+
+
+# check if trigger input is coming in the right way: (channel 49)
+hldprint localhost:6789  -hub 0xc035 -onlytdc 0x0350  -num 1

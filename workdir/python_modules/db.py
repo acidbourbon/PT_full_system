@@ -343,6 +343,57 @@ def find_board_by_name(board_name):
 
   return 0
 
+def find_board_by_fpc(fpc,layer,chamber):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if chamber == board["chamber"] and layer == board["layer"]:
+            if fpc == board["fpc_a"] or fpc == board["fpc_b"] or fpc == board["fpc_c"] or fpc == board["fpc_d"]:
+                return board["name"]
+
+  return 0
+
+def get_chamber_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["chamber"]
+  return 0
+
+def get_layer_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["layer"]
+  return 0
+
+def get_fpca_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["fpc_a"]
+  return 0
+
+def get_fpcd_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["fpc_d"]
+  return 0
 
 def get_calib_json_by_name(board_name,**kwargs):
   board_info = find_board_by_name(board_name)

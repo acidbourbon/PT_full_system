@@ -29,6 +29,8 @@ tmux new -d -s main
 # display some info
 tmux new-window -t main -n "info" "cat /conf/conf_log.txt; cat info.txt; /bin/bash"
 
+tmux new-window -t main -n "setupControl" "./setup_manager.py"
+
 tmux link-window -s cts_gui:cts_gui -t main  # attach window opened by conf.sh
 tmux link-window -s vnc:vnc -t main          # attach window opened by conf.sh
 

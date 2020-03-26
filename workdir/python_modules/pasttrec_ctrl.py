@@ -287,7 +287,7 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
     if(GAIN == 1):
       spi(TDC,CONN,CHIP, [0x01a])
 
-  set_threshold(TDC,CONN,CHIP,thresh)
+  #set_threshold(TDC,CONN,CHIP,thresh)
   
   board_info = db.find_board_by_tdc_connector(TDC,CONN)
   board_name = board_info["name"] 
@@ -302,6 +302,7 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
       channels = board_channels[8:17]
       values   = board_baselines[8:17]
     set_all_baselines(TDC,channels,values)
+  set_threshold(TDC,CONN,CHIP,thresh)
   return
 
   # send all at once
@@ -372,4 +373,4 @@ def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
   return
 
 def init_board_by_name(board_name,pktime=-1,gain=-1,threshold=-1):
-  return init_boards_by_name([board_name],pktime=-1,gain=-1,threshold=-1)
+  return init_boards_by_name([board_name],pktime,gain,threshold)

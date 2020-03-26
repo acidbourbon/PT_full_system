@@ -38,7 +38,7 @@ RUN apt-get update && \
 RUN pip3 install --upgrade pip
 RUN pip3 install setuptools && \
   pip3 install pythondialog python-vxi11
-
+ 
 # for garfield to feel at home make symlink to som gsl libs
 RUN ln -s /usr/lib/x86_64-linux-gnu/libgslcblas.so.0.0.0 /usr/lib/libgsl.so.0 
 
@@ -219,7 +219,9 @@ RUN apt-get update && \
 
 RUN apt-get update && \
   apt-get -y install \
-  texlive-xetex
+  texlive-xetex \
+  pandoc
+
     
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh

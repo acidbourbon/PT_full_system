@@ -3,7 +3,7 @@
     "default": {
       "gain": 2,
       "pktime": 15,
-      "threshold": 10
+      "threshold": 30
     },
     "standby": {
       "gain": 1,
@@ -15,7 +15,7 @@
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
     "reference_channel": 35049,
-    "spike_rejection": 15,
+    "spike_rejection": 25,
     "spike_rejection_refchan": 10,
     "t1_L": -400,
     "t1_R": 800,
@@ -42,7 +42,7 @@
               "layer": 2,
               "name": "0014",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -156,7 +156,7 @@
               "layer": 2,
               "name": "0025",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -448,7 +448,7 @@
               "layer": 2,
               "name": "0028",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -462,7 +462,7 @@
               "layer": 3,
               "name": "0029",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -476,7 +476,7 @@
               "layer": 3,
               "name": "0030",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             }
           ],
@@ -548,7 +548,7 @@
               "layer": 3,
               "name": "0023",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -562,7 +562,7 @@
               "layer": 3,
               "name": "0020",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -648,7 +648,7 @@
               "layer": 3,
               "name": "0016",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -662,7 +662,7 @@
               "layer": 3,
               "name": "0015",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -676,7 +676,7 @@
               "layer": 2,
               "name": "0006",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             }
           ],
@@ -748,7 +748,7 @@
               "layer": 3,
               "name": "0010",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -762,7 +762,7 @@
               "layer": 3,
               "name": "0011",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -776,7 +776,7 @@
               "layer": 3,
               "name": "0009",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
@@ -854,7 +854,7 @@
               "layer": 2,
               "name": "0013",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -868,7 +868,7 @@
               "layer": 2,
               "name": "0018",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
