@@ -205,7 +205,7 @@ def dump_db_to_csv(outfile,**kwargs):
 
 
 def write_go4_settings_h():
-  with open("go4_settings.h","w") as f:
+  with open("/workdir/go4_settings.h","w") as f:
     f.write("//do not edit by hand, this is automatically generated/overwritten by db.py\n\n\n")
 
     global_settings = get_global_settings()

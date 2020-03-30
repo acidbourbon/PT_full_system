@@ -4,7 +4,7 @@
 #define CHANNELS 53
 #define max_baseline_stddev 2.5
 #define reference_channel 35049
-#define spike_rejection 25
+#define spike_rejection 80
 #define spike_rejection_refchan 10
 #define t1_L -400
 #define t1_R 800
@@ -18,5 +18,5 @@
 
 
 // second processes in second.C:
-#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_0351", "TDC_0351");new SecondProc("Sec_0352", "TDC_0352");new SecondProc("Sec_0353", "TDC_0353");new SecondProc("Sec_1500", "TDC_1500");new SecondProc("Sec_1501", "TDC_1501");new SecondProc("Sec_1502", "TDC_1502");new SecondProc("Sec_1503", "TDC_1503");
+#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_0353", "TDC_0353");new SecondProc("Sec_1503", "TDC_1503");
 
