@@ -119,7 +119,18 @@ def baseline_calib_by_noise(board_name,**kwargs):
   ptc.init_board_by_name(board_name)
 
   return baselines
+
+def set_baselines_individual(board_name,baselines):    
+
+  board_info = db.find_board_by_name(board_name)
+  channels   = board_info["channels"] # zero based 
+  TDC        = board_info["tdc_addr"]
+  db.enable_board(board_name)
+  ptc.set_all_baselines(TDC,channels,baselines)
+  # do not perform init of boards afterwards, because this loads default baselines from calib json file / database
+  #ptc.init_board_by_name(board_name)
     
+  return 
 
 def threshold_noise_scan(board_name):
   
@@ -130,7 +141,7 @@ def threshold_noise_scan(board_name):
 
   db.enable_board(board_name)
   #ptc.init_active_boards()
-  ptc.init_board_by_name(board_name)
+  #ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   x = list(range(0,32)) #default scan range 
@@ -142,7 +153,10 @@ def threshold_noise_scan(board_name):
 
   ## set baselines to maximum, so we start scanning below the baseline
   ## and hopefully capture the full noise
- # ptc.set_all_baselines(TDC,channels, [15]*len(channels) )
+    
+    #CW 7.4. deeactivated  moving baselinfe for this scan, 
+     #as using individual baseline and do only threshold scan provides better comparison between diffent boards
+  #ptc.set_all_baselines(TDC,channels, [15]*len(channels) )
   
   result_matrix = []
 
