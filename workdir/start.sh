@@ -18,8 +18,8 @@ cd /workdir
 rm $(find . -iname ".*.sw*")
 rm $(find /conf -iname ".*.sw*")
 
-#BROWSER="chromium-browser --no-sandbox"
-BROWSER="midori"
+BROWSER="chromium-browser --no-sandbox"
+#BROWSER="midori"
 
 /workdir/web_hack/web_hack.sh
 

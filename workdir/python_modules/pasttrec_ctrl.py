@@ -372,5 +372,5 @@ def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
         init_board(tdc_addr,conn,pktime,gain,threshold)
   return
 
-def init_board_by_name(board_name,pktime=-1,gain=-1,threshold=-1):
-  return init_boards_by_name([board_name],pktime,gain,threshold)
+def init_board_by_name(board,pktime=-1,gain=-1,threshold=-1):
+  return init_boards_by_name([ board ],pktime,gain,threshold)

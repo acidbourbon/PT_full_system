@@ -54,6 +54,7 @@ RUN ln -s /usr/lib/x86_64-linux-gnu/libgslcblas.so.0.0.0 /usr/lib/libgsl.so.0
 # newest commit from 2018-02-28
 ENV DABC_TRB3_REV=4242 
 
+
 ##################################################
 
 RUN svn checkout -r $DABC_TRB3_REV https://subversion.gsi.de/dabc/trb3  
@@ -220,7 +221,9 @@ RUN apt-get update && \
 RUN apt-get update && \
   apt-get -y install \
   texlive-xetex \
-  pandoc
+  pandoc 
+
+RUN apt-get -y install emacs
 
     
 
