@@ -766,7 +766,7 @@
               "tdc_connector": 3
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0009.json",
               "chamber": 0,
               "fpc_a": 36,
