@@ -2,9 +2,10 @@ docker kill fst
 docker build -t fst . || exit
 #xhost +si:localuser:root
 docker run --net host -v $(pwd)/conf:/conf -v $(pwd)/workdir:/workdir --rm -it \
---device /dev/serial/by-id/usb-HAMEG_HAMEG_HO720_023192710-if00-port0:/dev/ttyUSB_HAMEG_TRB \
 --name fst \
 fst /workdir/start.sh
+#--device /dev/serial/by-id/usb-HAMEG_HAMEG_HO720_023192710-if00-port0:/dev/ttyUSB_HAMEG_TRB \
+
 
 #-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY \
 #--device /dev/serial/by-id/usb-Arduino_LLC_Arduino_Leonardo_phidrive-if00:/dev/ttyUSB_phidrive \
