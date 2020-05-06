@@ -366,7 +366,7 @@ via AC coupling and 10k resistor.".format(board_name) )
           if code == d.OK:
             code, channels_str = d.inputbox(text="enter number of channels",init="48")
             if code == d.OK:
-              code, connectors_str = d.inputbox(text="enter number of connectors",init="{:d}".format(int(channels_str)/16))
+              code, connectors_str = d.inputbox(text="enter number of connectors",init="{:d}".format(int(int(channels_str)/16)))
               if code == d.OK:
                 db.insert_tdc(hub_addr,tdc_addr,tdc_name,int(channels_str),int(connectors_str))
 
