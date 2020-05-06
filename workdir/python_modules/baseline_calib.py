@@ -138,7 +138,10 @@ def threshold_noise_scan(board_name):
   channels   = board_info["channels"] # zero based 
   TDC        = board_info["tdc_addr"]
   connector  = board_info["tdc_connector"]
-
+  
+  if TDC  == "0xeeef":
+        return 0
+    
   db.enable_board(board_name)
   #ptc.init_active_boards()
   #ptc.init_board_by_name(board_name)

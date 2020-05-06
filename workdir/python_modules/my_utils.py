@@ -145,3 +145,16 @@ def load_plot_pickle(file):
   pickle.load(open(file,"rb"))
 
 
+def set_width_max_of_jupyterpad():
+    from IPython.display import display, HTML
+    display(HTML(data="""
+    <style>
+        div#notebook-container    { width: 95%; }
+        div#menubar-container     { width: 65%; }
+        div#maintoolbar-container { width: 99%; }
+    </style>
+    """))
+def alert(message):
+    from IPython.display import display, HTML
+    js = "<script>alert('"+message+"');</script>"
+    display(HTML(js))
