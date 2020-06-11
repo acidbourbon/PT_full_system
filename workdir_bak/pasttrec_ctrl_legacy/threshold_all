@@ -1,0 +1,4 @@
+#!/bin/bash
+
+CHIP=0 ./threshold $1
+CHIP=1 ./threshold $1

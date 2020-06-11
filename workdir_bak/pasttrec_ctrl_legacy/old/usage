@@ -1,0 +1,3 @@
+export TDC=0x0351
+./init_asics
+./threshold_all 64

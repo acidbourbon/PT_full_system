@@ -1,0 +1,11 @@
+#!/bin/bash
+
+val=$1
+
+for i in $(seq 0 7); do
+./baseline 0 $i $val
+done
+
+for i in $(seq 0 7); do
+./baseline 1 $i $val
+done

@@ -1,0 +1,18 @@
+
+
+everything that is automatically running in this container
+was started by /workdir/start.sh
+which first calls /conf/conf.sh
+and then starts some user processes (e.g. dabc, Go4 ...)
+in separate tmux tabs
+
+you are in a tmux (terminal multiplexer)
+do not panic! - you can manage the tabs (called "windows")
+with the following shortcuts:
+
+ctrl-b n    to switch to the next     window
+ctrl-b p    to switch to the previous window
+ctrl-b 0-9  to switch to the n-th window directly
+ctrl-b c    to create new a window
+ctrl-b ,    to rename current window
+

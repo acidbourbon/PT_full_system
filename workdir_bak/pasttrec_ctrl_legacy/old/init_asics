@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./reset
+./spi chip0_black_settings_thr127
+./spi chip1_black_settings_thr127
+#./spi chip2_black_settings_thr127
+#./spi chip3_black_settings_thr127
