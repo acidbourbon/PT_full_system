@@ -66,11 +66,11 @@ def baseline_calib_by_noise(board_name,**kwargs):
   ### dummy_calib = kwargs.get("dummy_calib",False)
 
   individual = kwargs.get("individual",False)
-
+  baseline_inactive = kwargs.get("baseline_inactive",-15)
   x = []
   matrix = []
   if individual:
-    x, matrix = individual_channel_baseline_noise_scan(board_name)
+    x, matrix = individual_channel_baseline_noise_scan(board_name,baseline_inactive)
   else:
     x, matrix = baseline_noise_scan(board_name)
 
@@ -119,7 +119,7 @@ def baseline_calib_by_noise(board_name,**kwargs):
   ptc.init_board_by_name(board_name)
 
   return baselines
-
+ 
 def set_baselines_individual(board_name,baselines):    
 
   board_info = db.find_board_by_name(board_name)
@@ -190,7 +190,7 @@ def baseline_noise_scan(board_name):
   ptc.set_threshold_for_board(TDC,connector,0)
   
   result_matrix = []
-  x = list(range(-15,16))
+  x = list(range(-15,17))
 
   for i in x:
    # print( "threshold scan of board "+board_name )
@@ -203,7 +203,7 @@ def baseline_noise_scan(board_name):
 
   return (x, result_matrix)
 
-def individual_channel_baseline_noise_scan(board_name):
+def individual_channel_baseline_noise_scan(board_name,baseline_inactive=-15):
   
   
   board_info = db.find_board_by_name(board_name)
@@ -220,15 +220,15 @@ def individual_channel_baseline_noise_scan(board_name):
   ptc.set_threshold_for_board(TDC,connector,0)
   
   result_matrix = []
-  x = list(range(-15,16))
+  x = list(range(-15,17))
 
   for i in x:
     #print( "threshold scan of board "+board_name )
     rates = []
     #print( "setting baseline "+str(i) )
     for ch in range(0,16):
-      print( "probing channel "+str(ch) )
-      ptc.set_all_baselines(TDC,channels, [-15]*len(channels) )
+      #print( "probing channel "+str(ch) )
+      ptc.set_all_baselines(TDC,channels, [baseline_inactive]*len(channels) )
       ptc.set_baseline(TDC,channels[ch],i)
       ch_rate = tdc_daq.scaler_rate(TDC,channels,scan_time)[ch]
       rates.append(ch_rate)
@@ -238,6 +238,7 @@ def individual_channel_baseline_noise_scan(board_name):
 
 
   return (x, result_matrix)
+
   
 
 

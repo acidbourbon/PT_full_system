@@ -22,15 +22,17 @@ def generate_neighbouring_FPC_board_list(name):
     fpcd = db.get_fpcd_of_board(name)
     boards_scan_list = []
     boards_scan_list += [ name ]
-    for chamber in range(0,6):
+    for chamber in range(0,12):
       nextchamber = db.get_chamber_of_board(name)+next_fpc_difference[chamber]
-      for layer in range(0,6):
+      for layer in range(0,12):
         nextlayer = db.get_layer_of_board(name)+next_fpc_difference[layer]
         for nplus in next_fpc_difference:
             nextfpca = fpca+nplus
             next_board = db.find_board_by_fpc(nextfpca,nextlayer,nextchamber)
-            if next_board != 0 and next_board not in boards_scan_list:
-                boards_scan_list += [ next_board ]
+            board_info = db.find_board_by_name(str(next_board))      
+            if next_board != 0 and  "0xeee" not in board_info["tdc_addr"]:  
+                if next_board not in boards_scan_list:
+                    boards_scan_list += [ next_board ]
 
     print( str(len(boards_scan_list)) + " boards to activate, sequence of activation, boards list: ")
     print(boards_scan_list)
@@ -48,15 +50,17 @@ def generate_neighbouring_w_board_list(name):
     fpcd = db.get_fpcd_of_board(name)
     boards_scan_list = []
     boards_scan_list += [ name ]
-    for chamber in range(0,6):
+    for chamber in range(0,12):
         nextchamber = db.get_chamber_of_board(name)+next_fpc_difference[chamber]
         for nplus in next_fpc_difference:
             nextfpca = fpca+nplus
-            for layer in range(0,6):
+            for layer in range(0,12):
                 nextlayer = db.get_layer_of_board(name)+next_fpc_difference[layer]
                 next_board = db.find_board_by_fpc(nextfpca,nextlayer,nextchamber)
-                if next_board != 0 and next_board not in boards_scan_list:
-                    boards_scan_list += [ next_board ]
+                board_info = db.find_board_by_name(next_board)           
+                if next_board != 0 and "0xeee" not in board_info["tdc_addr"]:
+                    if  next_board not in boards_scan_list:
+                        boards_scan_list += [ next_board ]
 
     print( str(len(boards_scan_list)) + " boards to activate, sequence of activation, boards list: ")
     print(boards_scan_list)

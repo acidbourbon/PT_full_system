@@ -42,7 +42,7 @@
               "layer": 2,
               "name": "0014",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -56,7 +56,7 @@
               "layer": 1,
               "name": "0005",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -70,7 +70,7 @@
               "layer": 2,
               "name": "0021",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
@@ -142,7 +142,7 @@
               "layer": 2,
               "name": "0022",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -156,7 +156,7 @@
               "layer": 2,
               "name": "0025",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -170,7 +170,7 @@
               "layer": 2,
               "name": "0003",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             }
           ],
@@ -242,7 +242,7 @@
               "layer": 2,
               "name": "0026",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -256,7 +256,7 @@
               "layer": 2,
               "name": "0027",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -342,7 +342,7 @@
               "layer": 2,
               "name": "0004",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -356,7 +356,7 @@
               "layer": 2,
               "name": "0002",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -370,7 +370,7 @@
               "layer": 2,
               "name": "0101",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             }
           ],
@@ -448,7 +448,7 @@
               "layer": 2,
               "name": "0028",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -462,7 +462,7 @@
               "layer": 3,
               "name": "0029",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -476,7 +476,7 @@
               "layer": 5,
               "name": "0104",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             }
           ],
@@ -548,7 +548,7 @@
               "layer": 5,
               "name": "0102",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
@@ -562,7 +562,7 @@
               "layer": 5,
               "name": "0103",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -576,7 +576,7 @@
               "layer": 0,
               "name": "0108",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             }
           ],
@@ -648,7 +648,7 @@
               "layer": 3,
               "name": "0016",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -662,7 +662,7 @@
               "layer": 2,
               "name": "0006",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
@@ -676,7 +676,7 @@
               "layer": 2,
               "name": "0105",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
@@ -739,20 +739,6 @@
           "board": [
             {
               "active": 1,
-              "calib_file": "./boards/board_0010.json",
-              "chamber": 0,
-              "fpc_a": 32,
-              "fpc_b": 33,
-              "fpc_c": 34,
-              "fpc_d": 35,
-              "layer": 3,
-              "name": "0010",
-              "reverse_mapping": 0,
-              "standby": 1,
-              "tdc_connector": 1
-            },
-            {
-              "active": 1,
               "calib_file": "./boards/board_0011.json",
               "chamber": 0,
               "fpc_a": 28,
@@ -762,8 +748,36 @@
               "layer": 3,
               "name": "0011",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
+            },
+            {
+              "active": 1,
+              "calib_file": "./boards/board_0009.json",
+              "chamber": 0,
+              "fpc_a": 36,
+              "fpc_b": 37,
+              "fpc_c": 38,
+              "fpc_d": 39,
+              "layer": 3,
+              "name": "0009",
+              "reverse_mapping": 0,
+              "standby": 0,
+              "tdc_connector": 2
+            },
+            {
+              "active": 1,
+              "calib_file": "./boards/board_0110.json",
+              "chamber": 0,
+              "fpc_a": 22,
+              "fpc_b": 23,
+              "fpc_c": 24,
+              "fpc_d": 25,
+              "layer": 3,
+              "name": "0110",
+              "reverse_mapping": 1,
+              "standby": 0,
+              "tdc_connector": 1
             }
           ],
           "channels": 48,
@@ -830,7 +844,7 @@
           "addr": "0xeeef",
           "board": [
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0013.json",
               "chamber": 0,
               "fpc_a": 7,
@@ -840,11 +854,11 @@
               "layer": 2,
               "name": "0013",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0018.json",
               "chamber": 0,
               "fpc_a": 3,
@@ -854,11 +868,11 @@
               "layer": 2,
               "name": "0018",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0015.json",
               "chamber": 0,
               "fpc_a": 24,
@@ -868,11 +882,11 @@
               "layer": 3,
               "name": "0015",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 8
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0106.json",
               "chamber": 3,
               "fpc_a": 1,
@@ -882,11 +896,11 @@
               "layer": 0,
               "name": "0106",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 7
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0020.json",
               "chamber": 0,
               "fpc_a": 15,
@@ -896,11 +910,11 @@
               "layer": 3,
               "name": "0020",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 4
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0023.json",
               "chamber": 0,
               "fpc_a": 11,
@@ -910,11 +924,11 @@
               "layer": 3,
               "name": "0023",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0030.json",
               "chamber": 0,
               "fpc_a": 9,
@@ -924,11 +938,11 @@
               "layer": 3,
               "name": "0030",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 5
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_0017.json",
               "chamber": 0,
               "fpc_a": 19,
@@ -938,7 +952,7 @@
               "layer": 3,
               "name": "0017",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 6
             }
           ],
@@ -1081,17 +1095,17 @@
           "board": [
             {
               "active": 1,
-              "calib_file": "./boards/board_0009.json",
+              "calib_file": "./boards/board_0010.json",
               "chamber": 0,
-              "fpc_a": 36,
-              "fpc_b": 37,
-              "fpc_c": 38,
-              "fpc_d": 39,
+              "fpc_a": 32,
+              "fpc_b": 33,
+              "fpc_c": 34,
+              "fpc_d": 35,
               "layer": 3,
-              "name": "0009",
+              "name": "0010",
               "reverse_mapping": 0,
-              "standby": 1,
-              "tdc_connector": 1
+              "standby": 0,
+              "tdc_connector": 2
             }
           ],
           "channels": 48,
