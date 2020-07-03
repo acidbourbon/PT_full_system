@@ -66,7 +66,7 @@ def baseline_calib_by_noise(board_name,**kwargs):
   ### dummy_calib = kwargs.get("dummy_calib",False)
 
   individual = kwargs.get("individual",False)
-  baseline_inactive = kwargs.get("baseline_inactive",-15)
+  baseline_inactive = kwargs.get("baseline_inactive",[-15]*16)
   x = []
   matrix = []
   if individual:
@@ -183,7 +183,7 @@ def baseline_noise_scan(board_name):
 
   db.enable_board(board_name)
   #ptc.init_active_boards()
-  ptc.init_board_by_name(board_name)
+  #ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   
@@ -191,7 +191,7 @@ def baseline_noise_scan(board_name):
   
   result_matrix = []
   x = list(range(-15,17))
-
+  #ptc.init_boards_by_name([board_name], 10, 4)  
   for i in x:
    # print( "threshold scan of board "+board_name )
     ptc.set_all_baselines(TDC,channels, [i]*len(channels) )
@@ -203,7 +203,7 @@ def baseline_noise_scan(board_name):
 
   return (x, result_matrix)
 
-def individual_channel_baseline_noise_scan(board_name,baseline_inactive=-15):
+def individual_channel_baseline_noise_scan(board_name,baseline_inactive=[-15]*16):
   
   
   board_info = db.find_board_by_name(board_name)
@@ -213,7 +213,7 @@ def individual_channel_baseline_noise_scan(board_name,baseline_inactive=-15):
 
   db.enable_board(board_name)
   #ptc.init_active_boards()
-  ptc.init_board_by_name(board_name)
+  #ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   
@@ -228,12 +228,11 @@ def individual_channel_baseline_noise_scan(board_name,baseline_inactive=-15):
     #print( "setting baseline "+str(i) )
     for ch in range(0,16):
       #print( "probing channel "+str(ch) )
-      ptc.set_all_baselines(TDC,channels, [baseline_inactive]*len(channels) )
+      ptc.set_all_baselines(TDC,channels,baseline_inactive)
       ptc.set_baseline(TDC,channels[ch],i)
       ch_rate = tdc_daq.scaler_rate(TDC,channels,scan_time)[ch]
       rates.append(ch_rate)
-    #print( "rates" )
-    #print( rates )
+
     result_matrix.append(rates)
 
 

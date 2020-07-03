@@ -158,3 +158,4 @@ def alert(message):
     from IPython.display import display, HTML
     js = "<script>alert('"+message+"');</script>"
     display(HTML(js))
+    

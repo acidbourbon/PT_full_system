@@ -610,6 +610,16 @@ def board_list():
 
   return boards
 
+def board_list_installed():
+  setup = get_setup_json()
+  boards = []
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      if "0xeee" not in tdc["addr"]:
+          for board in tdc["board"]:
+            boards += [board["name"]]
+
+  return boards
 def active_board_list():
   setup = get_setup_json()
   boards = []
