@@ -334,8 +334,8 @@ def slow_control_test_boards(board_list):
   print( test_results )
   return test_results
 
-def init_active_boards():
-  return init_boards_by_name(db.active_board_list())
+def init_active_boards(pktime=-1,gain=-1,threshold=-1):
+  return init_boards_by_name(db.active_board_list(),pktime,gain,threshold)
 
 def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
   
