@@ -139,12 +139,12 @@ def threshold_noise_scan(board_name):
   TDC        = board_info["tdc_addr"]
   connector  = board_info["tdc_connector"]
   
-  if TDC  == "0xeeef":
+  if "0xeee" in TDC:
         return 0
     
   db.enable_board(board_name)
-  #ptc.init_active_boards()
-  #ptc.init_board_by_name(board_name)
+    #CW 13.7. don't init board,as trb gets timeout while often scanning
+  ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   x = list(range(0,32)) #default scan range 
@@ -167,10 +167,9 @@ def threshold_noise_scan(board_name):
     #print( "threshold scan of board "+board_name )
     ptc.set_threshold_for_board(TDC,connector,i)
     rates = tdc_daq.scaler_rate(TDC,channels,scan_time)
-    #print( "rates" )
-    #print( rates )
+#     print( "rates" )
     result_matrix.append(rates)
-
+  ptc.init_board_by_name(board_name)
   return (x, result_matrix)
 
 def baseline_noise_scan(board_name):
@@ -183,7 +182,7 @@ def baseline_noise_scan(board_name):
 
   db.enable_board(board_name)
   #ptc.init_active_boards()
-  #ptc.init_board_by_name(board_name)
+  ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   

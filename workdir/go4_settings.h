@@ -8,7 +8,7 @@
 #define spike_rejection_refchan 10
 #define t1_L -400
 #define t1_R 800
-#define threshold_noise_scan_limit 71
+#define threshold_noise_scan_limit 120
 #define tot_L -10
 #define tot_R 2000
 #define HUBRANGE_START 0x8150

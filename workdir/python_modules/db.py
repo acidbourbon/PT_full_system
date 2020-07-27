@@ -57,7 +57,7 @@ def dump_db_to_csv(outfile,**kwargs):
 
     # first collect keys
     for board in my_board_list:
-      print( "scanning keys of board: "+board )
+#       print( "scanning keys of board: "+board )
       board_info = find_board_by_name(board)
 
       calib_ = get_calib_json_by_name(board)

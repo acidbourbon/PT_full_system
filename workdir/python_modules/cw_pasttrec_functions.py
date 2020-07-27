@@ -34,8 +34,8 @@ def generate_neighbouring_FPC_board_list(name):
                 if next_board not in boards_scan_list:
                     boards_scan_list += [ next_board ]
 
-    print( str(len(boards_scan_list)) + " boards to activate, sequence of activation, boards list: ")
-    print(boards_scan_list)
+#     print( str(len(boards_scan_list)) + " boards to activate, sequence of activation, boards list: ")
+#     print(boards_scan_list)
     return boards_scan_list
 
 def generate_neighbouring_w_board_list(name):
@@ -62,7 +62,7 @@ def generate_neighbouring_w_board_list(name):
                     if  next_board not in boards_scan_list:
                         boards_scan_list += [ next_board ]
 
-    print( str(len(boards_scan_list)) + " boards to activate, sequence of activation, boards list: ")
-    print(boards_scan_list)
+#     print( str(len(boards_scan_list)) + " boards to activate, sequence of activation, boards list: ")
+#     print(boards_scan_list)
    
     return boards_scan_list
