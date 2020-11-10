@@ -9,17 +9,20 @@
 
 import ROOT
         
-def fit_scurve(raw_scan,startbin = 0.0,chisquare_limit = 1.5): 
+def fit_scurve(raw_scan,startX = 0.0,chisquare_limit = 1.5): 
     fit_output =  [-1,-1,-1,-1,-1,-1,-1,-1]
     scurve = ROOT.TF1("scurve","[3]+[0]*(1+erf((-1*x+[1])/(sqrt(2)*[2])))",0,130)
     if ( raw_scan.GetEntries() > 100 ):
        c = ROOT.TCanvas("myCanvasName","The Canvas Title",640,480)
        stdev = raw_scan.GetStdDev(1)
-       maxX = raw_scan.GetBinCenter(raw_scan.GetMaximumBin()) 
-       maxX += startbin      
-       scurve.SetParameters(raw_scan.GetMaximum(),stdev,maxX+stdev,raw_scan.GetMaximum()*0.05)
-       scurve.SetParLimits(0, raw_scan.GetMaximum()*0.1, raw_scan.GetMaximum()*2);  
-       raw_scan.Fit("scurve","Q","",maxX, raw_scan.GetBinCenter(raw_scan.GetNbinsX()))
+       maxX = raw_scan.GetBinCenter(raw_scan.GetMaximumBin())   
+       maxY = raw_scan.GetMaximum()
+       scurve.SetParameters(maxY,stdev,maxX+stdev,maxY*0.05)
+       scurve.SetParLimits(0, maxY*0.1, maxY*1.1); 
+       scurve.SetParLimits(1, 0, 100);    
+       scurve.SetParLimits(2, 0, 100);  
+       scurve.SetParLimits(3, 0, maxY);          
+       raw_scan.Fit("scurve","Q","",startX, raw_scan.GetBinCenter(raw_scan.GetNbinsX()))
        c.Draw()
        #c.SaveAs("noiseFit_lay" + str(l) +"_wire" + str(i) +".png")
        function = raw_scan.GetFunction("scurve")

@@ -143,8 +143,6 @@ def threshold_noise_scan(board_name):
         return 0
     
   db.enable_board(board_name)
-    #CW 13.7. don't init board,as trb gets timeout while often scanning
-  ptc.init_board_by_name(board_name)
 
   scan_time = 0.2
   x = list(range(0,32)) #default scan range 
