@@ -12,6 +12,17 @@ host = os.getenv("DAQOPSERVER")
 t = TrbNet(libtrbnet=lib, daqopserver=host)
 
 
+global_settings = db.get_global_settings()
+slow_control_log = 0
+if ("slow_control_log" in global_settings):
+  if (global_settings["slow_control_log"] == 1):
+    slow_control_log = 1
+
+slow_control_log_file = "./slow_control.log"
+
+
+
+
 black_settings_pt15_g1_thr127 = [
   0x019,
   0x11e,
@@ -61,6 +72,10 @@ spi_queue = 0
 spi_mem = {}
 
 def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
+  f = ""
+  if (slow_control_log):
+    f = open(slow_control_log_file,"a")
+
   
   TDC = int(TDC_str,16)
   
@@ -87,9 +102,14 @@ def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
       
     # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
     t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+    if (slow_control_log):
+      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, 0x0000FFFF))
+
 
     # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
     t.trb_register_write(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) )
+    if (slow_control_log):
+      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) ))
 
     # override: (chip-) select all ports!!
     #trbcmd w $TDC 0xd410 0xFFFF
@@ -99,9 +119,13 @@ def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
 
     # disable all SDO outputs but output $CONN
     t.trb_register_write(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) )
+    if (slow_control_log):
+      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) ))
 
     # disable all SCK outputs but output $CONN
     t.trb_register_write(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) )
+    if (slow_control_log):
+      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) ))
 
     # override: disable all SDO and SCK lines
     #trbcmd w $TDC 0xd415 0xFFFF
@@ -110,13 +134,22 @@ def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
     for data in my_data_list:
       # writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
       t.trb_register_write(TDC, 0xd400, (header+data)<<4 )
+      if (slow_control_log):
+        f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd400, (header+data)<<4 ))
       
       # write 1 to length register to trigger sending
       t.trb_register_write(TDC, 0xd411, 0x0001)
+      if (slow_control_log):
+        f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd411, 0x0001))
+
+  if (slow_control_log):
+    f.close()
     
 
 def reset_board(TDC_str,CONN):
-  # does not work
+  f = ""
+  if (slow_control_log):
+    f = open(slow_control_log_file,"a")
   
   TDC = int(TDC_str,16)
 
@@ -129,12 +162,16 @@ def reset_board(TDC_str,CONN):
 
   # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
   t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+  if (slow_control_log):
+    f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, 0x0000FFFF))
 
   # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
   #trbcmd w $TDC 0xd410 0x0000$sel_mask
 
   # bring CS low for sel mask, i.e. invert CS for sel mask, keep CS disabled
   t.trb_register_write(TDC, 0xd417, (sel_mask<<16) + 0xFFFF)
+  if (slow_control_log):
+    f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, (sel_mask<<16) + 0xFFFF))
 
   for i in range(1, 26):
     # generate 25 clock cycles
@@ -142,12 +179,21 @@ def reset_board(TDC_str,CONN):
 
     # upper four nibbles: invert SCK, lower four nibbles disable SCK
     t.trb_register_write(TDC, 0xd416, sel_mask<<16)
+    if (slow_control_log):
+      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd416, sel_mask<<16))
 
     # restore SCK to default state
     t.trb_register_write(TDC, 0xd416, 0x00000000)
+    if (slow_control_log):
+      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd416, 0x00000000))
 
   # bring CS to standard position (HI) again, keep CS disabled
   t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
+  if (slow_control_log):
+    f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, 0x0000FFFF))
+
+  if (slow_control_log):
+    f.close()
  
 
 

@@ -15,6 +15,7 @@
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
     "reference_channel": 35049,
+    "slow_control_log": 1,
     "spike_rejection": 15,
     "spike_rejection_refchan": 10,
     "t1_L": -400,

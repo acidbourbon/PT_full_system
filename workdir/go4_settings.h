@@ -4,6 +4,7 @@
 #define CHANNELS 53
 #define max_baseline_stddev 2.5
 #define reference_channel 35049
+#define slow_control_log 1
 #define spike_rejection 15
 #define spike_rejection_refchan 10
 #define t1_L -400
