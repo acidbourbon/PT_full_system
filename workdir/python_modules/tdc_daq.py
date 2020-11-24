@@ -33,13 +33,13 @@ def read_scalers(TDC,channels):
   last_chan = channels[len(channels)-1]
   memory_size = last_chan-first_chan +1
   
-  first_register = first_chan + 0xc001
+  first_register = first_chan + 0xdfc0
   values = read_memory(TDC,first_register,memory_size)
   return_vals = [0] * len(channels)
   index = 0
   for ch in channels:
     # mask out first bit, because it is the input state
-    return_vals[index] = values[ch + 0xc001] & 0x7fffffff
+    return_vals[index] = values[ch + 0xdfc0] & 0x7fffffff
     index += 1
 
   return return_vals
@@ -50,13 +50,13 @@ def read_ch_state(TDC,channels):
   last_chan = channels[len(channels)-1]
   memory_size = last_chan-first_chan +1
   
-  first_register = first_chan + 0xc001
-  values = read_memory(TDC,first_register,memory_size)
+  first_register = 0xdf8c
+  values = read_memory(TDC,first_register,1)
   return_vals = [0] * len(channels)
   index = 0
   for ch in channels:
     # only take first bit, because it is the input state
-    return_vals[index] = (values[ch + 0xc001] & 0x80000000)>>31
+    return_vals[index] = ((values[0xdf8c])>>index) & 1
     index += 1
 
   return return_vals

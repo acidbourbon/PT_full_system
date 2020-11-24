@@ -1,5 +1,5 @@
 #!/bin/bash
-
+exit
 echo trbcmd reset
 trbcmd reset
 

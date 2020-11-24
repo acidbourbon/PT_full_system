@@ -7,17 +7,13 @@
 #define slow_control_log 1
 #define spike_rejection 15
 #define spike_rejection_refchan 10
-#define t1_L -400
-#define t1_R 800
-#define threshold_noise_scan_limit 120
-#define tot_L -10
-#define tot_R 2000
+#define threshold_noise_scan_limit 64
 #define HUBRANGE_START 0xc035
-#define HUBRANGE_STOP 0xc035
+#define HUBRANGE_STOP 0xeeee
 #define TDCRANGE_START 0x0350
-#define TDCRANGE_STOP 0x0350
+#define TDCRANGE_STOP 0xfe91
 
 
 // second processes in second.C:
-#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");
+#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_fe91", "TDC_fe91");
 

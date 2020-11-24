@@ -6,9 +6,9 @@ cd /conf
 
 echo "configure container"
 
-export TRB3_PORT=35
-export DAQOPSERVER=localhost:$TRB3_PORT
-export TRB3_SERVER=192.168.4.240
+export TRB3_PORT=90
+export DAQOPSERVER=jspc29:$TRB3_PORT
+export TRB3_SERVER=141.2.242.18
 export CTS_GUI_PORT=1148
 export CTS_ENDPOINT=0xc035
 export DISPLAY=:2 # go4 window will be sent to $DISPLAY, if provide_vnc == yes , then it will be this x11 display
@@ -17,13 +17,13 @@ export PULSER=192.168.103.74
 
 > conf_log.txt
 
-provide_dhcp=yes
+provide_dhcp=no
 #edit conf/dhcpd.conf, enter your trb3 MAC address ###
-provide_trbnetd=yes
+provide_trbnetd=no
 
-provide_cts_gui=yes
+provide_cts_gui=no
 
-provide_vnc=yes
+provide_vnc=no
 vnc_password=1234
 vnc_port=5902
 vnc_geometry=1500x1024
@@ -44,13 +44,9 @@ vnc_geometry=1500x1024
 
 if [ $provide_dhcp == "yes" ]; then
   echo starting dhcp server
-  # for opensuse
-  #cp dhcpd.conf /etc/dhcpd.conf
-  # for ubuntu
-  cp dhcpd.conf /etc/dhcp/dhcpd.conf
-
+  cp dhcpd.conf /etc/dhcpd.conf
   > /tmp/dhcp_leasefile
-  dhcpd -lf /tmp/dhcp_leasefile >> conf_log.txt 2>&1
+  dhcpd -lf /tmp/dhcp_leasefile
   echo ... >> conf_log.txt
   echo dhcp server started >> conf_log.txt
   echo using config file /conf/dhcpd.conf >> conf_log.txt
@@ -79,10 +75,8 @@ fi
 
 if [ $provide_vnc == "yes" ]; then
   mkdir -p $HOME/.vnc/
-  cp /conf/xstartup $HOME/.vnc/xstartup
-  chmod +x $HOME/.vnc/xstartup
   echo $vnc_password | vncpasswd -f > $HOME/.vnc/passwd
-  tmux new-session -d -s vnc -n vnc "echo starting vnc server on port $vnc_port for display $DISPLAY; vncserver $DISPLAY -localhost no -rfbauth $HOME/.vnc/passwd -rfbport $vnc_port -geometry $vnc_geometry ;/bin/bash"
+  tmux new-session -d -s vnc -n vnc "echo starting vnc server on port $vnc_port for display $DISPLAY; vncserver $DISPLAY -rfbauth $HOME/.vnc/passwd -rfbport $vnc_port -geometry $vnc_geometry ;/bin/bash"
   
   echo ... >> conf_log.txt
   echo "started vnc server (e.g. for Go4 window)" >> conf_log.txt
