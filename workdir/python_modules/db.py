@@ -214,10 +214,18 @@ def write_go4_settings_h():
 
     sorted_hub_list = sorted(active_hub_list())
     sorted_tdc_list = sorted(active_tdc_list())
-    f.write("#define HUBRANGE_START {:s}\n".format( str(sorted_hub_list[0]) ))
-    f.write("#define HUBRANGE_STOP {:s}\n".format(  str(sorted_hub_list[-1]) ))
-    f.write("#define TDCRANGE_START {:s}\n".format( str(sorted_tdc_list[0]) ))
-    f.write("#define TDCRANGE_STOP {:s}\n".format(  str(sorted_tdc_list[-1]) ))
+    if(len(sorted_hub_list) > 0):
+      f.write("#define HUBRANGE_START {:s}\n".format( str(sorted_hub_list[0]) ))
+      f.write("#define HUBRANGE_STOP {:s}\n".format(  str(sorted_hub_list[-1]) ))
+    else:
+      f.write("#define HUBRANGE_START {:s}\n".format( "0x0000" ))
+      f.write("#define HUBRANGE_STOP {:s}\n".format( "0x0000" ))
+    if(len(sorted_tdc_list) > 0):
+      f.write("#define TDCRANGE_START {:s}\n".format( str(sorted_tdc_list[0]) ))
+      f.write("#define TDCRANGE_STOP {:s}\n".format(  str(sorted_tdc_list[-1]) ))
+    else:
+      f.write("#define TDCRANGE_START {:s}\n".format( "0x0000" ))
+      f.write("#define TDCRANGE_STOP {:s}\n".format( "0x0000" ))
     
     f.write("\n\n// second processes in second.C:\n")
     ### // new SecondProc("Sec_0350", "TDC_0350");

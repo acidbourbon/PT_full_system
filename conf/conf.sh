@@ -6,7 +6,8 @@ cd /conf
 
 echo "configure container"
 
-export TRB3_PORT=90
+#export TRB3_PORT=90
+export TRB3_PORT=167
 export DAQOPSERVER=jspc29:$TRB3_PORT
 export TRB3_SERVER=141.2.242.18
 export CTS_GUI_PORT=1148
