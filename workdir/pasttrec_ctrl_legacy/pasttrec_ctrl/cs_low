@@ -1,0 +1,4 @@
+#!/bin/bash
+
+trbcmd w $TDC 0xd417 0xFFFFFFFF # disable all CS lines, invert all CS lines to get a zero on all lines
+

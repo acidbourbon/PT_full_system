@@ -1,0 +1,61 @@
+#!/bin/bash
+
+function usage {
+  echo 'usage:     TDC=<TDC> CONN=<CONN> ./reset'
+  echo "            CONN can be 1..16"
+  echo 
+  echo 'example:   TDC=0x0351 CONN=1 ./reset'
+  exit
+}
+
+
+if [ -z $CONN ]; then
+  echo 'error: $CONN not set'
+  usage
+fi
+
+if [ -z $TDC ]; then
+  echo 'error: $TDC not set'
+  usage
+fi
+
+
+
+
+# bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+# ergo enable CS, because we need it for the reset
+#trbcmd w $TDC 0xd417 0x00000000
+
+# make selection mask from $CONN 
+sel_mask=$(perl -e "printf(\"%04X\", 0xFFFF & (1<<($CONN-1)))")
+
+# bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+trbcmd w $TDC 0xd417 0x0000FFFF
+
+# (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
+#trbcmd w $TDC 0xd410 0x0000$sel_mask
+
+
+
+# bring CS low for sel mask, i.e. invert CS for sel mask, keep CS disabled
+trbcmd w $TDC 0xd417 0x${sel_mask}FFFF
+
+for i in $(seq 1 25); do
+# generate 25 clock cycles
+
+# invert SCK for selection mask
+
+# upper four nibbles: invert SCK, lower four nibbles disable SCK
+trbcmd w $TDC 0xd416 0x${sel_mask}0000
+
+# restore SCK to default state
+trbcmd w $TDC 0xd416 0x00000000
+
+done
+
+# bring CS to standard position (HI) again, keep CS disabled
+trbcmd w $TDC 0xd417 0x0000FFFF
+
+
+
+
