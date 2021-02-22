@@ -1,0 +1,8 @@
+How to qualify PASTTREC housed asics?
+
+1. Put PASTTREC to Socket, close, check Power consumption.
+    current ?? without, ?? with PASTTREC connected
+2. initialize ASIC
+3. Baseline scan / calibration
+    each channel found an narrow noise peak, sigma < 2 steps (2x2mV)
+4. threshold scan / s-curve
