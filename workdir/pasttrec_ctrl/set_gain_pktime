@@ -1,0 +1,38 @@
+#!/bin/bash
+
+
+if [ $pktime == "10" ]; then
+	    if [ $gain == "4" ]; then
+		    ./spi <( echo 010)
+	    fi
+	    if [ $gain == "2" ]; then
+		    ./spi <( echo 014)
+	    fi
+	    if [ $gain == "1" ]; then
+		    ./spi <( echo 018)
+	    fi
+fi
+
+if [ $pktime == "15" ]; then
+	    if [ $gain == "4" ]; then
+		    ./spi <( echo 011)
+	    fi
+	    if [ $gain == "2" ]; then
+		    ./spi <( echo 015)
+	    fi
+	    if [ $gain == "1" ]; then
+		    ./spi <( echo 019)
+	    fi
+fi
+
+if [ $pktime == "20" ]; then
+	    if [ $gain == "4" ]; then
+		    ./spi <( echo 012)
+	    fi
+	    if [ $gain == "2" ]; then
+		    ./spi <( echo 016)
+	    fi
+	    if [ $gain == "1" ]; then
+		    ./spi <( echo 01a)
+	    fi
+fi

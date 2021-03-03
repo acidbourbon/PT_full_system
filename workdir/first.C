@@ -42,7 +42,7 @@ void first()
    const char* calmode = getenv("CALMODE");
    int cnt = (calmode && *calmode) ? atoi(calmode) : 0;
    const char* caltrig = getenv("CALTRIG");
-   unsigned trig = (caltrig && *caltrig) ? atoi(caltrig) : 0xd;
+   unsigned trig = (caltrig && *caltrig) ? atoi(caltrig) : 0x0;
    const char* uset = getenv("USETEMP");
    unsigned use_temp = 0; // 0x80000000;
    if ((uset!=0) && (*uset!=0) && (strcmp(uset,"1")==0)) use_temp = 0x80000000;
@@ -105,10 +105,6 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
       // try to build abs time difference between 0 channels
       //      if (tdc->GetID() != firsttdc)
       //   tdc->SetRefChannel(0, 0, (0x70000 | firsttdc), 6000,  -20., 20.);
-
-// configure 0xD trigger width and hmin/hmax histogram range for 0xD trigger ToT
-      tdc->SetToTRange(30, 50., 80.);
-
 
       tdc->SetUseLastHit(false);
       

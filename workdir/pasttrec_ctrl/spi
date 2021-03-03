@@ -1,0 +1,79 @@
+#!/bin/bash
+
+function usage {
+  echo 'usage:     TDC=<TDC> CONN=<CONN> CHIP=<0|1>./spi <data_file>'
+  echo "            CONN can be 1..16"
+  echo 
+  echo 'example:   TDC=0x0351 CONN=1 CHIP=0 ./spi chip0_settings.txt' 
+  exit
+}
+
+
+if [ -z $CONN ]; then
+  echo 'error: $CONN not set'
+  usage
+fi
+
+if [ -z $TDC ]; then
+  echo 'error: $TDC not set'
+  usage
+fi
+
+if [ -z $CHIP ]; then
+  echo 'error: $CHIP not set'
+  usage
+fi
+
+if [ -z $1 ]; then
+  echo 'error: no data file given'
+  usage
+fi
+
+
+
+# bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
+trbcmd w $TDC 0xd417 0x0000FFFF
+
+
+# (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
+trbcmd w $TDC 0xd410 $(perl -e "printf(\"0x%X\", 0xFFFF & (1<<($CONN-1)))")
+
+# override: (chip-) select all ports!!
+#trbcmd w $TDC 0xd410 0xFFFF
+
+# override: (chip-) select nothing !!
+#trbcmd w $TDC 0xd410 0x0000
+
+
+# disable all SDO outputs but output $CONN
+trbcmd w $TDC 0xd415 $(perl -e "printf(\"0x%X\", 0xFFFF & ~(1<<($CONN-1)))")
+
+# disable all SCK outputs but output $CONN
+trbcmd w $TDC 0xd416 $(perl -e "printf(\"0x%X\", 0xFFFF & ~(1<<($CONN-1)))")
+
+# override: disable all SDO and SCK lines
+#trbcmd w $TDC 0xd415 0xFFFF
+#trbcmd w $TDC 0xd416 0xFFFF
+
+prefix="0x"
+
+if [ $CHIP == "0" ]; then
+prefix="0x52"
+elif [ $CHIP == "1" ]; then
+prefix="0x54"
+else
+	echo 'error: wrong $CHIP setting'
+	usage
+fi
+
+
+# now parse the data word file line by line
+while read line; do
+
+# writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
+trbcmd w $TDC 0xd400 ${prefix}${line}0
+
+# write 1 to length register to trigger sending
+trbcmd w $TDC 0xd411 0x0001
+
+done < $1

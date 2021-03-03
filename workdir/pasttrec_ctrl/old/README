@@ -1,0 +1,6 @@
+
+
+export DAQOPSERVER=jspc29:143
+
+./init_asics
+./threshold_all 1

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+chip=$1
+chan=$2 #zero based
+val=$3
+
+val=$[ $val + 15 ]
+
+chan=$[ $chan + 4 ]
+
+
+if [ $chip == "0" ]; then
+trbcmd w $TDC 0xd400 "0x52"$(printf "%01x%02x" $chan $val)0
+trbcmd w $TDC 0xd411 0x0001
+elif [ $chip == "1" ]; then
+trbcmd w $TDC 0xd400 "0x54"$(printf "%01x%02x" $chan $val)0
+trbcmd w $TDC 0xd411 0x0001
+elif [ $chip == "2" ]; then
+trbcmd w $TDC 0xd400 "0xd2"$(printf "%01x%02x" $chan $val)0
+trbcmd w $TDC 0xd411 0x0001
+elif [ $chip == "3" ]; then
+trbcmd w $TDC 0xd400 "0xd4"$(printf "%01x%02x" $chan $val)0
+trbcmd w $TDC 0xd411 0x0001
+else
+echo "wrong input"
+fi
+

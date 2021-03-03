@@ -29,10 +29,10 @@
 
 
 // Muentz-Torte
-// #define t1_L -800 // EE
-// #define t1_R 800 // EE
-// #define tot_L -10 // EE
-// #define tot_R 2000 // EE
+#define t1_L -400 // EE
+#define t1_R 400 // EE
+#define tot_L -10 // EE
+#define tot_R 2000 // EE
 
 #define ref_channel_offset -75 //ns fine measured ref channel relative to coarse measured cts trigger channel
 //#define ref_channel_offset 0 //ns fine measured ref channel relative to coarse measured cts trigger channel
@@ -48,8 +48,8 @@
 
 
 
-#define t1_accept_L ( t1_L + ref_channel_offset) //ns // EE
-#define t1_accept_R ( t1_R + ref_channel_offset) //ns // EE
+#define t1_accept_L (-2000 + ref_channel_offset) //ns // EE
+#define t1_accept_R (2000 + ref_channel_offset)//ns // EE
 
 #define fish_proj_cut 20
 

@@ -105,7 +105,7 @@ def board_baseline_report(board_name,**kwargs):
   d = Dialog(dialog="dialog")
 
   report_calib = gen_baseline_report(board_name)
-  report_dummy = str("")
+  report_dummy = ""
   report = report_calib
   if dummy_calib and report_calib:
     report_dummy = gen_baseline_report(board_name,dummy_calib=True)
@@ -226,7 +226,7 @@ def dialog_board_list(**kwargs):
 
   if check_enable:
     code, active_boards = d.checklist("enable/disable boards", choices=choices, width=width, height=height, list_height=list_height)
-    if code == d.OK:
+    if code == d.DIALOG_OK:
       for board_name in board_list:
         db.disable_board(board_name)
       for board_name in active_boards:
@@ -235,7 +235,7 @@ def dialog_board_list(**kwargs):
 
   elif check_standby:
     code, standby_boards = d.checklist("set board standby", choices= choices, width=width,height=height,list_height=list_height)
-    if code == d.OK:
+    if code == d.DIALOG_OK:
       for board_name in board_list:
         db.unset_standby_board(board_name)
       for board_name in standby_boards:

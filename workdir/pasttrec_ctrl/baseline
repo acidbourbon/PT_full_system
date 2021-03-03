@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+chan=$1 #zero based
+val=$2 # -15 to 15
+
+val=$[ $val + 15 ]
+
+chan=$[ $chan + 4 ]
+
+
+./spi <( printf "%01x%02x\n" $chan $val )

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+./threshold 0 $1
+./threshold 1 $1
+#./threshold 2 $1
+#./threshold 3 $1
