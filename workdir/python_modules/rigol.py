@@ -23,7 +23,7 @@ def prefix_number(number):
   return nstr
  
 # change the IP address to your instrument's IP
-inst = vxi11.Instrument('TCPIP0::192.168.43.125::INSTR')
+inst = vxi11.Instrument('TCPIP0::192.168.44.125::INSTR') #rigol at GSI Dlab
 #inst = vxi11.Instrument('USB0::0x1AB1::0x0641::DG4E212801262::INSTR')
 print(inst.ask('*IDN?'))
 
@@ -88,7 +88,10 @@ def set_waveform(channel,data_x,data_y,**kwargs):
     inst.write("SOURCE"+str(channel)+":BURSt:MODE TRIGgered")
     
   inst.write("OUTPUT"+str(channel)+" ON")
-
+def set_output_on(channel):
+  inst.write("OUTPUT"+str(channel)+" ON")
+def set_output_off(channel):
+  inst.write("OUTPUT"+str(channel)+" OFF")
 
 
 

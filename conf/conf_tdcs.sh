@@ -84,3 +84,13 @@ done
 #	trbcmd w $TDC 0xdf24 $(perl -e "printf(\"0x%X\", 0b00000000000000000000000000000100 )")
 #
 #done
+#### 
+#  new MDC MBO 
+# set address for second TDC on short MBO:
+trbcmd s 0x0000f34c001f2941 0x01 0xf6dc
+trbcmd s 0x00009c7d00202941 0x01 0xf6dd
+# enable scalers
+trbcmd w 0xfe91 0xdf80  0xffffffff
+trbcmd w 0xfe91 0xdf85  0xffffffff
+trbcmd w 0xfe91 0xdf87  0xffffffff
+

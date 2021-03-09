@@ -99,7 +99,9 @@ ENV TRBNET_COMMIT=02cf41a486d64bc894986fe87c174bfe1b07fc9b
 
 RUN git clone git://jspc29.x-matter.uni-frankfurt.de/projects/trbnettools.git &&\
   cd /trbnettools &&\
-  git checkout $TRBNET_COMMIT &&\
+  git checkout $TRBNET_COMMIT &&\ 
+# CW 1.3.2021 switch to current version of trbnettolls to enable trbflash of new MDC MBO
+#  git checkout master &&̣ \
   cd /trbnettools/libtrbnet_perl && \
   perl Makefile.PL && \
   cd /trbnettools && \
@@ -223,7 +225,8 @@ RUN apt-get update && \
   texlive-xetex \
   pandoc 
 
-RUN apt-get -y install emacs
+RUN apt-get -y install emacs 
+RUN apt-get -y install libtirpc-dev
 
     
 
