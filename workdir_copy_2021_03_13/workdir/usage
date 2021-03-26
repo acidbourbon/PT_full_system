@@ -1,0 +1,89 @@
+dabc_exe TdcEventBuilder.xml
+CALMODE=100000 CALTRIG=13 go4analysis -stream localhost:6789 -http localhost:8080
+CALMODE=-1 CALTRIG=13 go4analysis -number 100000 -stream localhost:6789
+
+## tot calibration (run twice!)
+rm /tmp/*.hld
+dabc_exe TdcEventBuilder.xml
+# -- break after 100k events
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";  rm -f *.root
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/tmp/*.hld";  rm -f *.root
+
+
+##################################################
+##            calibration procedure             ##
+##################################################
+
+linux-l8n8:/workdir # vim first.C    #### edit TDC range, select just one
+
+### activate all channels of TDC
+### non invert all channels of TDC (/conf/conf_tdcs_for_calib.sh)
+
+linux-l8n8:/workdir # dabc_exe TdcEventBuilder.xml ### record 100k events
+
+## run calibration twice, look if tot  offset of 30 ns is measured
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/workdir/data/*.hld";  rm -f *.root
+rm *.root; CALMODE=-1 CALTRIG=0xd go4analysis -number 100000 -user "/workdir/data/*.hld" | less
+
+linux-l8n8:/workdir # mv data/TDC_*.hld data/cal52/0x1501.hld    ## save hld file for calibrating again if needed                                                                                                                             
+###############################
+
+
+CALMODE=10000 CALTRIG=13 go4analysis -stream localhost:6789
+rm *.root; go4 my_hotstart.hotstart
+dabc_exe TdcEventBuilder_noHLD.xml
+
+## record 100 events
+rm *.root; go4analysis -number 100 -stream localhost:6790
+
+## debug raw data ##
+hldprint localhost:6790  -hub 0xc035 -onlytdc 0x0350  -num 10
+
+## record from stream, display data from joint_tree
+
+## if you want to work with the recorded data, use tree_out=true
+## without this env flag, also go4 will not trash your RAM anymore
+rm *.root; tree_out=false go4analysis -number 1000 -stream localhost:6790
+rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -l unify.C
+
+## ROOTJS -> also displays second.C histograms
+rm *.root; tree_out=false go4analysis -stream localhost:6790 -http localhost:8080 
+rm *.root; tree_out=true go4analysis -stream localhost:6789 -http localhost:8080 
+
+rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q; ./rbrowse joint_tree.root
+rm *.root; tree_out=true go4analysis -number 1000 -user /workdir/data/lena_cosmics/TDC_data19078162428.hld; root -b -l unify.C -q; ./rbrowse joint_tree.root
+# in the browser:
+joint_tree->Draw("hits.t1","hits.chan == 35001")
+rm *.root; tree_out=true go4analysis -user /workdir/data/sandra_cosmics/*.hld; root -b -l unify.C -q; ./rbrowse joint_tree.root
+
+
+# this needs to be working for data taking and calibration
+rm *.root; tree_out=true go4analysis -number 1000 -stream localhost:6790; root -b -l unify.C -q; ./rbrowse joint_tree.root
+
+# draw from root tree
+ joint_tree->Draw("t1","wire==50") 
+
+
+# dump board database to tree and draw stuff
+./dump_everything.py
+root dump.root
+dump_tree->Draw("wires","name == 0014","")
+dump_tree->Draw("calib_baselines","name == 0014","")
+dummy_calib_tree->Draw("dummy_calib_noise_scan_raw","name==0014 && board_chan == 0","")
+### view it all against wire number!
+dummy_calib_tree->Draw("dummy_calib_noise_scan_raw:wires>>noise_scan(140,0,140,31,-15,15)","","colz")
+dummy_tsbl_tree->Draw("dummy_calib_tsbl_scan_raw:wires>>noise_scan(140,0,140,32,0,32)","","colz")
+dummy_calib_tree->Draw("dummy_calib_noise_scan_raw:wires>>noise_scan(140,0,140,31,-15,15)","chamber == 0 && layer == 3 && name == 0017","colz")
+dummy_tsbl_tree->Draw("dummy_calib_tsbl_scan_raw:wires>>noise_scan(140,0,140,32,0,32)","chamber == 0 && layer == 3 && name == 0017","colz")
+
+# reload one or more TDCs and properly address and configure them again, also enable formerly active tdc channels:
+#
+./GUReset.sh 0x0350 0x0353
+
+
+./recorrelate_id.sh id062
+
+
+
+# check if trigger input is coming in the right way: (channel 49)
+hldprint localhost:6789  -hub 0xc035 -onlytdc 0x0350  -num 1

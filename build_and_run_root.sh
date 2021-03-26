@@ -3,8 +3,8 @@ docker build -t fst . || exit
 #xhost +si:localuser:root
 docker run --net host -v $(pwd)/conf:/conf -v $(pwd)/workdir:/workdir --rm -it \
 --name fst \
---device /dev/serial/by-id/usb-HAMEG_HAMEG_HO720_020546035-if00-port0:/dev/ttyUSB_HAMEG_LV \
---device /dev/serial/by-id/usb-HAMEG_HAMEG_HO720_023192710-if00-port0:/dev/ttyUSB_HAMEG_TRB \
+--device /dev/HAMEG_HAMEG_HO720_020546035:/dev/ttyUSB_HAMEG_LV \
+--device /dev/HAMEG_HAMEG_HO720_023192710:/dev/ttyUSB_HAMEG_TRB \
 fst /workdir/start.sh
         
 

@@ -32,12 +32,13 @@ RUN apt-get update && \
   graphviz-dev libavahi-compat-libdnssd-dev \
   libldap2-dev python-dev libxml2-dev libkrb5-dev \
   libgsl0-dev libqt4-dev \
-  subversion
+  subversion 
+  
   
   
 RUN pip3 install --upgrade pip
 RUN pip3 install setuptools && \
-  pip3 install pythondialog python-vxi11
+    pip3 install pythondialog python-vxi11
  
 # for garfield to feel at home make symlink to som gsl libs
 RUN ln -s /usr/lib/x86_64-linux-gnu/libgslcblas.so.0.0.0 /usr/lib/libgsl.so.0 
@@ -54,6 +55,13 @@ RUN ln -s /usr/lib/x86_64-linux-gnu/libgslcblas.so.0.0.0 /usr/lib/libgsl.so.0
 # newest commit from 2018-02-28
 ENV DABC_TRB3_REV=4242 
 
+RUN apt-get update && \
+  apt-get -y install \
+#  qtwebengine5-dev \
+   libqt4-dev \
+   xorg-dev \ 
+   g++ \
+   cmake
 
 ##################################################
 
@@ -67,7 +75,7 @@ RUN perl -pi -e "s/-Dhttp=ON/-Dhttp=ON -DPYTHON_EXECUTABLE=\/usr\/bin\/python3/;
 
 RUN cd /trb3; \
   > /tmp/trb3_make_exit_value; \
-  { make -j2; echo $? > /tmp/trb3_make_exit_value; killall tail; }& \
+  { make -j4; echo $? > /tmp/trb3_make_exit_value; killall tail; }& \
   echo -e "\n\n---- display make log: ----\n\n"; \
   tail -F ./stream/makelog.txt & \
   tail -F ./go4/makelog.txt & \
@@ -124,10 +132,10 @@ ENV PATH=$PATH:/trbnettools/bin
 RUN cpan File::chdir XML::LibXML Data::TreeDumper CGI::Carp
 
 # newest commit
-#ENV DAQTOOLS_COMMIT=master
+ENV DAQTOOLS_COMMIT=master
 
 # newest commit from 2018-02-28
-ENV DAQTOOLS_COMMIT=4840d304ad9cce93ffe972ef8cff4c325d7ac198 
+#ENV DAQTOOLS_COMMIT=4840d304ad9cce93ffe972ef8cff4c325d7ac198 
 
 #################################################
 

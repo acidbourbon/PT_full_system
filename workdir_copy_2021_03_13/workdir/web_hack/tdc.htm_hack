@@ -1,0 +1,18 @@
+<script src="../jquery-3.4.1.min.js" type="text/javascript"></script>
+
+<script> 
+$( function() {
+  setTimeout(function(){
+    $("#form_board").val("fe4c");
+    $("#form_split").prop("checked",true);
+    $("#form_diff").prop("checked",true);
+    $("#form_status").prop("checked",true);
+    $("#form_enable").prop("checked",true);
+    $("#form_hitrate").prop("checked",true);
+    $("#form_rate").val("1000");
+    setValues();
+	
+  }, 2000);
+
+})
+</script>

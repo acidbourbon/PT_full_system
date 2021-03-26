@@ -1,0 +1,11 @@
+#!/bin/bash
+
+val=$1
+
+for i in $(seq 0 7); do
+CHIP=0 ./baseline $i $val
+done
+
+for i in $(seq 0 7); do
+CHIP=1 ./baseline $i $val
+done
