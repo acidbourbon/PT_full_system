@@ -18,7 +18,7 @@
     "slow_control_log": 1,
     "spike_rejection": 15,
     "spike_rejection_refchan": 10,
-    "threshold_noise_scan_limit": 64
+    "threshold_noise_scan_limit": 60
   },
   "hub": [
     {
@@ -173,14 +173,15 @@
             {
               "active": 1,
               "calib_file": "./boards/board_4000.json",
-              "chamber": 0,
-              "fpc_a": 1,
-              "fpc_b": 2,
-              "fpc_c": 3,
-              "fpc_d": 4,
-              "layer": 0,
+              "chamber": 8,
+              "fpc_a": 0,
+              "fpc_b": 1,
+              "fpc_c": 2,
+              "fpc_d": 3,
+              "layer": 8,
               "name": "4000",
-              "reverse_mapping": 1,
+              "reverse_mapping": 0,
+              "standby": 0,
               "tdc_connector": 1
             },
             {

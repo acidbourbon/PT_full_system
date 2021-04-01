@@ -23,14 +23,22 @@ def fit_scurve(raw_scan,startX = 0.0,chisquare_limit = 1.5):
        scurve.SetParLimits(2, 0, 100);  
        scurve.SetParLimits(3, 0, maxY);          
        raw_scan.Fit("scurve","Q","",startX, raw_scan.GetBinCenter(raw_scan.GetNbinsX()))
+       raw_scan.Fit("scurve","Q","",startX+1, raw_scan.GetBinCenter(raw_scan.GetNbinsX())) 
+       raw_scan.Fit("scurve","Q","",startX, raw_scan.GetBinCenter(raw_scan.GetNbinsX()))     
+    
        c.Draw()
        #c.SaveAs("noiseFit_lay" + str(l) +"_wire" + str(i) +".png")
        function = raw_scan.GetFunction("scurve")
        if (function):
         if(function.GetNDF() > 0 ):
+         #print(function.GetChisquare()/function.GetNDF())
          if( function.GetChisquare()/function.GetNDF() < chisquare_limit):
-           fit_output = []
-           for ip in range(0,4):
+           #raw_scan.Fit("scurve","Q","",startX, raw_scan.GetBinCenter(raw_scan.GetNbinsX()))
+           #function = raw_scan.GetFunction("scurve")
+           #print(function.GetChisquare()/function.GetNDF())
+           #if( function.GetChisquare()/function.GetNDF() < chisquare_limit):        
+              fit_output = []
+              for ip in range(0,4):
                fit_output += [ function.GetParameter(ip) ]
                fit_output += [ function.GetParError(ip) ]  
     return fit_output

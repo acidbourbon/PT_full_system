@@ -7,7 +7,7 @@
 #define slow_control_log 1
 #define spike_rejection 15
 #define spike_rejection_refchan 10
-#define threshold_noise_scan_limit 64
+#define threshold_noise_scan_limit 60
 #define HUBRANGE_START 0xc035
 #define HUBRANGE_STOP 0xc035
 #define TDCRANGE_START 0xf3cf
