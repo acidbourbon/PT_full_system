@@ -258,10 +258,11 @@ def scurve_scan(serial_no):
         plt.xlabel("threshold LSB ( 2mV / LSB ) ")
         plt.ylabel("mean pulse rate (Hz)")
         #plt.yscale('log')
+        errors =  np.sqrt(y) 
         TS = calc_chisquare(y, errors , sigmoid(x,*popt))
         NDF = len(y) - len(p0)
         print("chisquare/NDF = {0:.2f} / {1:d} = {2:.2f}".format(TS, NDF, TS / NDF))
-   
+           
 
         plt.plot(x,sigmoid(x,*popt),"r-",label="fit chi2/ndf = {:.2f}".format(TS/NDF))
         plt.title("s-curve channel: "+str(ch))
@@ -272,14 +273,12 @@ def scurve_scan(serial_no):
         py_noise_halfmax += [popt[1]]
         py_noise_halfmax_err += [perr[1]] 
         py_noise_sigma += [popt[2]]
-        py_noise_sigma_err += [perr[2]]                                       
+        py_noise_sigma_err += [perr[2]] 
+        py_noise_fit_chi2 += [ TS / NDF ]
 
         for p in range(0,len(popt)):
             print("fit pram ",p," = ",popt[p], " +- = ",perr[p])
-            
-        errors =  np.sqrt(y)  
 
-        py_noise_fit_chi2 += [ TS / NDF ]
           # plt.show()
         pdf.savefig(fig00)
     pdf.close()
