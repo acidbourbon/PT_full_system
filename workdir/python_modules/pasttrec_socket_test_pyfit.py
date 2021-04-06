@@ -258,7 +258,12 @@ def scurve_scan(serial_no):
         plt.xlabel("threshold LSB ( 2mV / LSB ) ")
         plt.ylabel("mean pulse rate (Hz)")
         #plt.yscale('log')
-        plt.plot(x,sigmoid(x,*popt),"r-",label="fit")
+        TS = calc_chisquare(y, errors , sigmoid(x,*popt))
+        NDF = len(y) - len(p0)
+        print("chisquare/NDF = {0:.2f} / {1:d} = {2:.2f}".format(TS, NDF, TS / NDF))
+   
+
+        plt.plot(x,sigmoid(x,*popt),"r-",label="fit chi2/ndf = {:.2f}".format(TS/NDF))
         plt.title("s-curve channel: "+str(ch))
         plt.legend()
         
@@ -273,9 +278,7 @@ def scurve_scan(serial_no):
             print("fit pram ",p," = ",popt[p], " +- = ",perr[p])
             
         errors =  np.sqrt(y)  
-        TS = calc_chisquare(y, errors , sigmoid(x,*popt))
-        NDF = len(y) - len(p0)
-        print("chisquare/NDF = {0:.2f} / {1:d} = {2:.2f}".format(TS, NDF, TS / float(NDF)))
+
         py_noise_fit_chi2 += [ TS / NDF ]
           # plt.show()
         pdf.savefig(fig00)
@@ -329,9 +332,15 @@ def scurve_scan(serial_no):
         
         if baseline_mean[i] < 15 and baseline_mean[i] > -15 and py_noise_sigma[i] < 4.0 and py_noise_sigma[i] > 0 and py_noise_halfmax[i] < 40 and py_noise_halfmax[i] > 3  and py_noise_fit_chi2[i] < 200 :
             passed_test += ['OK']
-        else :
+        elif baseline_mean[i] > 15 or baseline_mean[i] < -15 :
             passed_test += ['no baseline']
             asic_result += "channel "+i+" failed "
+        elif  py_noise_fit_chi2[i] > 200   :
+            passed_test += ['s-curve fit failed']
+            asic_result += "channel "+i+" s-curve failed "
+        else    :
+            passed_test += ['s-curve fit out of range']
+            asic_result += "channel "+i+" s-curve  out of range "
     if not asic_result:
         asic_result = "all channels OK"
     # write results to table over all tested pasttrec as .csv file
