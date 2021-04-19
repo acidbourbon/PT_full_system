@@ -237,20 +237,25 @@ def scurve_scan(serial_no):
     plt.rcParams["figure.figsize"] = (8,6)
     for i in range(0,8): 
         
-        
+        #fit parameters:
         x = np.array(tsbl_range)
         y = np.array(tsbl_scan_raw[i])
         p0 = [np.amax(y),20,1]
-        xmin = 5
+        xmin = 6
         xmax = 50
 
         mask = (x >= xmin) & (x <= xmax)
 
-        x = x[mask]
-        y = y[mask]
+        xfit = x[mask]
+        yfit = y[mask]
 
-        popt, pcov = curve_fit(sigmoid, x, y, p0=p0)
-
+        popt, pcov = curve_fit(sigmoid, xfit, yfit, p0=p0)
+        
+        #plot properties
+        maskPlot = (x >= 2) & (x <= 50)
+        x = x[maskPlot]
+        y = y[maskPlot]
+        
         fig00 = plt.figure(num=None, figsize=(15, 10), dpi=80, facecolor='w', edgecolor='k')
         plt.scatter(x,y,alpha=1,label = "{:d}".format(i))
 
@@ -333,13 +338,13 @@ def scurve_scan(serial_no):
             passed_test += ['OK']
         elif baseline_mean[i] > 15 or baseline_mean[i] < -15 :
             passed_test += ['no baseline']
-            asic_result += "channel "+i+" failed "
-        elif  py_noise_fit_chi2[i] > 200   :
+            asic_result += "channel {} failed ".format(i)
+        elif  py_noise_fit_chi2[i] > 0.1   :
             passed_test += ['s-curve fit failed']
-            asic_result += "channel "+i+" s-curve failed "
+            asic_result += "channel {} s-curve failed ".format(i)
         else    :
             passed_test += ['s-curve fit out of range']
-            asic_result += "channel "+i+" s-curve  out of range "
+            asic_result += "channel {} s-curve  out of range ".format(i)
     if not asic_result:
         asic_result = "all channels OK"
     # write results to table over all tested pasttrec as .csv file
