@@ -339,7 +339,7 @@ def scurve_scan(serial_no):
         elif baseline_mean[i] > 15 or baseline_mean[i] < -15 :
             passed_test += ['no baseline']
             asic_result += "channel {} failed ".format(i)
-        elif  py_noise_fit_chi2[i] > 0.1   :
+        elif  py_noise_fit_chi2[i] > 200   :
             passed_test += ['s-curve fit failed']
             asic_result += "channel {} s-curve failed ".format(i)
         else    :
