@@ -249,7 +249,10 @@ def scurve_scan(serial_no):
         xfit = x[mask]
         yfit = y[mask]
 
-        popt, pcov = curve_fit(sigmoid, xfit, yfit, p0=p0)
+        try:
+            popt, pcov = curve_fit(sigmoid, xfit, yfit, p0=p0)
+        except Exception as e:
+            print(e)
         
         #plot properties
         maskPlot = (x >= 2) & (x <= 50)
@@ -350,12 +353,12 @@ def scurve_scan(serial_no):
     # write results to table over all tested pasttrec as .csv file
     import csv
     #table headers: only uncomment, when file is written for the first time.
-    channel_label_list = ['channel_0', 'channel_1', 'channel_2','channel_3','channel_4' ,'channel_5','channel_6', 'channel_7' ]   
-    l1 = [ "baseline_" + s for s in channel_label_list]
-    l2 = [ "s-curve_halfmax_" + s for s in channel_label_list]
-    l3 = [ "s-curve_sigma_" + s for s in channel_label_list]
-    l4 = [ "s-curve_chi2ndf_" + s for s in channel_label_list]
-    l5 = [ "Test_passed_" + s for s in channel_label_list]
+   # channel_label_list = ['channel_0', 'channel_1', 'channel_2','channel_3','channel_4' ,'channel_5','channel_6', 'channel_7' ]   
+   # l1 = [ "baseline_" + s for s in channel_label_list]
+   # l2 = [ "s-curve_halfmax_" + s for s in channel_label_list]
+   # l3 = [ "s-curve_sigma_" + s for s in channel_label_list]
+   # l4 = [ "s-curve_chi2ndf_" + s for s in channel_label_list]
+   # l5 = [ "Test_passed_" + s for s in channel_label_list]
     #table_row = ["serial"] + ["ASIC test result"]+  l1 + l2   + l3  + l4  + l5
     
     table_row = [serial] + [asic_result] + baseline_mean +  py_noise_halfmax +  py_noise_sigma + py_noise_fit_chi2 +  passed_test
