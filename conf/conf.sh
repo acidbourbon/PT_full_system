@@ -11,7 +11,7 @@ export DAQOPSERVER=localhost:$TRB3_PORT
 export TRB3_SERVER=192.168.4.240
 export CTS_GUI_PORT=1148
 export CTS_ENDPOINT=0xc035
-export DISPLAY=:2 # go4 window will be sent to $DISPLAY, if provide_vnc == yes , then it will be this x11 display
+export DISPLAY=:5 # go4 window will be sent to $DISPLAY, if provide_vnc == yes , then it will be this x11 display
 
 export PULSER=192.168.103.74
 
@@ -25,7 +25,7 @@ provide_cts_gui=yes
 
 provide_vnc=yes
 vnc_password=1234
-vnc_port=5902
+vnc_port=5905
 vnc_geometry=1500x1024
 
 

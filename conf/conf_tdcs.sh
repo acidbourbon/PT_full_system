@@ -1,5 +1,23 @@
 #!/bin/bash
-for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503; do
+alias i='trbcmd i 0xffff'
+
+#  new MDC MBO 
+# set address for second TDC on short MBO:
+trbcmd s 0x0000f34c001f2941 0x01 0x1800
+trbcmd s 0x00009c7d00202941 0x01 0x1801
+trbcmd s 0x00009b7400202941 0x01 0x1802
+trbcmd s 0x0000f5a1001f2941 0x01 0x1803
+  #hub
+trbcmd s 0x0000e4b3001f2941 0x01 0x80eb
+trbcmd s 0x0000fe5c001f2941 0x01 0x80ec
+# enable scalers
+trbcmd w 0xfe91 0xdf80  0xffffffff
+trbcmd w 0xfe91 0xdf85  0xffffffff
+trbcmd w 0xfe91 0xdf87  0xffffffff
+
+
+
+for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503 0x1800 0x1801 0x1802 0x1803; do
 
 	# invert the first 32 channels
 	#trbcmd w $TDC 0xc805 0xFFFFFFFF
@@ -11,6 +29,13 @@ for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503; do
 	# set channel ringbuffer size
 	trbcmd w $TDC 0xc804 10
 
+        # enable the 49th channel
+        trbcmd setbit $TDC 0xc803 0x10000
+
+        # enable trigger for 49th channel
+        trbcmd setbit $TDC 0xdf01 0x10000
+
+
 done
 
 
@@ -18,7 +43,8 @@ done
 
 for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503; do
 
-	# invert the first 48 channels 
+	# invert the first 48 channels  for TDC with PANDA boards input
+	# do not invert channels for newMBO TDC with 10 channels
 	trbcmd w $TDC 0xc805 0xFFFFFFFF
 	trbcmd w $TDC 0xc806 0xFFFF
 
@@ -27,10 +53,7 @@ done
 
 # PASTTREC TDC #
 
-for TDC in 0x0350; do
-	# invert the first 48 channels 
-	trbcmd w $TDC 0xc805 0xFFFFFFFF
-	trbcmd w $TDC 0xc806 0xFFFF
+#for TDC in 0x0350 0x0351 0x0352 0x0353 0x1500 0x1501 0x1502 0x1503  0x1800 0x1801; do
 
 	# non- invert the first channel 
 	#trbcmd clearbit $TDC 0xc805 0x1
@@ -42,10 +65,10 @@ for TDC in 0x0350; do
 	#trbcmd setbit $TDC 0xc802 0xFFFFFFFF
 
 	# enable the 49th channel
-	trbcmd setbit $TDC 0xc803 0x10000
+#	trbcmd setbit $TDC 0xc803 0x10000
 
 	# enable trigger for 49th channel
-        trbcmd setbit $TDC 0xdf01 0x10000
+#       trbcmd setbit $TDC 0xdf01 0x10000
 
 	# enable Florian's trigger Logic
 	#trbcmd setbit $TDC 0xe000 0x1
@@ -57,9 +80,9 @@ for TDC in 0x0350; do
 	#trbcmd setbit $TDC 0xe100 0x0
 	# stretcher on, five cycles
 	#trbcmd setbit $TDC 0xe200 0x10005
-        echo " --- "
+#       echo " --- "
 
-done
+#done
 
 #for TDC in 0x0351; do
 #
@@ -85,12 +108,4 @@ done
 #
 #done
 #### 
-#  new MDC MBO 
-# set address for second TDC on short MBO:
-trbcmd s 0x0000f34c001f2941 0x01 0xf6dc
-trbcmd s 0x00009c7d00202941 0x01 0xf6dd
-# enable scalers
-trbcmd w 0xfe91 0xdf80  0xffffffff
-trbcmd w 0xfe91 0xdf85  0xffffffff
-trbcmd w 0xfe91 0xdf87  0xffffffff
 

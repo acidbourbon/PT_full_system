@@ -193,7 +193,8 @@ void unify(void){
     
     Bool_t all_ends_reached = true; 
     Int_t hits_per_trigger = 0;
-    
+//cout << trig_no ;
+//cout << endl;    
     // loop over all participating TDCs
     
     Float_t reference_time = 0;
@@ -277,7 +278,7 @@ void unify(void){
 
           
       }
-        
+        cout << reference_time ;
       joint_tree->Fill();
     }
     

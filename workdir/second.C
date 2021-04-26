@@ -108,16 +108,17 @@ class SecondProc : public base::EventProc {
 //       base::H1handle  totCh1; //!< histogram with hits number
 //       base::H1handle  totCh2; //!< histogram with hits number
       
-      
-      base::H1handle  tot_h[CHANNELS]; 
-      base::H1handle  tot_untrig_h[CHANNELS]; 
-      base::H1handle  t1_h[CHANNELS]; 
-      base::H1handle  potato_h[CHANNELS];
       base::H1handle  meta_potato_h;
       base::H1handle  meta_t1_h;
       base::H1handle  meta_tot_h;
       base::H1handle  meta_tot_2d;
       base::H1handle  meta_t1_2d;
+            
+      base::H1handle  tot_h[CHANNELS]; 
+      base::H1handle  tot_untrig_h[CHANNELS]; 
+      base::H1handle  t1_h[CHANNELS]; 
+      base::H1handle  potato_h[CHANNELS];
+
       base::H1handle  coinc_matrix;
 //      base::H1handle  meta_fish;
 //      base::H1handle  meta_fish_proj;
@@ -165,7 +166,14 @@ class SecondProc : public base::EventProc {
        data_tree[fTdcId]->Branch("chan",&entry_chan);
        data_tree[fTdcId]->Branch("ref_chan",&entry_ref_chan);
        
-         
+        meta_t1_h = MakeH1("meta_t1","meta_t1", 2000, t1_L, t1_R, "ns");
+        meta_t1_2d = MakeH2("meta_t1_2d","meta_t1_2d", 2000, t1_L, t1_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
+        meta_tot_h = MakeH1("meta_tot","meta_tot", 4000, tot_L, tot_R, "ns");
+        meta_tot_2d = MakeH2("meta_tot_2d","meta_tot_2d", 2000, tot_L, tot_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
+        meta_potato_h = MakeH2("meta_potato","meta_potato",500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
+         ((TObject*) meta_t1_2d)->SetDrawOption("colz");
+         ((TH2F*) meta_tot_2d)->SetDrawOption("COLZ");
+         ((TObject*) meta_potato_h)->SetDrawOption("colz");       
         for( unsigned i=0; i<CHANNELS; i++ ) {
           char chno[16];
           sprintf(chno,"Ch%02d_t1",i);
@@ -178,12 +186,7 @@ class SecondProc : public base::EventProc {
           potato_h[i] = MakeH2(chno,chno,500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
         }
         
-        meta_t1_h = MakeH1("meta_t1","meta_t1", 2000, t1_L, t1_R, "ns");
-        meta_t1_2d = MakeH2("meta_t1_2d","meta_t1_2d", 2000, t1_L, t1_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
-        meta_tot_h = MakeH1("meta_tot","meta_tot", 4000, tot_L, tot_R, "ns");
-        meta_tot_2d = MakeH2("meta_tot_2d","meta_tot_2d", 2000, tot_L, tot_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
-        meta_potato_h = MakeH2("meta_potato","meta_potato",500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
-        
+
         efficiency_h = MakeH1("efficiency","efficiency", CHANNELS -1, 0.5, CHANNELS-0.5, "channel #;kind:F");
             ((TH1F*) efficiency_h)->SetDrawOption("P0");
             ((TH1F*) efficiency_h)->SetMarkerStyle(22);

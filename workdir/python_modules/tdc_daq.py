@@ -38,7 +38,7 @@ def read_scalers(TDC,channels):
   last_chan = channels[len(channels)-1]
   memory_size = last_chan-first_chan +1
   
-  if  "0xf6d" in TDC:
+  if  "0x18" in TDC:
     #new MDC MBO
     first_register = first_chan + 0xdfc0
   else:
@@ -51,7 +51,7 @@ def read_scalers(TDC,channels):
   index = 0
   for ch in channels:
     # mask out first bit, because it is the input state
-    if  "0xf6d" in TDC: 
+    if  "0x18" in TDC: 
         #new MDC MBO
         return_vals[index] = values[ch + 0xdfc0] & 0x7fffffff
     else:
@@ -72,7 +72,7 @@ def read_ch_state(TDC,channels):
 #   first_register = first_chan + 0xc001
 #   values = read_memory(TDC,first_register,memory_size)
 #   if TDC == '0xf6dc':
-  if  "0xf6d" in TDC:
+  if  "0x18" in TDC:
       #new MDC MBO
       first_register = 0xdf8c
       values = read_memory(TDC,first_register,1)
@@ -84,7 +84,7 @@ def read_ch_state(TDC,channels):
   index = 0
   for ch in channels:
     # only take first bit, because it is the input state
-    if  "0xf6d" in TDC:
+    if  "0x18" in TDC:
         #new MDC MBO
         return_vals[index] = ((values[0xdf8c])>>index) & 1
     else:

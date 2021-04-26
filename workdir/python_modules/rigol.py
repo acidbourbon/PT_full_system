@@ -86,10 +86,12 @@ def set_waveform(channel,data_x,data_y,**kwargs):
   if burst:
     inst.write("SOURCE"+str(channel)+":BURSt ON")
     inst.write("SOURCE"+str(channel)+":BURSt:MODE TRIGgered")
+    inst.write("SOURCE"+str(channel)+":BURSt:INTernal:PERiod 50us")
     
   inst.write("OUTPUT"+str(channel)+" ON")
 def set_output_on(channel):
-  inst.write("OUTPUT"+str(channel)+" ON")
+  print(inst.ask('*IDN?'))  
+  print(inst.write("OUTPUT"+str(channel)+" ON"))
 def set_output_off(channel):
   inst.write("OUTPUT"+str(channel)+" OFF")
 

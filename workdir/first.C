@@ -1,5 +1,20 @@
 // this is example for
 
+#include "TTree.h"
+#include "TFile.h"
+#include "TSystem.h"
+#include "TString.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TCanvas.h"
+#include "TGo4AnalysisObjectManager.h"
+
+
+#include "base/EventProc.h"
+#include "base/Event.h"
+#include "hadaq/TdcSubEvent.h"
+
+#include "go4_settings.h"
 
 #include <stdlib.h>
 #include "go4_settings.h"
