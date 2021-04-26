@@ -198,6 +198,8 @@ def get_t1_tot(tdc_addr,channels):
     root_tree_channel = tdc_int*100 +i+1     # example 0x0350 channel 11 -> root_tree_channel = 35011
     joint_tree.Draw("t1 >> t1_dummy_{:d}".format(i)  ,"chan == {:d}".format(root_tree_channel),"") 
     t1_dummy = f.Get("t1_dummy_{:d}".format(i))
+    if ( t1_dummy.GetEntries()<10 ):
+            continue
     t1[index]  = t1_dummy.GetMean()
     t1_stdev[index]  = t1_dummy.GetStdDev()
     counts[index] = t1_dummy.GetEntries()

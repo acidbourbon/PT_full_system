@@ -477,7 +477,7 @@
               "layer": 3,
               "name": "0030",
               "reverse_mapping": 1,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 3
             }
           ],
@@ -1429,7 +1429,7 @@
               "layer": 0,
               "name": "0900",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -1443,7 +1443,7 @@
               "layer": 1,
               "name": "0901",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
@@ -1499,7 +1499,7 @@
               "layer": 2,
               "name": "0902",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -1513,7 +1513,7 @@
               "layer": 3,
               "name": "0903",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
@@ -1589,7 +1589,7 @@
               "layer": 5,
               "name": "0905",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
@@ -1597,22 +1597,22 @@
           "connectors": 2,
           "name": "0x1802",
           "t1_offset": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            -23.38231012020418,
+            -24.30277438057192,
+            -24.71299941229364,
+            -24.775757655340442,
+            -25.152280867948946,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0,
             0,
             0,
@@ -1645,7 +1645,7 @@
               "layer": 6,
               "name": "0906",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 1
             },
             {
@@ -1659,7 +1659,7 @@
               "layer": 7,
               "name": "0907",
               "reverse_mapping": 0,
-              "standby": 1,
+              "standby": 0,
               "tdc_connector": 2
             }
           ],
