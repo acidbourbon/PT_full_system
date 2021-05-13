@@ -1,6 +1,5 @@
 // this is example for
 
-/*
 #include "TTree.h"
 #include "TFile.h"
 #include "TSystem.h"
@@ -9,24 +8,16 @@
 #include "TH2.h"
 #include "TCanvas.h"
 #include "TGo4AnalysisObjectManager.h"
-*/
 
-//#include "base/EventProc.h"
-//#include "base/Event.h"
-//#include "hadaq/TdcSubEvent.h"
 
-// #include "go4_settings.h"
-
-//#include <stdlib.h>
-
+#include "base/EventProc.h"
+#include "base/Event.h"
+#include "hadaq/TdcSubEvent.h"
 
 #include "go4_settings.h"
 
-#include "base/ProcMgr.h"
-#include "hadaq/HldProcessor.h"
-#include "hadaq/TdcProcessor.h"
-#include "hadaq/TrbProcessor.h"
-
+#include <stdlib.h>
+#include "go4_settings.h"
 
 void first()
 {
@@ -37,7 +28,7 @@ void first()
    base::ProcMgr::instance()->SetHistFilling(4);
 
    // this limits used for liner calibrations when nothing else is available
-   hadaq::TdcMessage::SetFineLimits(18, 490);
+   hadaq::TdcMessage::SetFineLimits(10, 510);
 
    // default channel numbers and edges mask
    hadaq::TrbProcessor::SetDefaults(53, 0x2);
@@ -49,8 +40,8 @@ void first()
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram
-   // second - maximal RMS value
-   hadaq::TdcProcessor::SetToTCalibr(100, 0.2);
+   // second - maximal RMS value 
+   hadaq::TdcProcessor::SetToTCalibr(100, 0.2); 
 
    //hadaq::T
    // [min..max] range for HUB ids
@@ -84,7 +75,8 @@ void first()
    //    0x3FFF - all kinds of trigger types will be used for calibration (excluding 0xE and 0xF)
    //   0x80000000 in mask enables usage of temperature correction
 //   hld->ConfigureCalibration(calname, cnt, /*(1 << trig) | use_temp*/ 0x3fff);
-   hld->ConfigureCalibration("test_", -1, (1 << 0xD));
+   hld->ConfigureCalibration("test_", -1, (1 << 0xD)); 
+ 
 
    // only accept trigger type 0x1 when storing file
    //new hadaq::HldFilter(0x0);
@@ -129,16 +121,16 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
       //      if (tdc->GetID() != firsttdc)
       //   tdc->SetRefChannel(0, 0, (0x70000 | firsttdc), 6000,  -20., 20.);
 
-      // configure 0xD trigger width and hmin/hmax histogram range for 0xD trigger ToT
+// configure 0xD trigger width and hmin/hmax histogram range for 0xD trigger ToT
+      tdc->SetToTRange(30, 50., 80.);
+
+
+      tdc->SetUseLastHit(false);
       
-      if (tdc->GetID() == 0x1800 || tdc->GetID() == 0x1801 || tdc->GetID() == 0x1802 || tdc->GetID() == 0x1803 ) tdc->SetToTRange(24, 20., 60.);
-
-      //tdc->SetUseLastHit(false);
-
       // tdc->DisableCalibrationFor(0);
 
       // if (tdc->GetID() == 0x1130);
-
+      
       for (int n=1;n<53;++n)
          tdc->SetRefChannel(n,0, 0xffff, 6000, -200, 200); // LED DIFF
    }
