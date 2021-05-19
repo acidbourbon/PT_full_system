@@ -58,8 +58,8 @@
 // real cuts on selected data
 
 #define max_tot 1000000 // Muentz-Torte
-#define t1_cut_L -2000
-#define t1_cut_R 2000
+#define t1_cut_L -400
+#define t1_cut_R 300
 
 
 // #define coincidence_rejection 7
@@ -192,7 +192,8 @@ class SecondProc : public base::EventProc {
             ((TH1F*) efficiency_h)->SetMarkerStyle(22);
             ((TH1F*) efficiency_h)->GetXaxis()->SetNdivisions(55);
          
-        coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-2.5,9.5,10,15-0.5,24+0.5, "channels 0-7;channels 16-23");
+        //coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-2.5,9.5,10,15-0.5,24+0.5, "channels 0-7;channels 16-23");
+         coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-0.5,11.5,12,-0.5,11.5, "channels 0-10;channels 0-10");
          
          // enable storing already in constructor
          SetStoreEnabled();

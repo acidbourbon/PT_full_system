@@ -3,15 +3,17 @@
 
 #define CHANNELS 53
 #define max_baseline_stddev 2.5
-#define reference_channel 35049
+#define reference_channel 35050
 #define slow_control_log 1
-#define spike_rejection 20
+#define spike_rejection 10
 #define spike_rejection_refchan 10
-#define t1_L -4000
-#define t1_R 8000
+#define t1_L -1000
+#define t1_R 1500
 #define threshold_noise_scan_limit 120
 #define tot_L -10
-#define tot_R 2000
+#define tot_R 800
+#define tot_cut_L 35
+#define tot_cut_R 200
 #define HUBRANGE_START 0x80eb
 #define HUBRANGE_STOP 0xc035
 #define TDCRANGE_START 0x0350

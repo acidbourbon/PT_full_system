@@ -59,3 +59,15 @@ trbcmd w 0xc035 0xa15a 0x11111111  # _trg_trigger_types1:
                             # type14=0x1_physics_trigger, type15=0x1_physics_trigger
                             # type8=0x1_physics_trigger, type9=0x1_physics_trigger
 trbcmd clearbit 0xc035 0xa00c 0x80000000  # Enable all triggers
+# coincidennce trigger from two TRb3 TDC 0x0350 channels 49 & 50 connected to two scintillators
+# configure Coincidenc logic: channels 48 (0x30) & 49  (0x31)
+trbcmd w  0x0350 0xdf40  0x80003130
+# set output channel of coincidence signal :
+trbcmd w  0x0350 0xdf34  0x20000
+# set coincidence signal to trigger input FPGA Inputs1
+trbcmd w 0xc035 0xa150 0x00000004  # trg_periph_config1: mask=0000 0000 0000 0000 0100
+# activate coincidence trigger only:
+trbcmd w 0xc035 0xa101 0xffff0800
+# activate scintillator1 trigger (ch49) only:
+#trbcmd w 0xc035 0xa101 0xffff0400
+  # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0100 0000 0000

@@ -3,9 +3,13 @@ docker build -t fst . || exit
 #xhost +si:localuser:root
 docker run --net host -v $(pwd)/conf:/conf -v $(pwd)/workdir:/workdir --rm -it \
 --name fst \
---device /dev/HAMEG_HAMEG_HO720_020546035:/dev/ttyUSB_HAMEG_LV \
---device /dev/HAMEG_HAMEG_HO720_023192710:/dev/ttyUSB_HAMEG_TRB \
+--device /dev/serial/by-id/usb-HAMEG_HAMEG_HO720_023192710-if00-port0:/dev/ttyUSB_HAMEG_TRB \
+--device /dev/serial/by-id/usb-HAMEG_HAMEG_HO720_020546035-if00-port0:/dev/ttyUSB_HAMEG_LV \
 fst /workdir/start.sh
+
+#--device /dev/HAMEG_HAMEG_HO720_020546035:/dev/ttyUSB_HAMEG_LV \
+#--device /dev/HAMEG_HAMEG_HO720_023192710:/dev/ttyUSB_HAMEG_TRB \
+#fst /workdir/start.sh
         
 
 #-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY \

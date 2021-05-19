@@ -14,15 +14,17 @@
   "global_settings": {
     "CHANNELS": 53,
     "max_baseline_stddev": 2.5,
-    "reference_channel": 35049,
+    "reference_channel": 35050,
     "slow_control_log": 1,
-    "spike_rejection": 20,
+    "spike_rejection": 10,
     "spike_rejection_refchan": 10,
-    "t1_L": -4000,
-    "t1_R": 8000,
+    "t1_L": -1000,
+    "t1_R": 1500,
     "threshold_noise_scan_limit": 120,
     "tot_L": -10,
-    "tot_R": 2000
+    "tot_R": 800,
+    "tot_cut_L": 35,
+    "tot_cut_R": 200
   },
   "hub": [
     {
@@ -43,7 +45,7 @@
               "layer": 2,
               "name": "0014",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 3
             },
             {
@@ -57,7 +59,7 @@
               "layer": 2,
               "name": "0021",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 2
             },
             {
@@ -71,7 +73,7 @@
               "layer": 2,
               "name": "0018",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 1
             }
           ],
@@ -357,7 +359,7 @@
               "layer": 2,
               "name": "0110",
               "reverse_mapping": 1,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 1
             },
             {
@@ -749,7 +751,7 @@
               "layer": 3,
               "name": "0011",
               "reverse_mapping": 0,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 3
             },
             {
@@ -763,7 +765,7 @@
               "layer": 3,
               "name": "0009",
               "reverse_mapping": 0,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 2
             },
             {
@@ -777,7 +779,7 @@
               "layer": 3,
               "name": "0007",
               "reverse_mapping": 0,
-              "standby": 0,
+              "standby": 1,
               "tdc_connector": 1
             }
           ],

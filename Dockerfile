@@ -235,7 +235,9 @@ RUN apt-get update && \
 
 RUN apt-get -y install emacs 
 RUN apt-get -y install libtirpc-dev
-
+#set berlin timezone
+RUN cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime &&\
+date
     
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh
