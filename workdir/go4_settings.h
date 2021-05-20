@@ -7,8 +7,8 @@
 #define slow_control_log 1
 #define spike_rejection 0
 #define spike_rejection_refchan 10
-#define t1_L -3000
-#define t1_R 4000
+#define t1_L -500
+#define t1_R 200
 #define threshold_noise_scan_limit 120
 #define tot_L -10
 #define tot_R 800
