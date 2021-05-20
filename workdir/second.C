@@ -34,8 +34,8 @@
 // #define tot_L -10 // EE
 // #define tot_R 2000 // EE
 
-#define ref_channel_offset -75 //ns fine measured ref channel relative to coarse measured cts trigger channel
-//#define ref_channel_offset 0 //ns fine measured ref channel relative to coarse measured cts trigger channel
+//#define ref_channel_offset -75 //ns fine measured ref channel relative to coarse measured cts trigger channel
+#define ref_channel_offset 0 //ns fine measured ref channel relative to coarse measured cts trigger channel
 
 // in the first iteration, scanning through data in the coincidence window, rejecting hits (fuzzy edges)
 
@@ -58,12 +58,12 @@
 // real cuts on selected data
 
 #define max_tot 1000000 // Muentz-Torte
-#define t1_cut_L -400
-#define t1_cut_R 300
+#define t1_cut_L -4000
+#define t1_cut_R 4000
 
 
 // #define coincidence_rejection 7
-#define accept_hits_per_layer 20
+#define accept_hits_per_layer 2000
 
 #define enable_coincidence_rejection 0
 

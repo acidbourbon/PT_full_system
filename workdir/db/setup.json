@@ -3,7 +3,7 @@
     "default": {
       "gain": 4,
       "pktime": 15,
-      "threshold": 30
+      "threshold": 10
     },
     "standby": {
       "gain": 1,
@@ -16,15 +16,15 @@
     "max_baseline_stddev": 2.5,
     "reference_channel": 35050,
     "slow_control_log": 1,
-    "spike_rejection": 10,
+    "spike_rejection": 0,
     "spike_rejection_refchan": 10,
-    "t1_L": -1000,
-    "t1_R": 1500,
+    "t1_L": -3000,
+    "t1_R": 4000,
     "threshold_noise_scan_limit": 120,
     "tot_L": -10,
     "tot_R": 800,
-    "tot_cut_L": 35,
-    "tot_cut_R": 200
+    "tot_cut_L": 0,
+    "tot_cut_R": 800
   },
   "hub": [
     {
