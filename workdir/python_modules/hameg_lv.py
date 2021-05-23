@@ -53,3 +53,41 @@ def report():
     print("volt {:f} curr {:f} state {:d}".format( get_volt(i), get_curr(i), get_state(i))) 
     
     
+    
+from IPython.display import display, Markdown, clear_output
+import ipywidgets as widgets
+
+def buttons():
+    button = widgets.Button(description='CH1 ON')
+    button2 = widgets.Button(description='CH1 OFF')
+    ch = 1
+
+    def on_button_clicked(_):
+          # "linking function with output"
+          with out:
+              # what happens when we press the button
+              clear_output()
+
+              set_state(ch,1) 
+              print('channel {:d} ON'.format(ch))
+              report()
+    def off_button_clicked(_):
+          # "linking function with output"
+          with out:
+              # what happens when we press the button
+              clear_output()
+
+              set_state(ch,0) 
+              print('channel {:d} OFF'.format(ch))
+              report()
+    # linking button and function together using a button's method
+    button.on_click(on_button_clicked)
+    button2.on_click(off_button_clicked)
+
+
+
+    out = widgets.Output()
+
+    # displaying button and its output together
+    
+    return(widgets.VBox([button,button2,out]))
