@@ -114,10 +114,12 @@ class SecondProc : public base::EventProc {
       base::H1handle  meta_tot_2d;
       base::H1handle  meta_t1_2d;
             
-      base::H1handle  tot_h[CHANNELS]; 
-      base::H1handle  tot_untrig_h[CHANNELS]; 
-      base::H1handle  t1_h[CHANNELS]; 
-      base::H1handle  potato_h[CHANNELS];
+      base::H1handle  tot_h[CHANNELS+1]; 
+      base::H1handle  tot_untrig_h[CHANNELS+1]; 
+      base::H1handle  t1_untrig_h[CHANNELS+1]; 
+      base::H1handle  t2_untrig_h[CHANNELS+1]; 
+      base::H1handle  t1_h[CHANNELS+1]; 
+      base::H1handle  potato_h[CHANNELS+1];
 
       base::H1handle  coinc_matrix;
 //      base::H1handle  meta_fish;
@@ -174,7 +176,7 @@ class SecondProc : public base::EventProc {
          ((TObject*) meta_t1_2d)->SetDrawOption("colz");
          ((TH2F*) meta_tot_2d)->SetDrawOption("COLZ");
          ((TObject*) meta_potato_h)->SetDrawOption("colz");       
-        for( unsigned i=0; i<CHANNELS; i++ ) {
+        for( unsigned i=0; i<CHANNELS+1; i++ ) {
           char chno[16];
           sprintf(chno,"Ch%02d_t1",i);
           t1_h[i] = MakeH1(chno,chno, 2000, t1_L, t1_R, "ns");
@@ -182,6 +184,10 @@ class SecondProc : public base::EventProc {
           tot_h[i] = MakeH1(chno,chno, 4000, tot_L, tot_R, "ns");
           sprintf(chno,"Ch%02d_tot_untrig",i);
           tot_untrig_h[i] = MakeH1(chno,chno, 4000, tot_L, tot_R, "ns");
+          sprintf(chno,"Ch%02d_t1_untrig",i);
+          t1_untrig_h[i] = MakeH1(chno,chno, 4000, t1_L, t1_R, "ns");
+          sprintf(chno,"Ch%02d_t2_untrig",i);
+          t2_untrig_h[i] = MakeH1(chno,chno, 4000, t1_L, t1_R, "ns");
           sprintf(chno,"Ch%02d_potato",i);
           potato_h[i] = MakeH2(chno,chno,500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
         }
@@ -315,6 +321,13 @@ class SecondProc : public base::EventProc {
                     
                     // fill untriggered tot histogram
                     FillH1(tot_untrig_h[chid],tot[chid]*1e9);
+                    FillH1(t1_untrig_h[chid],t1[chid]*1e9);
+                    FillH1(t2_untrig_h[chid],t2[chid]*1e9);
+                    FillH1(tot_untrig_h[CHANNELS],tot[chid]*1e9);
+                    FillH1(t1_untrig_h[CHANNELS],t1[chid]*1e9);
+                    if(tot[chid]>50/1e9) {
+						FillH1(t2_untrig_h[CHANNELS],t2[chid]*1e9);
+					}
                   }
 //                   printf("got hit, ch %d, tot = %f ns\n",(chid), tot[chid]*1e9);
                 }
@@ -336,6 +349,7 @@ class SecondProc : public base::EventProc {
                   // fill histograms
                   FillH1(tot_h[i],tot[i]*1e9);
                   FillH2(potato_h[i],t1_vs_ref ,tot[i]*1e9); 
+                  FillH2(potato_h[CHANNELS],t1_vs_ref ,tot[i]*1e9); 
                   FillH1(t1_h[i],t1_vs_ref ); // without cuts
 //                  if(t1_vs_ref < -200 && tot[i]*1e9 > 0 )	FillH1(t1_h[i],t1_vs_ref ); // with noise rejecting cuts
 		// if(  tot[i]*1e9 > 50 ) 	FillH1(t1_h[i],t1_vs_ref ); // with noise rejecting cuts

@@ -12,7 +12,7 @@ from dialog import Dialog
 import db_dialogs as dbd
 import tdc_daq as td
 import pasttrec_ctrl as ptc
-
+import numpy as np
 
 
 
@@ -121,6 +121,7 @@ while True:
     code, tag = d.menu("test procedures", height="30", menu_height="28",
     choices = [
                ("1","view boards - enable/disable boards"),
+               ("55","PASTTREC socket QA"),
                ("53","... enable only selected boards"),
                ("31","init + slow control test all active boards"),
                ("51","init + slow control test selected boards"),
@@ -657,7 +658,58 @@ via AC coupling and 10k resistor.".format(board_name) )
       
     if tag == "z":
       exit()
-    
+      
+    ## pasttrec socket QA ##
+    if tag == "55":
+      code, str = d.inputbox(text="type PASTTREc serial number",init="0000")
+      if code == d.OK: 
+        import pasttrec_socket_test_pyfit
+        result = pasttrec_socket_test_pyfit.scurve_scan(str)
+        np.set_printoptions(precision=2)
+        #text =  " ------------------------ baseline means: {}      units [LSB = 2mV]".format(result[0]) 
+        baselines = np.array(result[0])
+        np.round(baselines,2)
+        text =  " \n baseline means:   units [LSB = 2mV] \n {}   \n  ".format(baselines) 
+        scurve = np.array(result[1])
+        np.round(scurve,2)
+        text += " \n Fit s-curve half-max at threshold:   units [LSB = 2mV] \n {} \n  ".format(scurve)         
+        scurve = np.array(result[2])
+        np.round(scurve,2)
+        text += " \n Fit s-curve sigmas:   units [LSB = 2mV] \n {} \n  ".format(scurve) 
+        formatted_list =["%.2f"%item for item in result[3]]                
+        text += " \n Fit s-curve chi2/ndf:   \n {}  \n ".format(formatted_list)
+        text += " \n channels passed test?: \n {}  ".format(result[4])               
+        d.msgbox("PT serial {} baseline & s-curve scan finished, results for 8 channels: ".format(str) + text, width=60, height=30)
+        
+        # 
+        # 
+        # 
+        # import pasttrec_socket_test_py_and_root_fit
+        # result = pasttrec_socket_test_py_and_root_fit.scurve_scan(str)
+        # np.set_printoptions(precision=2)
+        # #text =  " ------------------------ baseline means: {}      units [LSB = 2mV]".format(result[0]) 
+        # baselines = np.array(result[0])
+        # np.round(baselines,2)
+        # text =  " \n baseline means:   units [LSB = 2mV] \n {}     ".format(baselines) 
+        # scurve = np.array(result[1])
+        # np.round(scurve,2)
+        # text += " \n ROOT s-curve half-max at threshold:   units [LSB = 2mV] \n {}   ".format(scurve) 
+        # scurve = np.array(result[2])
+        # np.round(scurve,2)
+        # text += " \n PyFit s-curve half-max at threshold:   units [LSB = 2mV] \n {}   ".format(scurve)        
+        # scurve = np.array(result[3])
+        # np.round(scurve,2)
+        # text += " \n ROOT  s-curve sigmas:   units [LSB = 2mV] \n {}   ".format(scurve)  
+        # scurve = np.array(result[4])
+        # np.round(scurve,2)
+        # text += " \n PyFit s-curve sigmas:   units [LSB = 2mV] \n {}   ".format(scurve) 
+        # chi2 =  np.round(np.array(result[5]),3)
+        # text += " \n PyFit s-curve chi2/ndf:   \n {}   ".format(chi2)                  
+        # text += " \n channels passed test?: \n {}  ".format(result[6])               
+        # d.msgbox("PT serial {} baseline & s-curve scan finished, results for 8 channels: ".format(str) + text, width=60, height=30)
+        
+      else:
+          d.msgbox("Scan failed, check PASTTREC socket")
       
   else:
     mm_tag = ""
