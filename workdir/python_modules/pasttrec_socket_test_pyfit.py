@@ -93,8 +93,9 @@ def scurve_scan(serial_no):
 
     #switch on Power supply of PASTTREC board:    
     import hameg_PT_Frankfurt as htrb
+    import time
     htrb.set_state(1,1)
-
+    time.sleep(2)
 
 
 
@@ -249,10 +250,12 @@ def scurve_scan(serial_no):
         xfit = x[mask]
         yfit = y[mask]
 
+        popt = None
         try:
             popt, pcov = curve_fit(sigmoid, xfit, yfit, p0=p0)
         except Exception as e:
             print(e)
+            #continue
         
         #plot properties
         maskPlot = (x >= 2) & (x <= 50)
