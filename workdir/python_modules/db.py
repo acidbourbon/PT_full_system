@@ -224,8 +224,11 @@ def write_go4_settings_h():
     f.write("\n\n// second processes in second.C:\n")
     ### // new SecondProc("Sec_0350", "TDC_0350");
     f.write("#define SECOND_PROCESS_TDCs ")
-    #for tdc_addr in active_tdc_list():
-    tdc_list_cosy = ['0x0350',   '0x1806', '0x1807',  '0x1812', '0x1813' ]
+   # for tdc_addr in active_tdc_list():
+    tdc_list_cosy = active_tdc_list()
+   # tdc_list_cosy.remove('0x1801')
+    #tdc_list_cosy = ['0x0350',   '0x1806', '0x1807',  '0x1812', '0x1813',  '0x1818', '0x1819', '0x1820', '0x1821' ]
+    #tdc_list_cosy = ['0x0350', '0x1800', '0x1801', '0x1802', '0x1803', '0x1806', '0x1807', '0x1808', '0x1809', '0x1810', '0x1811', '0x1812', '0x1813', '0x1814', '0x1815', '0x1816', '0x1817', '0x1818', '0x1819', '0x1820', '0x1821']
     for tdc_addr in tdc_list_cosy:
       tdc_int = tdc_addr.replace("0x","");
       f.write("new SecondProc(\"Sec_{:s}\", \"TDC_{:s}\");".format(tdc_int,tdc_int));

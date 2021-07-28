@@ -58,16 +58,16 @@ void first()
    // second parameter is function name, called after elements are created
    hadaq::HldProcessor* hld = new hadaq::HldProcessor(true, "after_create");
    // create TRB processor which holds custom data
-   //hadaq::TrbProcessor* trb = new hadaq::TrbProcessor(0xc035, hld);
-   //trb->SetAutoCreate(true);
-   //trb->AddHadaqHUBId(0xc035);   
-   //trb->AddHadaqHUBId(0x8352);
-   //trb->AddHadaqHUBId(0x8353);
+   //~ hadaq::TrbProcessor* trb = new hadaq::TrbProcessor(0xc035, hld);
+   //~ trb->SetAutoCreate(true);
+   //~ trb->AddHadaqHUBId(0xc035);   
+   //~ trb->AddHadaqHUBId(0x8352);
+   //~ trb->AddHadaqHUBId(0x8353);
 
    
    // create custom processor
-   //hadaq::MdcProcessor *mdc1 = new hadaq::MdcProcessor(trb, 0x1806);
-   //hadaq::MdcProcessor *mdc2 = new hadaq::MdcProcessor(trb, 0x1807);
+   //~ hadaq::MdcProcessor *mdc1 = new hadaq::MdcProcessor(trb, 0x1812);
+   //~ hadaq::MdcProcessor *mdc2 = new hadaq::MdcProcessor(trb, 0x1807);
 
    const char* calname = getenv("CALNAME");
    if ((calname==0) || (*calname==0)) calname = "test_";

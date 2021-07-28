@@ -328,7 +328,7 @@ void unify(void){
 Int_t nchan_coinc = 12;
  // TH2F* coinc_matrix = new TH2F("coinc_matrix","coinc_matrix", 500, 35000, 35000+500, 500, 35000, 35000+500);
   TH2F* coinc_matrix = new TH2F("coinc_matrix","coinc_matrix", nchan_coinc, 180700, 180700+nchan_coinc,  nchan_coinc, 181200, 181200+nchan_coinc);
-  TH2F* meta_fish = new TH2F("meta_fish","meta_fish", 500, -250, 250, 500, -250, 250);
+  TH2F* meta_fish = new TH2F("meta_fish","meta_fish", 500, -450, 250, 500, -250, 250);
 
   for (Int_t evt_no = 0; evt_no < joint_tree->GetEntries(); evt_no++){
 
@@ -355,11 +355,11 @@ Int_t nchan_coinc = 12;
               Float_t t1_b = this_event->hits[hit_no_b].t1;
               Float_t tot_a = this_event->hits[hit_no_a].tot;
               Float_t tot_b = this_event->hits[hit_no_b].tot; 
-              Float_t t1L = -200;
+              Float_t t1L = -2000;
               Float_t t1R = +4000;   
-              Float_t tot_low = 80;
-              Float_t tot_high = 250;
-              if ( (hit_a_chan == 180704)   && (hit_b_chan = 181206) && t1_a > t1L && t1_a < t1R && t1_b > t1L && t1_b < t1R && tot_a > tot_low &&  tot_b > tot_low) meta_fish->Fill(t1_a +t1_b, t1_a -t1_b);
+              Float_t tot_low = 10;
+              Float_t tot_high = 550;
+              if ( (hit_a_chan == 180704)   && (hit_b_chan == 181206 || hit_b_chan == 181207) && t1_a > t1L && t1_a < t1R && t1_b > t1L && t1_b < t1R && tot_a > tot_low &&  tot_b > tot_low) meta_fish->Fill(t1_a +t1_b, t1_a -t1_b);
               // if ( (hit_a_chan == 180704)   && (hit_b_chan = 181206) )  meta_fish->Fill(t1_a +t1_b, t1_a -t1_b);
                //}//
              }

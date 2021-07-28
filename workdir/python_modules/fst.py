@@ -2,6 +2,7 @@ def take_data(**kwargs):
     import os
     events  = int(kwargs.get("events",0))
     time = float(kwargs.get("time",0))
+    
     os.system("rm /workdir/*.root")
     if( time > 0 ):
       os.system("cd /workdir; ./take_data_n_sec.sh {:f}".format(time))
@@ -17,9 +18,14 @@ def take_raw_data(**kwargs):
     os.system("cd /workdir; ./take_raw_data_n_sec.sh {:f} {:s}".format(time,label))
 
 
-
-    
-
+def start_hld_file(**kwargs):
+    import os
+    filename = kwargs.get("filename","")
+    os.system("curl http://localhost:8091/EventBuilder/HadaqCombiner/StartHldFile/execute?filename={:s}.hld".format(filename))
+def stop_hld_file(**kwargs):
+     import os
+     os.system("curl http://localhost:8091/EventBuilder/HadaqCombiner/StopHldFile/execute")
+        
 def trigger_scinti():
   import os
   os.system("cd /conf; ./trigger_scinti.sh")
