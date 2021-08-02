@@ -6,9 +6,9 @@
 
 
 #----- default settings for the mass test, don't change:
-measure_board_list=[ "0904","0902", "0903", "0905"]
+measure_board_list=[ "0900","0901","0902","0903"]
 # threshold scan scurve fit quality limit to store results
-chisquare_limit = 1000
+#chisquare_limit = 1000
 # PASTTREC ASIC parameters:
 pt_pktime = 15
 pt_gain = 4
@@ -35,13 +35,13 @@ import db
 from cw_pasttrec_functions import *
 
 
-from scipy.optimize import curve_fit
-def sigmoid(x,const,mu,sigma):
-  return const/(1+np.exp((x-mu)/sigma))
+# from scipy.optimize import curve_fit
+# def sigmoid(x,const,mu,sigma):
+#   return const/(1+np.exp((x-mu)/sigma))
 
 
-from my_utils import *
-set_width_max_of_jupyterpad()
+# from my_utils import *
+# set_width_max_of_jupyterpad()
 
     
 def hist_rms(x,y):
@@ -56,19 +56,19 @@ def list_rms(x):
   return np.sqrt(sum(deviations**2) /len(x))
 def MeanArrays(xs,ys):
     return np.dot(xs,ys)/sum(ys)
-def fwhm(x,y):
-  dummy, t1, tot = sigproc_kit.discriminate(x,y,np.max(y)/2.,0,0)
-  return tot
+# def fwhm(x,y):
+#   dummy, t1, tot = sigproc_kit.discriminate(x,y,np.max(y)/2.,0,0)
+#   return tot
 
-def calc_chisquare(meas, sigma, fit):
- test_statistic = 0
- diff = pow(meas-fit, 2.)
- for i in range(9,len(meas)):
-  if sigma[i] > 0:
-     test_statistic += diff[i] / pow(sigma[i],2.)
-  else:
-     test_statistic += diff[i]
- return test_statistic
+# def calc_chisquare(meas, sigma, fit):
+#  test_statistic = 0
+#  diff = pow(meas-fit, 2.)
+#  for i in range(9,len(meas)):
+#   if sigma[i] > 0:
+#      test_statistic += diff[i] / pow(sigma[i],2.)
+#   else:
+#      test_statistic += diff[i]
+#  return test_statistic
 
 
 def mbo_scan(serial_no):
@@ -78,8 +78,8 @@ def mbo_scan(serial_no):
       #switch on Power supply of PASTTREC board:    
     import hameg_lv as htrb
     import time
-    htrb.set_state(3,1)
-    htrb.set_state(4,1)
+    #htrb.set_state(3,1)
+    #htrb.set_state(4,1)
     time.sleep(2)
     import tdc_daq as tdc
     tdc.reset_trb()
@@ -101,13 +101,17 @@ def mbo_scan(serial_no):
         #baseline_calib.baseline_calib_by_noise(name, dummy_calib=True,individual=True) 
         baseline_calib.baseline_calib_by_noise(name, dummy_calib=True,individual=False)     
         #read baseline scans from database:
-        baseline_to_set = [15 for i in range(16)] 
+        
+        baseline_to_set = [15 for i in range(16)]
         dummy_calib = db.get_calib_json_by_name(name,dummy_calib=True)
         noise_scan_raw = dummy_calib["noise_scan_raw"]
         noise_range    = dummy_calib["bl_range"]
         # get baseline position from mean of scan
-        global hist_rms
+         
+        
         global MeanArrays
+        global hist_rms
+        
         for ch in range(0,16):
                 rms = hist_rms(noise_range,noise_scan_raw[ch]) 
                 if rms < 5.0:
@@ -218,7 +222,6 @@ def mbo_scan(serial_no):
         print("\n threshold scans")
         plt.rcParams["figure.figsize"] = (8,6)
         for i in range(0,16): 
-
 # #             #fit parameters:
             x = np.array(tsbl_range)
             y = np.array(tsbl_scan_raw[i])
@@ -238,7 +241,7 @@ def mbo_scan(serial_no):
 # #                 print(e)
 # #                 #continue
 
-#             #plot properties
+#             #plot propertiesf
 
 
             fig00 = plt.figure(num=None, figsize=(15, 10), dpi=80, facecolor='w', edgecolor='k')
@@ -312,12 +315,11 @@ def mbo_scan(serial_no):
 
     pdf.close()
     pdf2.close()
-    
-    print("Baseline mean [LSB/2mV]: ",baseline_mean,"| mean of 8 channels: ", sum(baseline_mean)/len(baseline_mean), " +- RMS = ", list_rms(baseline_mean) ) 
+    global list_rms
+    print("Baseline mean [LSB/2mV]: ",baseline_mean,"| mean of 16 channels: ", sum(baseline_mean)/len(baseline_mean), " +- RMS = ", list_rms(baseline_mean) ) 
    
     asic_result = ""
-    for i in range(0,8):
-        
+    for i in range(0,16):       
         if baseline_mean[i] < 15 and baseline_mean[i] > -15  :
             passed_test += ['OK']
         elif baseline_mean[i] > 15 or baseline_mean[i] < -15 :
@@ -337,13 +339,13 @@ def mbo_scan(serial_no):
     #table_row = ["serial"] + ["ASIC test result"]+  l1 + l2   + l3  + l4  + l5
     
     table_row = [serial] + [asic_result] + baseline_mean + passed_test
-    with open(data_output_dicrectory+"/MBO_results_table.csv", 'a') as f:
+    with open(data_output_dicrectory+"/MBO_results_table_final.csv", 'a') as f:
             writer = csv.writer(f)
             writer.writerow(table_row)
     #
         #switch OFF Power supply of PASTTREC board:    
-    htrb.set_state(3,0)
-    htrb.set_state(4,0) 
+#    htrb.set_state(3,0)
+#    htrb.set_state(4,0) 
         
     return baseline_mean,  passed_test
 # In[ ]:
