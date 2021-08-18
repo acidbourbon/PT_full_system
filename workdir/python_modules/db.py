@@ -211,7 +211,7 @@ def write_go4_settings_h():
     global_settings = get_global_settings()
     for key in  global_settings:
       f.write("#define {:s} {:s}\n".format(str(key),str(global_settings[key])))
-
+    
     sorted_hub_list = sorted(active_hub_list())
     sorted_tdc_list = sorted(active_tdc_list())
     if len(sorted_hub_list)>0:
@@ -555,9 +555,9 @@ def add_board_json(my_tdc,board_json):
 
 def hub_list():
   setup = get_setup_json()
-  hubs = []
+  hubs = []      
   for hub in setup["hub"]:
-    hubs += [hub["addr"].lower()]
+        hubs += [hub["addr"].lower()]
 
   return hubs
 

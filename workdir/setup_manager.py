@@ -199,42 +199,68 @@ while True:
                 if code_43 == d.OK:
                   code_44, str_44 = d.inputbox(text="enter drift chamber number",init="0")
                   if code_44 == d.OK:
-                    code_45, str_45 = d.inputbox(text="enter sense wire layer",init="0")
-                    if code_45 == d.OK:
-                      code_455, tag_455 = d.menu("wire to channel mapping",\
-                        choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
-                      if code_455 == d.OK:
+                    code_45_a, str_45_a = d.inputbox(text="enter sense wire layer - conn A",init="0")
+                    if code_45_a == d.OK:
+                      code_455_a, tag_455_a = d.menu("wire to channel mapping - conn A",\
+                      choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
+                      if code_455_a == d.OK:
                         code_46, str_46 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn A (PT chan 1-4)",init="")
                         if code_46 == d.OK:
-                          code_47, str_47 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn B (PT chan 5-8)",init="")
-                          if code_47 == d.OK:
-                            code_48, str_48 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn C (PT chan 9-12)",init="")
-                            if code_48 == d.OK:
-                              code_49, str_49 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn D (PT chan 13-16)",init="")
-                              if code_49 == d.OK:
-                                chamber_no = int(str_44)
-                                layer_no   = int(str_45)
-                                fpc_a_no     = int(str_46)
-                                fpc_b_no     = int(str_47)
-                                fpc_c_no     = int(str_48)
-                                fpc_d_no     = int(str_49)
-                                reverse_mapping = int(tag_455) 
-
-                                print( "adding" )
-                                print( tdc_addr )
-                                print( conn_str )
-                                print( name_str )
-                                print( calib_file )
-                                db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
-                                    "chamber":chamber_no,\
-                                    "layer":layer_no,\
-                                    "fpc_a":fpc_a_no,\
-                                    "fpc_b":fpc_b_no,\
-                                    "fpc_c":fpc_c_no,\
-                                    "fpc_d":fpc_d_no,\
-                                    "reverse_mapping":reverse_mapping,\
-                                    "calib_file":calib_file, "active":0 })
-              break
+                          code_45_b, str_45_b = d.inputbox(text="enter sense wire layer - conn B",init="0")
+                          if code_45_b == d.OK:
+                            code_455_b, tag_455_b = d.menu("wire to channel mapping - conn B",\
+                            choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
+                            if code_455_b == d.OK:
+                              code_47, str_47 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn B (PT chan 5-8)",init="")
+                              if code_47 == d.OK:
+                                code_45_c, str_45_c = d.inputbox(text="enter sense wire layer - conn C",init="0")
+                                if code_45_c == d.OK:
+                                  code_455_c, tag_455_c = d.menu("wire to channel mapping - conn C",\
+                                  choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
+                                  if code_455_c == d.OK:
+                                    code_48, str_48 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn C (PT chan 9-12)",init="")										
+                                    if code_48 == d.OK:
+                                      code_45_d, str_45_d = d.inputbox(text="enter sense wire layer - conn D",init="0")
+                                      if code_45_d == d.OK:
+                                        code_455_d, tag_455_d = d.menu("wire to channel mapping - conn D",\
+                                        choices = [("1","reverse wire->channel mapping"), ("0","ascending wire->channel mapping")   ])
+                                        if code_455_d == d.OK:
+                                          code_49, str_49 = d.inputbox(text="enter chamber FPC number (start w/ 0) for FPC conn D (PT chan 13-16)",init="")
+                                          if code_49 == d.OK:
+                                            chamber_no = int(str_44)
+                                            layer_a_no   = int(str_45_a)                               
+                                            fpc_a_no     = int(str_46)
+                                            reverse_mapping_a = int(tag_455_a) 
+                                            layer_b_no   = int(str_45_b)                                  
+                                            fpc_b_no     = int(str_47)
+                                            reverse_mapping_b = int(tag_455_b) 
+                                            layer_c_no   = int(str_45_c) 
+                                            fpc_c_no     = int(str_48)
+                                            reverse_mapping_c = int(tag_455_c)
+                                            layer_d_no   = int(str_45_c) 
+                                            fpc_d_no     = int(str_49)
+                                            reverse_mapping_d = int(tag_455_d) 
+                                            print( "adding" )
+                                            print( tdc_addr )
+                                            print( conn_str )
+                                            print( name_str )
+                                            print( calib_file )
+                                            db.add_board_json(tdc_addr,{ "name":name_str, "tdc_connector":conn,\
+                                            "chamber":chamber_no,\
+                                            "fpc_a":fpc_a_no,\
+                                            "layer_a":layer_a_no,\
+                                            "reverse_mapping_a":reverse_mapping_a,\
+                                            "fpc_b":fpc_b_no,\
+                                            "layer_b":layer_b_no,\
+                                            "reverse_mapping_b":reverse_mapping_b,\
+                                            "fpc_c":fpc_c_no,\
+                                            "layer_c":layer_c_no,\
+                                            "reverse_mapping_c":reverse_mapping_c,\
+                                            "fpc_d":fpc_d_no,\
+                                            "layer_d":layer_d_no,\
+                                            "reverse_mapping_d":reverse_mapping_d,\
+                                            "calib_file":calib_file, "active":0 })
+                break
             else:
               d.msgbox("this connector is already occupied :(")
           else:

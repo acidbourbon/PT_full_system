@@ -14,12 +14,12 @@
 #define tot_R 800
 #define tot_cut_L 0
 #define tot_cut_R 800
-#define HUBRANGE_START 0x8099
-#define HUBRANGE_STOP 0xc035
-#define TDCRANGE_START 0x0350
-#define TDCRANGE_STOP 0x1899
+#define HUBRANGE_START 0x80eb
+#define HUBRANGE_STOP 0x80eb
+#define TDCRANGE_START 0x1800
+#define TDCRANGE_STOP 0x1800
 
 
 // second processes in second.C:
-#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_1800", "TDC_1800");new SecondProc("Sec_1801", "TDC_1801");new SecondProc("Sec_1802", "TDC_1802");new SecondProc("Sec_1898", "TDC_1898");new SecondProc("Sec_1899", "TDC_1899");
+#define SECOND_PROCESS_TDCs new SecondProc("Sec_1800", "TDC_1800");
 
