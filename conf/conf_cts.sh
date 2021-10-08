@@ -12,7 +12,8 @@ trbcmd w 0xc035 0xa00c 0x80000414  # cts_throttle: enable=true, stop=false, thre
 trbcmd w 0xc035 0xa00d 0x00000001  # cts_eventbuilder: 
                             # cal_eb=0, mask=0000 0000 0000 0001, rr_interval=0
                             # use_cal_eb=false
-trbcmd w 0xc035 0xa101 0xffff0400  # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0100 0000 0000
+trbcmd w 0xc035 0xa101 0xffff0001  # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0000 0000 0001
+##trbcmd w 0xc035 0xa101 0xffff0400  # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0100 0000 0000
 trbcmd w 0xc035 0xa124 0x00000000  # trg_input_config0: delay=0, invert=false, override=off, spike_rej=0
 trbcmd w 0xc035 0xa125 0x00000000  # trg_input_config1: delay=0, invert=false, override=off, spike_rej=0
 trbcmd w 0xc035 0xa126 0x00000000  # trg_input_config2: delay=0, invert=false, override=off, spike_rej=0
@@ -48,6 +49,8 @@ trbcmd w 0xc035 0xa152 0x00000000  # trg_periph_config3: mask=0000 0000 0000 000
 trbcmd w 0xc035 0xa154 0xffffffff  # trg_pulser_config0: low_duration=4294967295
 trbcmd w 0xc035 0xa155 0x00000003  # trg_pulser_config1: low_duration=3
 trbcmd w 0xc035 0xa157 0x00000000  # trg_random_pulser_config0: threshold=0
+trbcmd w 0xc035 0xa156 0x00000000  # trg_periph_config3: mask=0000 0000 0000 0000 0000
+trbcmd w 0xc035 0xa158 0x0001869f  # trg_pulser_config0: low_duration=99999
 trbcmd w 0xc035 0xa159 0x1111111d  # _trg_trigger_types0: 
                             # type0=0xd_tdc_calibration_trigger, type1=0x1_physics_trigger
                             # type2=0x1_physics_trigger, type3=0x1_physics_trigger
@@ -61,13 +64,13 @@ trbcmd w 0xc035 0xa15a 0x11111111  # _trg_trigger_types1:
 trbcmd clearbit 0xc035 0xa00c 0x80000000  # Enable all triggers
 # coincidennce trigger from two TRb3 TDC 0x0350 channels 49 & 50 connected to two scintillators
 # configure Coincidenc logic: channels 48 (0x30) & 49  (0x31)
-trbcmd w  0x0350 0xdf40  0x80003130
+#trbcmd w  0x0350 0xdf40  0x80003130
 # set output channel of coincidence signal :
-trbcmd w  0x0350 0xdf34  0x20000
+#trbcmd w  0x0350 0xdf34  0x20000
 # set coincidence signal to trigger input FPGA Inputs1
-trbcmd w 0xc035 0xa150 0x00000004  # trg_periph_config1: mask=0000 0000 0000 0000 0100
+#trbcmd w 0xc035 0xa150 0x00000004  # trg_periph_config1: mask=0000 0000 0000 0000 0100
 # activate coincidence trigger only:
-trbcmd w 0xc035 0xa101 0xffff0800
+#trbcmd w 0xc035 0xa101 0xffff0800
 # activate scintillator1 trigger (ch49) only:
-#trbcmd w 0xc035 0xa101 0xffff0400
+trbcmd w 0xc035 0xa101 0xffff0400
   # trg_channel_mask: edge=1111 1111 1111 1111, mask=0000 0100 0000 0000

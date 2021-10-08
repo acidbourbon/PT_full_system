@@ -3,7 +3,7 @@ import time
 
 import serial
 
-from hameg_trb import *
+#from hameg_trb import *
 
 device = '/dev/ttyUSB_HAMEG_LV'
 baudrate = 9600
@@ -57,17 +57,18 @@ def report():
 from IPython.display import display, Markdown, clear_output
 import ipywidgets as widgets
 
-def buttons():
-    button = widgets.Button(description='CH1 ON')
-    button2 = widgets.Button(description='CH1 OFF')
-    ch = 1
+
+def OnOffButton(ch=1):
+    button = widgets.Button(description='CH'+str(ch)+' ON')
+    button2 = widgets.Button(description='CH'+str(ch)+' OFF')
+
 
     def on_button_clicked(_):
           # "linking function with output"
           with out:
               # what happens when we press the button
-              clear_output()
-
+              #clear_output()
+              
               set_state(ch,1) 
               print('channel {:d} ON'.format(ch))
               report()
@@ -75,8 +76,8 @@ def buttons():
           # "linking function with output"
           with out:
               # what happens when we press the button
-              clear_output()
-
+              #clear_output()
+              
               set_state(ch,0) 
               print('channel {:d} OFF'.format(ch))
               report()

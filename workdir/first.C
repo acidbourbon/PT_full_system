@@ -14,6 +14,11 @@
 #include "base/Event.h"
 #include "hadaq/TdcSubEvent.h"
 
+#include "base/ProcMgr.h"
+#include "hadaq/HldProcessor.h"
+#include "hadaq/TdcProcessor.h"
+#include "hadaq/TrbProcessor.h"
+
 #include "go4_settings.h"
 
 #include <stdlib.h>
@@ -28,15 +33,16 @@ void first()
    base::ProcMgr::instance()->SetHistFilling(4);
 
    // this limits used for liner calibrations when nothing else is available
-   hadaq::TdcMessage::SetFineLimits(10, 510);
+   hadaq::TdcMessage::SetFineLimits(10, 490);
 
    // default channel numbers and edges mask
-   hadaq::TrbProcessor::SetDefaults(53, 0x2);
+//   hadaq::TrbProcessor::SetDefaults(53, 0x2);
+	hadaq::TrbProcessor::SetDefaults(11, 0x2);
 //    hadaq::TdcProcessor::SetDefaults(1000);
    //hadaq::TdcProcessor::DisableCalibrationFor(0,8);
    // [min..max] range for TDC ids
-   //hadaq::TrbProcessor::SetTDCRange(0x610, 0x613);
-   hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
+  hadaq::TrbProcessor::SetTDCRange(0x0350, 0x1900);
+//   hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram
@@ -45,8 +51,8 @@ void first()
 
    //hadaq::T
    // [min..max] range for HUB ids
-   hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
-   //hadaq::TrbProcessor::SetHUBRange(0xc035, 0xc035);
+   //hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
+   hadaq::TrbProcessor::SetHUBRange(0x8000, 0xc035);
 
    // when first argument true - TRB/TDC will be created on-the-fly
    // second parameter is function name, called after elements are created
@@ -122,7 +128,7 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
       //   tdc->SetRefChannel(0, 0, (0x70000 | firsttdc), 6000,  -20., 20.);
 
 // configure 0xD trigger width and hmin/hmax histogram range for 0xD trigger ToT
-      tdc->SetToTRange(30, 50., 80.);
+      tdc->SetToTRange(30, 20., 80.);
 
 
       tdc->SetUseLastHit(false);

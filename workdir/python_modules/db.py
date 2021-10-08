@@ -333,6 +333,26 @@ def find_board_by_tdc_channel(my_tdc, my_channel):
   my_connector = int(my_channel/16)+1
   return find_board_by_tdc_connector(my_tdc, my_connector)
 
+def find_boardname_by_tdc_channel(my_tdc, my_channel):
+  setup = get_setup_json()
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      if my_tdc ==  tdc["name"]:
+          i = -1
+          for board in tdc["board"]:
+             i  += 1 
+             if int(my_channel/16) == i:
+                return  board["name"]
+
+def find_tdc_by_hub(hub_name):
+  setup = get_setup_json()
+  tdcs=[]
+  for hub in setup["hub"]:
+    if hub_name == hub["addr"]:
+      for tdc in hub["tdc"]:
+        tdcs.append(tdc["addr"])
+
+  return tdcs
 
 def find_board_by_name(board_name):
   setup = get_setup_json()
@@ -351,7 +371,7 @@ def find_board_by_fpc(fpc,layer,chamber):
   for hub in setup["hub"]:
     for tdc in hub["tdc"]:
       for board in tdc["board"]:
-        if chamber == board["chamber"] and layer == board["layer"]:
+        if chamber == board["chamber"] and (layer == board["layer_a"] or layer == board["layer_b"] or layer == board["layer_c"] or layer == board["layer_d"]):
             if fpc == board["fpc_a"] or fpc == board["fpc_b"] or fpc == board["fpc_c"] or fpc == board["fpc_d"]:
                 return board["name"]
 
@@ -367,14 +387,44 @@ def get_chamber_of_board(board_name):
           return board["chamber"]
   return 0
 
-def get_layer_of_board(board_name):
+def get_a_layer_of_board(board_name):
   setup = get_setup_json()
 
   for hub in setup["hub"]:
     for tdc in hub["tdc"]:
       for board in tdc["board"]:
         if board_name ==  board["name"]:
-          return board["layer"]
+          return board["layer_a"]
+  return 0
+
+def get_b_layer_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["layer_b"]
+  return 0
+
+def get_c_layer_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["layer_c"]
+  return 0
+
+def get_d_layer_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["layer_d"]
   return 0
 
 def get_fpca_of_board(board_name):
@@ -387,6 +437,26 @@ def get_fpca_of_board(board_name):
           return board["fpc_a"]
   return 0
 
+def get_fpcb_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["fpc_b"]
+  return 0
+
+def get_fpcc_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["fpc_c"]
+  return 0
+
 def get_fpcd_of_board(board_name):
   setup = get_setup_json()
 
@@ -395,6 +465,46 @@ def get_fpcd_of_board(board_name):
       for board in tdc["board"]:
         if board_name ==  board["name"]:
           return board["fpc_d"]
+  return 0
+
+def get_fpca_mapping_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["reverse_mapping_a"]
+  return 0
+
+def get_fpcb_mapping_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["reverse_mapping_b"]
+  return 0
+
+def get_fpcc_mapping_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["reverse_mapping_c"]
+  return 0
+
+def get_fpcd_mapping_of_board(board_name):
+  setup = get_setup_json()
+
+  for hub in setup["hub"]:
+    for tdc in hub["tdc"]:
+      for board in tdc["board"]:
+        if board_name ==  board["name"]:
+          return board["reverse_mapping_d"]
   return 0
 
 def get_calib_json_by_name(board_name,**kwargs):
@@ -473,7 +583,10 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
             fpc_b = -3
             fpc_c = -2
             fpc_d = -1
-            reverse_mapping = 0
+            reverse_mapping_a = 0
+            reverse_mapping_b = 0
+            reverse_mapping_c = 0
+            reverse_mapping_d = 0
 
             if( "fpc_a" in board_defs):
               fpc_a = board_defs["fpc_a"]  
@@ -483,16 +596,40 @@ def find_board_by_tdc_connector(my_tdc, my_connector):
               fpc_c = board_defs["fpc_c"]
             if( "fpc_d" in board_defs):
               fpc_d = board_defs["fpc_d"]
-
-            if( "reverse_mapping" in board_defs):
-              reverse_mapping = board_defs["reverse_mapping"]
+#
+#            if( "reverse_mapping" in board_defs):
+#              reverse_mapping = board_defs["reverse_mapping"]
+            if( "reverse_mapping_a" in board_defs):
+              reverse_mapping_a = board_defs["reverse_mapping_a"]
+            if( "reverse_mapping_b" in board_defs):
+              reverse_mapping_b = board_defs["reverse_mapping_b"]
+            if( "reverse_mapping_c" in board_defs):
+              reverse_mapping_c = board_defs["reverse_mapping_c"]
+            if( "reverse_mapping_d" in board_defs):
+              reverse_mapping_d = board_defs["reverse_mapping_d"]
 
             wires = []
 
-            if( reverse_mapping ):
-              wires =  list(range((fpc_a+1)*4-1,fpc_a*4-1, -1)) + list(range((fpc_b+1)*4-1,fpc_b*4-1, -1)) + list(range((fpc_c+1)*4-1,fpc_c*4-1, -1)) + list(range((fpc_d+1)*4-1,fpc_d*4-1, -1)) 
+#            if( reverse_mapping ):
+#              wires =  list(range((fpc_a+1)*4-1,fpc_a*4-1, -1)) + list(range((fpc_b+1)*4-1,fpc_b*4-1, -1)) + #list(range((fpc_c+1)*4-1,fpc_c*4-1, -1)) + list(range((fpc_d+1)*4-1,fpc_d*4-1, -1)) 
+#            else:
+#              wires =  list(range(fpc_a*4,(fpc_a+1)*4)) + list(range(fpc_b*4,(fpc_b+1)*4)) + list(range(fpc_c*4,(fpc_c+1)*4)) + #list(range(fpc_d*4,(fpc_d+1)*4))
+            if( reverse_mapping_a ):
+              wires +=  list(range((fpc_a+1)*4-1,fpc_a*4-1, -1))
             else:
-              wires =  list(range(fpc_a*4,(fpc_a+1)*4)) + list(range(fpc_b*4,(fpc_b+1)*4)) + list(range(fpc_c*4,(fpc_c+1)*4)) + list(range(fpc_d*4,(fpc_d+1)*4))
+              wires +=  list(range(fpc_a*4,(fpc_a+1)*4))
+            if( reverse_mapping_b ):
+              wires +=  list(range((fpc_b+1)*4-1,fpc_b*4-1, -1))
+            else:
+              wires +=  list(range(fpc_b*4,(fpc_b+1)*4))
+            if( reverse_mapping_c ):
+              wires +=  list(range((fpc_c+1)*4-1,fpc_c*4-1, -1))
+            else:
+              wires +=  list(range(fpc_c*4,(fpc_c+1)*4))
+            if( reverse_mapping_d ):
+              wires +=  list(range((fpc_d+1)*4-1,fpc_d*4-1, -1))
+            else:
+              wires +=  list(range(fpc_d*4,(fpc_d+1)*4))
            
             channels =  list(range((conn-1)*16,conn*16))
             

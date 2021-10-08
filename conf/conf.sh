@@ -7,11 +7,13 @@ cd /conf
 echo "configure container"
 
 export TRB3_PORT=35
+#hades63: export DAQOPSERVER=192.168.100.169:$TRB3_PORT
 export DAQOPSERVER=localhost:$TRB3_PORT
 #export TRB3_SERVER=192.168.4.240
 export TRB3_SERVER=192.168.102.35
 export CTS_GUI_PORT=1148
 export CTS_ENDPOINT=0xc035
+#export CTS_ENDPOINT=0xf3c0
 export DISPLAY=:5 # go4 window will be sent to $DISPLAY, if provide_vnc == yes , then it will be this x11 display
 
 export PULSER=192.168.103.74
@@ -21,7 +23,6 @@ export PULSER=192.168.103.74
 provide_dhcp=yes
 #edit conf/dhcpd.conf, enter your trb3 MAC address ###
 provide_trbnetd=yes
-
 provide_cts_gui=yes
 
 provide_vnc=yes

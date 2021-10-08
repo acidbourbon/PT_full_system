@@ -20,15 +20,27 @@ trbcmd loadbit 0xfe45 0xc5 0xffff0000 0x00040000
 #cd -
 
 
-echo /daqtools/tools/loadregisterdb.pl register_configgbe.db
-echo /daqtools/tools/loadregisterdb.pl register_configgbe_ip.db
+echo loadregisterdb.pl register_configgbe.db
+echo loadregisterdb.pl register_configgbe_ip.db
 
+#~/trbsoft/daqtools/tools/loadregisterdb.pl register_configgbe.db
+#~/trbsoft/daqtools/tools/loadregisterdb.pl register_configgbe_ip.db
 /daqtools/tools/loadregisterdb.pl register_configgbe.db
 /daqtools/tools/loadregisterdb.pl register_configgbe_ip.db
 #sleep 1
 
 echo ./conf_tdcs.sh
 ./conf_tdcs.sh
+# setting the VOVA tdc to  default settings and max thresholds
+trbcmd w 0x1801 0xA002 0x00000000
+trbcmd w 0x1801 0xA003 0x00000000
+trbcmd w 0x1801 0xAA00 0x00000000
+trbcmd w 0x1801 0xA203 0xffffffff
+trbcmd w 0x1801 0xA213 0xffffffff
+trbcmd w 0x1801 0xA223 0xffffffff
+trbcmd w 0x1801 0xA233 0xffffffff
+
+
 
 echo ./conf_cts.sh
 ./conf_cts.sh

@@ -179,9 +179,9 @@ class SecondProc : public base::EventProc {
         for( unsigned i=0; i<CHANNELS+1; i++ ) {
           char chno[16];
           sprintf(chno,"Ch%02d_t1",i);
-          t1_h[i] = MakeH1(chno,chno, 2000, t1_L, t1_R, "ns");
+          t1_h[i] = MakeH1(chno,chno, 1000, t1_L, t1_R, "ns");
           sprintf(chno,"Ch%02d_tot",i);
-          tot_h[i] = MakeH1(chno,chno, 4000, tot_L, tot_R, "ns");
+          tot_h[i] = MakeH1(chno,chno, 1000, tot_L, tot_R, "ns");
           sprintf(chno,"Ch%02d_tot_untrig",i);
           tot_untrig_h[i] = MakeH1(chno,chno, 4000, tot_L, tot_R, "ns");
           sprintf(chno,"Ch%02d_t1_untrig",i);

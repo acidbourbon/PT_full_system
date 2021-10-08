@@ -53,7 +53,7 @@ def read_scalers(TDC,channels):
     # mask out first bit, because it is the input state
     if  "0x18" in TDC: 
         #new MDC MBO
-        return_vals[index] = values[ch + 0xdfc0] & 0x7fffffff
+        return_vals[index] = values[ch + 0xdfc0] & 0x00ffffff
     else:
         #PASTTREC on PANDA board
         return_vals[index] = values[ch + 0xc001] & 0x7fffffff
@@ -100,7 +100,7 @@ def scaler_rate(TDC,channels,time):
   b = np.array(read_scalers(TDC,channels))
   diff = b-a
   ## add overflow
-  diff += (diff < 0)*(2**31)
+  diff += (diff < 0)*(2**24)
   diff = diff/time
   return diff.tolist()
 
