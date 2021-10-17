@@ -3,8 +3,6 @@ import os
 import db
 import tdc_daq
 from time import sleep
-import numpy as np
-import scipy.optimize as optim
 
 from trbnet import TrbNet
 
@@ -348,22 +346,3 @@ def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
 
 def init_board_by_name(board,pktime=-1,gain=-1,threshold=-1):
 	return init_boards_by_name([ board ],pktime,gain,threshold)
-
-def found_baselines_for_board(board, scaning_time = 0.2, channels = range(32)):
-	val = []
-	for i in range(-15,15 + 1):
-		set_all_baselines(board,channels,[i]*len(channels))
-		scaler = tdc_daq.scaler_rate(board,channels,scaning_time)
-		val.append(scaler)
-	val = np.array(val)
-	func = lambda x, x0, sigma: 1/np.sqrt(2*np.pi)/sigma *np.exp(-(x-x0)**2/(2*sigma**2))
-	res = {}
-	for i, values in enumerate(val.T):
-		norm = np.linalg.norm(values)
-		if norm == 0:
-			res[channels[i]] = {"err": "all-zeros"}
-			continue	
-		values2 = values / norm
-		popt, _ = optim.curve_fit(func, range(-15,15+1), values2, p0 = [np.argmax(values2)-15,1])
-		res[channels[i]] = {"mean": popt[0], "sigma": popt[1]}
-	return res
