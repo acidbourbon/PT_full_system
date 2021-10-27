@@ -81,7 +81,7 @@ void first()
    //    0x3FFF - all kinds of trigger types will be used for calibration (excluding 0xE and 0xF)
    //   0x80000000 in mask enables usage of temperature correction
 //   hld->ConfigureCalibration(calname, cnt, /*(1 << trig) | use_temp*/ 0x3fff);
-   hld->ConfigureCalibration("test_", 0, (1 << 0xD)); 
+   hld->ConfigureCalibration("test_", -1, (1 << 0xD)); 
  
 
    // only accept trigger type 0x1 when storing file

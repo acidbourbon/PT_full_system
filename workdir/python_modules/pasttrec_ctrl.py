@@ -4,7 +4,7 @@ import db
 import tdc_daq
 from time import sleep
 import numpy as np
-import scipy.optimize as optim
+import matplotlib.pyplot as plt
 
 from trbnet import TrbNet
 
@@ -137,7 +137,8 @@ def reset_board(TDC_str,CONN=0):
 def set_threshold(TDC,CONN,CHIP,THR):
 	spi(TDC,CONN,CHIP, [ 0x300 + (0xFF & THR)])
 
-
+def set_threshold_for_pasttrec(TDC,PAST,THR):
+	set_threshold(TDC,PAST // 2 + 1,PAST % 2,THR)
 
 def slow_control_test(board_name): #TODO
 	
@@ -205,7 +206,7 @@ def set_baseline( TDC, channel,value): #TODO
 	val	= value + 15 
 	chan = chip_chan + 4 
 
-	spi(TDC,conn, chip, [ ((0xF & chan)<<8) + val] )
+	spi(TDC,conn, chip, [ ((0xF & chan)<<8) + (val & 0xFF)] )
 
 	return
 
@@ -349,21 +350,74 @@ def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
 def init_board_by_name(board,pktime=-1,gain=-1,threshold=-1):
 	return init_boards_by_name([ board ],pktime,gain,threshold)
 
-def found_baselines_for_board(board, scaning_time = 0.2, channels = range(32)):
+def found_baselines_for_board(board, scaning_time = 0.2, channels = range(32), plot=False):
+	set_threshold_for_board(board,0,0)
 	val = []
+	if plot:
+		fig, ax = plt.subplots(7,5)
+		fig.set_size_inches(18.5, 18.5)
 	for i in range(-15,15 + 1):
 		set_all_baselines(board,channels,[i]*len(channels))
 		scaler = tdc_daq.scaler_rate(board,channels,scaning_time)
+		assert not np.isnan(scaler).any(), "Scaler rate {} returned NaN: tdc_daq.scaler_rate({},{},{})".format(i,board,channels,scaning_time)
 		val.append(scaler)
 	val = np.array(val)
-	func = lambda x, x0, sigma: 1/np.sqrt(2*np.pi)/sigma *np.exp(-(x-x0)**2/(2*sigma**2))
 	res = {}
 	for i, values in enumerate(val.T):
-		norm = np.linalg.norm(values)
-		if norm == 0:
-			res[channels[i]] = {"err": "all-zeros"}
-			continue	
-		values2 = values / norm
-		popt, _ = optim.curve_fit(func, range(-15,15+1), values2, p0 = [np.argmax(values2)-15,1])
-		res[channels[i]] = {"mean": popt[0], "sigma": popt[1]}
+		charr = np.array(range(-15,15+1))
+		mean = np.dot(values, charr)/np.sum(values)
+		rms = np.sqrt(np.dot(np.power(charr-mean,2), values)/np.sum(values))
+		if plot:
+			ax[i // 5, i % 5].scatter(charr,values)
+			ax[i // 5, i % 5].set_yscale("log")
+			ax[i // 5, i % 5].set_ylim([0.5, np.amax(values)])
+			ax[i // 5, i % 5].set_title("Ch {}".format(i))
+			ax[i // 5, i % 5].axvline(x = mean, c="r")
+			ax[i // 5, i % 5].axvline(x = mean-3*rms, c="g")
+			ax[i // 5, i % 5].axvline(x = mean+3*rms, c="g")
+		res[channels[i]] = {"mean": mean, "rms": rms}
 	return res
+
+def found_baselines_for_boards(boards, scaning_time = 0.2, channels = -1, plot=False):
+	if channels == -1: channels = [list(range(32))] * len(boards)
+	# print(channels)
+	assert len(boards) == len(channels), "Size of TDC array and channels array must be same"
+	for board in boards:
+		set_threshold_for_board(board,0,0)
+	# val = []
+	if plot:
+		fig, ax = plt.subplots(7 * len(boards),5)
+		fig.set_size_inches(18.5, 18.5 * len(boards))
+	
+	# scalers = [[]] * len(boards)
+	scalers = np.empty((len(boards), max([len(el) for el in channels]), 31))
+	for baseline in range(-15,15 + 1):
+		a, b = [], []
+		for nboard, board in enumerate(boards):
+			set_all_baselines(board,channels[nboard],[baseline]*len(channels[nboard]))
+			a.append(np.array(tdc_daq.read_scalers(board,channels[nboard])))
+		sleep(scaning_time)
+		for nboard, board in enumerate(boards):
+			b.append(np.array(tdc_daq.read_scalers(board,channels[nboard])))
+			diff = b[nboard] - a[nboard]
+			diff += (diff < 0)*(2**24)
+			scalers[nboard, :len(channels[nboard]), baseline+15] = diff / scaning_time
+	res = {}
+	for nboard,board in enumerate(boards):
+		res[board] = {}
+		for nch,ch in enumerate(channels[nboard]):
+			baselinearr = np.array(list(range(-15,15+1)))
+			values = scalers[nboard, nch, :]
+			mean = np.dot(values, baselinearr)/np.sum(values)
+			rms = np.sqrt(np.dot(np.power(baselinearr-mean,2), values)/np.sum(values))
+			if plot:
+				ax[nboard * 7 + nch // 5, nch % 5].scatter(baselinearr,values)
+				ax[nboard * 7 + nch // 5, nch % 5].set_yscale("log")
+				ax[nboard * 7 + nch // 5, nch % 5].set_ylim([0.5, np.amax(values)])
+				ax[nboard * 7 + nch // 5, nch % 5].set_title("Board {} ch {}".format(board, ch))
+				ax[nboard * 7 + nch // 5, nch % 5].axvline(x = mean, c="r")
+				ax[nboard * 7 + nch // 5, nch % 5].axvline(x = mean-3*rms, c="g")
+				ax[nboard * 7 + nch // 5, nch % 5].axvline(x = mean+3*rms, c="g")
+			res[board][ch] = {"mean": mean, "rms": rms}
+	return res
+	

@@ -37,8 +37,8 @@ tmux link-window -s vnc:vnc -t main          # attach window opened by conf.sh
 tmux new-window -t main -n "dabc" "dabc_exe TdcEventBuilder_noHLD.xml;/bin/bash"
 #tmux new-window -t main -n "go4" "rm *.root;  go4 0350_meta.hotstart;/bin/bash"
 GO4_WEB_PORT=8080
-#tmux new-window -t main -n "go4_ana" "rm Go4AutoSave.root; sleep 50;  tree_out=false go4analysis -stream localhost:6790 -http localhost:$GO4_WEB_PORT;/bin/bash"
-tmux new-window -t main -n "go4_ana" "rm Go4AutoSave.root; sleep 5;  tree_out=false go4analysis -stream hadesp63:6790 -http localhost:$GO4_WEB_PORT ; /bin/bash"
+tmux new-window -t main -n "go4_ana" "rm Go4AutoSave.root; sleep 5;  tree_out=false go4analysis -stream localhost:6790 -http localhost:$GO4_WEB_PORT;/bin/bash"
+#tmux new-window -t main -n "go4_ana" "rm Go4AutoSave.root; sleep 5;  tree_out=false go4analysis -stream hadesp63:6790 -http localhost:$GO4_WEB_PORT ; /bin/bash"
 tmux new-window -t main -n "new" "/bin/bash"
 # open CTS GUI and GO4 Web interface in firefox (running in VNC)
 #tmux new-window -t main -n "x11_apps" "sleep 5 && firefox -new-tab -url localhost:$CTS_GUI_PORT -new-tab -url localhost:$GO4_WEB_PORT& /bin/bash"
