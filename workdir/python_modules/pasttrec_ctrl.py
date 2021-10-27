@@ -132,7 +132,10 @@ def reset_board(TDC_str,CONN=0):
 	# TDC = int(TDC_str,16)
 	spi_vova(TDC_str, 0xAA00,0)
  
-
+def reset_boards(TDCs,CONN=0):
+	# TDC = int(TDC_str,16)
+	for TDC in TDCs:
+		spi_vova(TDC, 0xAA00,0)
 
 def set_threshold(TDC,CONN,CHIP,THR):
 	spi(TDC,CONN,CHIP, [ 0x300 + (0xFF & THR)])

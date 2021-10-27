@@ -293,14 +293,14 @@ def uploadImage(path, flash_settings, TDCs=[]):
                 print("Error code returned")
                 return
 
-def found_all_baselines(conf, scaning_time = 0.2):
+def found_all_baselines(conf, scaning_time = 0.2, plot=False):
     TDCs = []
     for oep in conf.values():
         TDCs = [*TDCs, *[el for el in oep.fpga]]
-    baselines = pt.found_baselines_for_boards(TDCs, scaning_time=scaning_time)
+    baselines = pt.found_baselines_for_boards(TDCs, scaning_time=scaning_time, plot=plot)
     for oep in conf.values():
         for fpga in oep.fpga.values():
             # for ch in baselines[fpga.addr]:
             for i,past in enumerate(fpga.pasttrec):
-                past.setBaseline(baselines[fpga.addr].values()[8*i:8+8*i])
+                past.setBaseline([ round(el["mean"]) + 15 for el in list(baselines[fpga.addr].values())[8*i:8+8*i] ])
     

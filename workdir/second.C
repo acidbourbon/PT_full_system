@@ -248,7 +248,7 @@ class SecondProc : public base::EventProc {
                dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent(fTdcId));
          
          if(VERBOSE) cout<< "tdc: " << fTdcId << " evt no: " << trig_no[fTdcId] << endl;
-         if (sub==0) return false;
+         if (sub==0) return true;
 
 //         printf("%s process sub %d %s\n", GetName(), sub->Size(), fTdcId.c_str());
 
