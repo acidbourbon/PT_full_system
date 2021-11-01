@@ -97,7 +97,7 @@ bool hadaq::MdcProcessor::FirstBufferScan(const base::Buffer &buf)
       FillH2(ToT,    channel, timeOverThreshold);
 
       FillH2(meta_potato_h, timeDiff, timeOverThreshold);
-      #FillH2(meta_times_h, timeDiff, timeOverThreshold);      
+      //FillH2(meta_times_h, timeDiff, timeOverThreshold);      
       FillH1(meta_tot_h, timeOverThreshold);
       FillH1(meta_t1_h, timeDiff );
       FillH2(meta_tot_2d, timeOverThreshold, channel);
