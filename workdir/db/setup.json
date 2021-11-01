@@ -3,7 +3,7 @@
     "default": {
       "gain": 4,
       "pktime": 15,
-      "threshold": 0
+      "threshold": 10
     },
     "standby": {
       "gain": 1,
@@ -18,13 +18,13 @@
     "slow_control_log": 1,
     "spike_rejection": 3,
     "spike_rejection_refchan": 10,
-    "t1_L": -5000,
-    "t1_R": 5000,
+    "t1_L": -8000,
+    "t1_R": 8000,
     "threshold_noise_scan_limit": 30,
     "tot_L": -20,
     "tot_R": 1000,
     "tot_cut_L": 0,
-    "tot_cut_R": 800
+    "tot_cut_R": 1000
   },
   "hub": [
     {
@@ -1498,7 +1498,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80054.json",
               "chamber": 0,
               "fpc_a": 29,

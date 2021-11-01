@@ -7,13 +7,13 @@
 #define slow_control_log 1
 #define spike_rejection 3
 #define spike_rejection_refchan 10
-#define t1_L -5000
-#define t1_R 5000
+#define t1_L -8000
+#define t1_R 8000
 #define threshold_noise_scan_limit 30
 #define tot_L -20
 #define tot_R 1000
 #define tot_cut_L 0
-#define tot_cut_R 800
+#define tot_cut_R 1000
 #define HUBRANGE_START 0x8001
 #define HUBRANGE_STOP 0xc035
 #define TDCRANGE_START 0x0350

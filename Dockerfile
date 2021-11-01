@@ -238,6 +238,19 @@ RUN apt-get -y install libtirpc-dev
 #set berlin timezone
 RUN cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime &&\
 date
+
+# 1.11.2021 update go4 to provide unpacker of new MDC TDC design
+#RUN cd /trb3/go4 && \
+#svn update && \
+#make
+#RUN ./startGo4.sh &
+
+# 1.11.2021 update go4/streamto provide unpacker of new MDC TDC design
+RUN cd /trb3/stream && \
+svn update 
+#do not compile this, will bind to wrong release of go4analysis
+#make -j4 ## needs to be done after go4 is configured (with loading of workdir ...), so after docker image is fully started
+
     
 
 #RUN echo "#!/bin/bash\n. /root-build/bin/thisroot.sh" >entrypoint.sh ; chmod +x entrypoint.sh

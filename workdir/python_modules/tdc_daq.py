@@ -169,7 +169,8 @@ def enable_tdc_channels_of_active_boards():
 
 
 def record_tree_data(no_events):
-  dummy=os.popen("rm *.root; tree_out=true go4analysis -number {:d} -stream localhost:6790; root -b -l unify.C -q".format(no_events)).read()
+  dummy=os.popen("cd /workdir; rm *.root; tree_out=true go4analysis -number {:d} -stream localhost:6789 ".format(no_events)).read()
+ # dummy=os.popen("cd /workdir; rm *.root; tree_out=true go4analysis -number {:d} -stream localhost:6789; root -b -l unify.C -q".format(no_events)).read()
   return
 
 

@@ -8,7 +8,7 @@
 #include "TH2.h"
 #include "TCanvas.h"
 #include "TGo4AnalysisObjectManager.h"
-
+#include "mdc.h"
 
 #include "base/EventProc.h"
 #include "base/Event.h"
@@ -41,22 +41,31 @@ void first()
 //    hadaq::TdcProcessor::SetDefaults(1000);
    //hadaq::TdcProcessor::DisableCalibrationFor(0,8);
    // [min..max] range for TDC ids
-//  hadaq::TrbProcessor::SetTDCRange(0x0350, 0x1900);
-   hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
+    hadaq::TrbProcessor::SetTDCRange(0x0350, 0x1900);
+   //hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram
-   // second - maximal RMS value 
-   hadaq::TdcProcessor::SetToTCalibr(100, 0.2); 
+   // second - maximal RMS value
+   hadaq::TdcProcessor::SetToTCalibr(100, 0.2);
 
    //hadaq::T
    // [min..max] range for HUB ids
-   hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
-//   hadaq::TrbProcessor::SetHUBRange(0x8000, 0xc035);
+ //  hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
+    hadaq::TrbProcessor::SetHUBRange(0x8300, 0x8400);
 
    // when first argument true - TRB/TDC will be created on-the-fly
    // second parameter is function name, called after elements are created
    hadaq::HldProcessor* hld = new hadaq::HldProcessor(true, "after_create");
+   // create TRB processor which holds custom data
+   hadaq::TrbProcessor* trb = new hadaq::TrbProcessor(0xc035, hld);
+   trb->SetAutoCreate(true);
+   trb->AddHadaqHUBId(0x8353);
+   trb->AddHadaqHUBId(0x8354);
+
+   // create custom processor
+   hadaq::MdcProcessor *mdc1 = new hadaq::MdcProcessor(trb, 0x1806);
+   // hadaq::MdcProcessor *mdc2 = new hadaq::MdcProcessor(trb, 0x0d31);
 
    const char* calname = getenv("CALNAME");
    if ((calname==0) || (*calname==0)) calname = "test_";
@@ -81,8 +90,8 @@ void first()
    //    0x3FFF - all kinds of trigger types will be used for calibration (excluding 0xE and 0xF)
    //   0x80000000 in mask enables usage of temperature correction
 //   hld->ConfigureCalibration(calname, cnt, /*(1 << trig) | use_temp*/ 0x3fff);
-   hld->ConfigureCalibration("test_", 0, (1 << 0xD)); 
- 
+   hld->ConfigureCalibration("test_", 0, (1 << 0xD));
+
 
    // only accept trigger type 0x1 when storing file
    //new hadaq::HldFilter(0x0);
@@ -132,11 +141,11 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
 
 
       tdc->SetUseLastHit(true);
-      
+
       // tdc->DisableCalibrationFor(0);
 
       // if (tdc->GetID() == 0x1130);
-      
+
       for (int n=1;n<17;++n)
          tdc->SetRefChannel(n,0, 0xffff, 6000, -200, 200); // LED DIFF
    }

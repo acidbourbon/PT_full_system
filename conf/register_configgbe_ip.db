@@ -30,8 +30,8 @@
 
 # 0xc035        0    0xF13BAF95     0xF0DE     0xc0a80401      50002      0xc350
 # 0x8150        0    0xF13BAF95     0xF0DE     0xc0a80401      50003      0xc351
-# 0xc035        0    0x4C80BC07     0xD85D     0xc0a80401      50002      0xc350 #xbox_internal networc car d
-  0xc035        0    0xF4D7BA4C     0xBC5F     0xc0a8648a      50002      0xc350 #xbox_hades networkk card
+ 0xc035        0    0x4C80BC07     0xD85D     0xc0a80401      50002      0xc350 #xbox_internal network card
+#  0xc035        0    0xF4D7BA4C     0xBC5F     0xc0a8648a      50002      0xc350 #xbox_hades network card 
 # 0xc035        0    0xbb61482f     0xecf4     0xc0a864a9      50002      0xc350  #l8n8
 # 0xc035        0    0xfe57a587     0x244b     0xc0a8677e      50002      0xc350  #hades63
 

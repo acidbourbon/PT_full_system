@@ -278,7 +278,7 @@ void unify(void){
 
           
       }
-      //  cout << reference_time ;
+        cout << reference_time ;
       joint_tree->Fill();
     }
     
@@ -342,11 +342,11 @@ void unify(void){
           if ( (hit_a_chan > 35000) && (hit_a_chan < 35100) && (hit_b_chan > 35100) && (hit_b_chan < 35200)){
             if (  
                  // Lena
-                   (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ||   /* main diagonal */
-                   (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )     /* next to diagonal */
+                 //  (hit_a_chan % 100 -1)  == ( 31 - (hit_b_chan % 100 -1)) ||   /* main diagonal */
+                 //  (hit_a_chan % 100 -1)  == ( 32 - (hit_b_chan % 100 -1) )     /* next to diagonal */
 
                  // Sandra
-                 // (hit_a_chan % 100 -1)  == (hit_b_chan % 100 -1) 
+                  (hit_a_chan % 100 -1)  == (hit_b_chan % 100 -1) 
                ){ 
               Float_t t1_a = this_event->hits[hit_no_a].t1;
               Float_t t1_b = this_event->hits[hit_no_b].t1;
