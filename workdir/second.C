@@ -113,7 +113,8 @@ class SecondProc : public base::EventProc {
       base::H1handle  meta_tot_h;
       base::H1handle  meta_tot_2d;
       base::H1handle  meta_t1_2d;
-            
+      base::H2handle  meta_t2_t1_h;
+      base::H1handle  meta_t2_h;            
       //~ base::H1handle  tot_h[CHANNELS+1]; 
       //~ base::H1handle  tot_untrig_h[CHANNELS+1]; 
       //~ base::H1handle  t1_untrig_h[CHANNELS+1]; 
@@ -122,6 +123,7 @@ class SecondProc : public base::EventProc {
       //~ base::H1handle  potato_h[CHANNELS+1];
 
       base::H1handle  coinc_matrix;
+      base::H1handle  channelHits;
 //      base::H1handle  meta_fish;
 //      base::H1handle  meta_fish_proj;
 //      base::H1handle  fishes[FISHES];
@@ -167,12 +169,15 @@ class SecondProc : public base::EventProc {
        data_tree[fTdcId]->Branch("tot",&entry_tot);
        data_tree[fTdcId]->Branch("chan",&entry_chan);
        data_tree[fTdcId]->Branch("ref_chan",&entry_ref_chan);
-       
-        meta_t1_h = MakeH1("meta_t1","meta_t1", 2000, t1_L, t1_R, "ns");
+       channelHits = MakeH1("channelHits","channelHits", 4000, 0,400, "15*TDC + channel");
+        meta_t1_h = MakeH1("meta_t1","meta_t1", 4000, t1_L, t1_R, "ns");
+        meta_t2_h = MakeH1("meta_t2","meta_t2", 4000, t1_L, t1_R, "ns");        
         meta_t1_2d = MakeH2("meta_t1_2d","meta_t1_2d", 2000, t1_L, t1_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
         meta_tot_h = MakeH1("meta_tot","meta_tot", 4000, tot_L, tot_R, "ns");
         meta_tot_2d = MakeH2("meta_tot_2d","meta_tot_2d", 2000, tot_L, tot_R,CHANNELS-1,0.5,CHANNELS-0.5, "ns;channel#");
-        meta_potato_h = MakeH2("meta_potato","meta_potato",500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
+        
+        meta_potato_h = MakeH2("meta_potato","meta_potato",2000,t1_L,t1_R,1000, tot_L, tot_R, "t1 (ns);tot (ns)");
+        meta_t2_t1_h = MakeH2("meta_t2_t1","meta_t2_t1",2000,t1_L,t1_R,1000, t1_L, t1_R, "t1 (ns);t2 (ns)");
          ((TObject*) meta_t1_2d)->SetDrawOption("colz");
          ((TH2F*) meta_tot_2d)->SetDrawOption("COLZ");
          ((TObject*) meta_potato_h)->SetDrawOption("colz");       
@@ -359,11 +364,15 @@ class SecondProc : public base::EventProc {
                     FillH2(meta_potato_h,t1_vs_ref,tot[i]*1e9);
                     FillH1(meta_tot_h,tot[i]*1e9);
                     FillH1(meta_t1_h,t1_vs_ref );
+                    FillH1(meta_t2_h,(t2[i] -t1[REFCHAN])*1e9  );                   
                     FillH2(meta_tot_2d,tot[i]*1e9,i);
+                    FillH2(meta_t2_t1_h,(t2[i] -t1[REFCHAN])*1e9 , t1_vs_ref);
                     FillH2(meta_t1_2d,t1_vs_ref,i);
                     entry_chan = i;
                     entry_t1 = t1_vs_ref;
                     entry_tot = tot[i]*1e9;
+                    //~ cout << fTdcId<< endl;
+                    //FillH1(channelHits,((fTdcId-1800)*15 + i));
                     if(write_tree){
                       data_tree[fTdcId]->Fill();
                     }

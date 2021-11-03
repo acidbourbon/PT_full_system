@@ -185,4 +185,9 @@ done
 #
 #done
 #### 
+# shift TDC channels to  the beam spot of COSY 2.11.2021
+trbcmd loadbit 0x1806  0xd580 0x300 0x200
+trbcmd loadbit 0x1813  0xd580 0x300 0x100
+
+
 

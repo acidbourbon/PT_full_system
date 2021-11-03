@@ -18,13 +18,13 @@
     "slow_control_log": 1,
     "spike_rejection": 3,
     "spike_rejection_refchan": 10,
-    "t1_L": -8000,
-    "t1_R": 8000,
+    "t1_L": -800,
+    "t1_R": 1200,
     "threshold_noise_scan_limit": 30,
     "tot_L": -20,
-    "tot_R": 1000,
+    "tot_R": 1500,
     "tot_cut_L": 0,
-    "tot_cut_R": 1000
+    "tot_cut_R": 2000
   },
   "hub": [
     {
@@ -468,7 +468,7 @@
           "addr": "0x1820",
           "board": [
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80121.json",
               "chamber": 0,
               "fpc_a": 43,
@@ -488,7 +488,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80122.json",
               "chamber": 0,
               "fpc_a": 41,
@@ -550,7 +550,7 @@
           "addr": "0x1821",
           "board": [
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80123.json",
               "chamber": 0,
               "fpc_a": -1,
@@ -570,7 +570,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80124.json",
               "chamber": 0,
               "fpc_a": 39,
@@ -975,68 +975,8 @@
       "name": "0x8008",
       "tdc": [
         {
-          "addr": "0x1812",
-          "board": [],
-          "channels": 32,
-          "connectors": 2,
-          "name": "0x1812",
-          "t1_offset": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        {
           "addr": "0x1813",
           "board": [
-            {
-              "active": 1,
-              "calib_file": "./boards/board_80083.json",
-              "chamber": 0,
-              "fpc_a": 3,
-              "fpc_b": 5,
-              "fpc_c": 4,
-              "fpc_d": 6,
-              "layer_a": 3,
-              "layer_b": 4,
-              "layer_c": 0,
-              "layer_d": 0,
-              "name": "80083",
-              "reverse_mapping_a": 1,
-              "reverse_mapping_b": 1,
-              "reverse_mapping_c": 1,
-              "reverse_mapping_d": 1,
-              "tdc_connector": 1
-            },
             {
               "active": 1,
               "calib_file": "./boards/board_80084.json",
@@ -1055,59 +995,17 @@
               "reverse_mapping_c": 1,
               "reverse_mapping_d": 1,
               "tdc_connector": 2
-            }
-          ],
-          "channels": 32,
-          "connectors": 2,
-          "name": "0x1813",
-          "t1_offset": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          "addr": "0x1813",
-          "board": [
+            },
             {
               "active": 1,
               "calib_file": "./boards/board_80083.json",
               "chamber": 0,
-              "fpc_a": 3,
-              "fpc_b": 5,
-              "fpc_c": 4,
-              "fpc_d": 6,
-              "layer_a": 3,
-              "layer_b": 4,
+              "fpc_a": 7,
+              "fpc_b": 8,
+              "fpc_c": 9,
+              "fpc_d": 10,
+              "layer_a": 0,
+              "layer_b": 0,
               "layer_c": 0,
               "layer_d": 0,
               "name": "80083",
@@ -1116,25 +1014,6 @@
               "reverse_mapping_c": 1,
               "reverse_mapping_d": 1,
               "tdc_connector": 1
-            },
-            {
-              "active": 1,
-              "calib_file": "./boards/board_80084.json",
-              "chamber": 0,
-              "fpc_a": 8,
-              "fpc_b": 9,
-              "fpc_c": 11,
-              "fpc_d": 12,
-              "layer_a": 0,
-              "layer_b": 0,
-              "layer_c": 0,
-              "layer_d": 0,
-              "name": "80084",
-              "reverse_mapping_a": 1,
-              "reverse_mapping_b": 1,
-              "reverse_mapping_c": 1,
-              "reverse_mapping_d": 1,
-              "tdc_connector": 2
             }
           ],
           "channels": 32,
@@ -1177,7 +1056,46 @@
         },
         {
           "addr": "0x1812",
-          "board": [],
+          "board": [
+            {
+              "active": 1,
+              "calib_file": "./boards/board_80081.json",
+              "chamber": 0,
+              "fpc_a": 1,
+              "fpc_b": 2,
+              "fpc_c": 3,
+              "fpc_d": 4,
+              "layer_a": 0,
+              "layer_b": 0,
+              "layer_c": 0,
+              "layer_d": 0,
+              "name": "80081",
+              "reverse_mapping_a": 1,
+              "reverse_mapping_b": 1,
+              "reverse_mapping_c": 1,
+              "reverse_mapping_d": 1,
+              "tdc_connector": 1
+            },
+            {
+              "active": 1,
+              "calib_file": "./boards/board_80082.json",
+              "chamber": 0,
+              "fpc_a": 5,
+              "fpc_b": 6,
+              "fpc_c": 7,
+              "fpc_d": 8,
+              "layer_a": 0,
+              "layer_b": 0,
+              "layer_c": 0,
+              "layer_d": 0,
+              "name": "80082",
+              "reverse_mapping_a": 1,
+              "reverse_mapping_b": 1,
+              "reverse_mapping_c": 1,
+              "reverse_mapping_d": 1,
+              "tdc_connector": 2
+            }
+          ],
           "channels": 32,
           "connectors": 2,
           "name": "0x1812",
@@ -1498,7 +1416,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 0,
+              "active": 1,
               "calib_file": "./boards/board_80054.json",
               "chamber": 0,
               "fpc_a": 29,
@@ -1730,7 +1648,7 @@
           "addr": "0x1818",
           "board": [
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80111.json",
               "chamber": 0,
               "fpc_a": 32,
@@ -1750,7 +1668,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80112.json",
               "chamber": 0,
               "fpc_a": 34,
@@ -1812,7 +1730,7 @@
           "addr": "0x1819",
           "board": [
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80113.json",
               "chamber": 0,
               "fpc_a": 36,
@@ -1832,7 +1750,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80114.json",
               "chamber": 0,
               "fpc_a": 38,
@@ -1900,7 +1818,7 @@
           "addr": "0x1816",
           "board": [
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80102.json",
               "chamber": 0,
               "fpc_a": 40,
@@ -1920,7 +1838,7 @@
               "tdc_connector": 2
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80101.json",
               "chamber": 0,
               "fpc_a": 31,
@@ -1982,7 +1900,7 @@
           "addr": "0x1817",
           "board": [
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80103.json",
               "chamber": 0,
               "fpc_a": 42,
@@ -2002,7 +1920,7 @@
               "tdc_connector": 1
             },
             {
-              "active": 1,
+              "active": 0,
               "calib_file": "./boards/board_80104.json",
               "chamber": 0,
               "fpc_a": 21,
@@ -2185,90 +2103,7 @@
     {
       "addr": "0xc038",
       "name": "0xc038",
-      "tdc": [
-        {
-          "addr": "0x0812",
-          "board": [],
-          "channels": 32,
-          "connectors": 2,
-          "name": "0x0812",
-          "t1_offset": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          "addr": "0x0813",
-          "board": [],
-          "channels": 32,
-          "connectors": 2,
-          "name": "0x0813",
-          "t1_offset": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        }
-      ]
+      "tdc": []
     }
   ],
   "name": "DLAB"

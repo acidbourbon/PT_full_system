@@ -1,4 +1,5 @@
-
+#ifndef Hit_h
+#define Hit_h
 class Hit {
 public:
   int chan;
@@ -11,9 +12,12 @@ public:
   int fpc;
   int chamber;
 };
+#endif 
 
+#ifndef Event_h
+#define Event_h
 class Event {
 public:
   std::vector<Hit> hits;
 };
-
+#endif 

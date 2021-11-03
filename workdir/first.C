@@ -36,13 +36,13 @@ void first()
    hadaq::TdcMessage::SetFineLimits(10, 490);
 
    // default channel numbers and edges mask
-//   hadaq::TrbProcessor::SetDefaults(53, 0x2);
-	hadaq::TrbProcessor::SetDefaults(17, 0x2);
+   hadaq::TrbProcessor::SetDefaults(53, 0x2);
+	//hadaq::TrbProcessor::SetDefaults(17, 0x2);
 //    hadaq::TdcProcessor::SetDefaults(1000);
    //hadaq::TdcProcessor::DisableCalibrationFor(0,8);
    // [min..max] range for TDC ids
-    hadaq::TrbProcessor::SetTDCRange(0x0350, 0x1900);
-   //hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
+   // hadaq::TrbProcessor::SetTDCRange(0x0350, 0x1900);
+   hadaq::TrbProcessor::SetTDCRange(TDCRANGE_START, TDCRANGE_STOP);
 
    // configure ToT calibration parameters
    // first - minimal number of counts in ToT histogram
@@ -51,8 +51,8 @@ void first()
 
    //hadaq::T
    // [min..max] range for HUB ids
- //  hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
-    hadaq::TrbProcessor::SetHUBRange(0x8300, 0x8400);
+    hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
+  //  hadaq::TrbProcessor::SetHUBRange(0x0350, 0x8400);
 
    // when first argument true - TRB/TDC will be created on-the-fly
    // second parameter is function name, called after elements are created
@@ -60,11 +60,13 @@ void first()
    // create TRB processor which holds custom data
    hadaq::TrbProcessor* trb = new hadaq::TrbProcessor(0xc035, hld);
    trb->SetAutoCreate(true);
+//   trb->AddHadaqHUBId(0xc035);   
+   trb->AddHadaqHUBId(0x8352);
    trb->AddHadaqHUBId(0x8353);
-   trb->AddHadaqHUBId(0x8354);
 
+   
    // create custom processor
-   hadaq::MdcProcessor *mdc1 = new hadaq::MdcProcessor(trb, 0x1806);
+   //hadaq::MdcProcessor *mdc1 = new hadaq::MdcProcessor(trb, 0x1806);
    // hadaq::MdcProcessor *mdc2 = new hadaq::MdcProcessor(trb, 0x0d31);
 
    const char* calname = getenv("CALNAME");
@@ -146,7 +148,7 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
 
       // if (tdc->GetID() == 0x1130);
 
-      for (int n=1;n<17;++n)
+      for (int n=1;n<53;++n)
          tdc->SetRefChannel(n,0, 0xffff, 6000, -200, 200); // LED DIFF
    }
 }
