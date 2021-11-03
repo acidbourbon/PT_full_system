@@ -107,7 +107,10 @@ class SecondProc : public base::EventProc {
       
 //       base::H1handle  totCh1; //!< histogram with hits number
 //       base::H1handle  totCh2; //!< histogram with hits number
-      
+      	double      fHitsLay2[CHANNELS][4];    //!< 17 channel, abstract hits, two dges
+		double      fHitsLay3[CHANNELS][4];    //!< 17 channel, abstract hits, two dges
+		double      fHitsTDC[CHANNELS][4];    //!< 17 channel, abstract hits, two dges
+        
       base::H1handle  meta_potato_h;
       base::H1handle  meta_t1_h;
       base::H1handle  meta_tot_h;
@@ -124,8 +127,9 @@ class SecondProc : public base::EventProc {
 
       base::H1handle  coinc_matrix;
       base::H1handle  channelHits;
-//      base::H1handle  meta_fish;
-//      base::H1handle  meta_fish_proj;
+      base::H1handle  meta_fish;
+      
+//~ //      base::H1handle  meta_fish_proj;
 //      base::H1handle  fishes[FISHES];
 //      base::H1handle  fish_proj[FISHES];
       base::H1handle  efficiency_h;
@@ -139,7 +143,7 @@ class SecondProc : public base::EventProc {
       double entry_tot;
       
       
-      
+    
       
       
 //       int evt_no;
@@ -178,9 +182,11 @@ class SecondProc : public base::EventProc {
         
         meta_potato_h = MakeH2("meta_potato","meta_potato",2000,t1_L,t1_R,1000, tot_L, tot_R, "t1 (ns);tot (ns)");
         meta_t2_t1_h = MakeH2("meta_t2_t1","meta_t2_t1",2000,t1_L,t1_R,1000, t1_L, t1_R, "t1 (ns);t2 (ns)");
-         ((TObject*) meta_t1_2d)->SetDrawOption("colz");
-         ((TH2F*) meta_tot_2d)->SetDrawOption("COLZ");
-         ((TObject*) meta_potato_h)->SetDrawOption("colz");       
+        Int_t nchan_coinc = 12;
+        coinc_matrix = MakeH2("coinc_matrix","coinc_matrix", nchan_coinc, 0, 0+nchan_coinc,  nchan_coinc, 0, 0+nchan_coinc,"channel layer2; channel layer 3" );
+        meta_fish =  MakeH2("meta_fish","meta_fish", 500, -250, 250, 500, -250, 250, "t1a + t1b (ns); t1a - t1b (ns) (ns)");
+        
+      
         //~ for( unsigned i=0; i<CHANNELS+1; i++ ) {
           //~ char chno[16];
           //~ sprintf(chno,"Ch%02d_t1",i);
@@ -210,49 +216,11 @@ class SecondProc : public base::EventProc {
          SetStoreEnabled();
       }
       
-      virtual void UserPostLoop(void) {
-        
-        static Int_t was_called_before = 0;
-        
-        cout << "--- User Post Loop " << fTdcId << endl;
-        
-        if(from_env("tree_out","false") == "true"){
-          
-          cout << "write tree_out.root" << endl;
-          TFile* tree_out;
-          
-          
-          if(was_called_before){
-            tree_out = new TFile("tree_out.root","UPDATE");
-          } else {
-            tree_out = new TFile("tree_out.root","RECREATE");
-          }
-          tree_out->cd();
-          data_tree[fTdcId]->Write();
-          tree_out->Write();
-          tree_out->Close();
-          delete tree_out;
-        }
-        was_called_before ++;
-      }
-
-
-      virtual void CreateBranch(TTree* t)
+      long Unpack(hadaq::TdcSubEvent* sub, double hits[][4]) 
       {
-         // only called when tree is created in first.C
-         // one can ignore
-         t->Branch(GetName(), fHits, "hits[8]/D");
-      }
+        long msgcnt = 0;
 
-      virtual bool Process(base::Event* ev)
-      {
-//          printf("### DEBUG ###\n");
-         for (unsigned n=0;n<8;n++) fHits[n] = 0.;
-
-         hadaq::TdcSubEvent* sub =
-               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent(fTdcId));
-         
-         if(VERBOSE) cout<< "tdc: " << fTdcId << " evt no: " << trig_no[fTdcId] << endl;
+        if(VERBOSE) cout<< "tdc: " << fTdcId << " evt no: " << trig_no[fTdcId] << endl;
          if (sub==0) return true;
 
 //         printf("%s process sub %d %s\n", GetName(), sub->Size(), fTdcId.c_str());
@@ -300,7 +268,7 @@ class SecondProc : public base::EventProc {
             double tm = ext.GetGlobalTime();
             if((chid) >= CHANNELS) {continue;} // channel out of range of analysis
             if(rising){
-              
+              msgcnt++;
               
               if( !(TAKE_FIRST_HIT && got_real_hit[chid]) ){ // block subsequent hits if TAKE_FIRST_HIT setting is active
                 if((( ((tm)*1e9) > t1_accept_L) && (((tm)*1e9) < t1_accept_R ))  ) { // this condition sets another coincidence window, except for REFCHAN_A
@@ -323,7 +291,10 @@ class SecondProc : public base::EventProc {
                     t2[chid] = t2_candidate[chid];
                     tot[chid] = t2[chid] - t1[chid];
                     got_real_hit[chid] = true;
-                    
+                    hits[chid][0] = chid; 
+                    hits[chid][1] = t1[chid]; 
+                    hits[chid][2] = t2[chid]; 
+                    hits[chid][3] = got_real_hit[chid]; 
                     // fill untriggered tot histogram
                     //~ FillH1(tot_untrig_h[chid],tot[chid]*1e9);
                     //~ FillH1(t1_untrig_h[chid],t1[chid]*1e9);
@@ -412,6 +383,91 @@ class SecondProc : public base::EventProc {
 //    data_tree[fTdcId]->Write();
          trig_no[fTdcId]++;
          
+        
+    
+        return msgcnt;
+
+      }   
+      virtual void UserPostLoop(void) {
+        
+        static Int_t was_called_before = 0;
+        
+        cout << "--- User Post Loop " << fTdcId << endl;
+        
+        if(from_env("tree_out","false") == "true"){
+          
+          cout << "write tree_out.root" << endl;
+          TFile* tree_out;
+          
+          
+          if(was_called_before){
+            tree_out = new TFile("tree_out.root","UPDATE");
+          } else {
+            tree_out = new TFile("tree_out.root","RECREATE");
+          }
+          tree_out->cd();
+          data_tree[fTdcId]->Write();
+          tree_out->Write();
+          tree_out->Close();
+          delete tree_out;
+        }
+        was_called_before ++;
+      }
+
+
+      virtual void CreateBranch(TTree* t)
+      {
+         // only called when tree is created in first.C
+         // one can ignore
+         t->Branch(GetName(), fHits, "hits[8]/D");
+      }
+
+      virtual bool Process(base::Event* ev)
+      {
+//          printf("### DEBUG ###\n");
+         for (unsigned n=0;n<8;n++) fHits[n] = 0.;
+
+         hadaq::TdcSubEvent* sub =
+               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent(fTdcId));
+          hadaq::TdcSubEvent* subLay2 =
+               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent("TDC_1813"));
+          hadaq::TdcSubEvent* subLay3 =
+               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent("TDC_1806"));                      
+            
+        long num = 0;
+        long num2 = 0;
+        long num3 = 0;
+        
+		    num =  Unpack(sub, fHitsTDC);
+        num2 = Unpack(subLay2,  fHitsLay2);
+        num3 = Unpack(subLay3,  fHitsLay3);     
+         
+         
+         // fish plot self tracking correlation of COSY beam 3.11.2021:
+        for (Int_t hit_no_a = 0; hit_no_a <  CHANNELS; hit_no_a++){
+          Int_t hit_a_chan = fHitsLay2[hit_no_a][0];
+          
+          for (Int_t hit_no_b = hit_no_a; hit_no_b < CHANNELS; hit_no_b++){
+            Int_t hit_b_chan = fHitsLay3[hit_no_b][0];
+    
+            FillH2(coinc_matrix,hit_a_chan,hit_b_chan);
+ 
+              Float_t t1_a = fHitsLay2[hit_no_a][1];
+              Float_t t1_b = fHitsLay3[hit_no_b][1];
+              Float_t tot_a = fHitsLay2[hit_no_a][2]-fHitsLay2[hit_no_a][1];
+              Float_t tot_b = fHitsLay3[hit_no_b][2]-fHitsLay3[hit_no_b][1]; 
+              Float_t t1L = -550;
+              Float_t t1R = 800;   
+              Float_t tot_low = 100;
+  
+              if ( (hit_a_chan == 180607)   && (hit_b_chan < 1813080) && t1_a > t1L && t1_a < t1R && t1_b > t1L && t1_b < t1R && tot_a > tot_low &&  tot_b > tot_low){
+                 FillH2(meta_fish,(t1_a +t1_b), (t1_a -t1_b));
+               }
+             }
+            
+          } 
+         
+
          return true;
       }
       
