@@ -118,21 +118,22 @@ class SecondProc : public base::EventProc {
       base::H1handle  meta_t1_2d;
       base::H2handle  meta_t2_t1_h;
       base::H1handle  meta_t2_h;            
-      //~ base::H1handle  tot_h[CHANNELS+1]; 
+      base::H1handle  tot_h[CHANNELS+1]; 
       //~ base::H1handle  tot_untrig_h[CHANNELS+1]; 
       //~ base::H1handle  t1_untrig_h[CHANNELS+1]; 
       //~ base::H1handle  t2_untrig_h[CHANNELS+1]; 
-      //~ base::H1handle  t1_h[CHANNELS+1]; 
-      //~ base::H1handle  potato_h[CHANNELS+1];
+      base::H1handle  t1_h[CHANNELS+1]; 
+      base::H1handle  potato_h[CHANNELS+1];
 
-      base::H1handle  coinc_matrix;
-      base::H1handle  channelHits;
-      base::H1handle  meta_fish;
+      base::H2handle  coinc_matrix;
       
+      base::H1handle  channelHits;
+      base::H2handle  meta_fish;
+      base::H2handle  potato_fish_h;
 //~ //      base::H1handle  meta_fish_proj;
 //      base::H1handle  fishes[FISHES];
 //      base::H1handle  fish_proj[FISHES];
-      base::H1handle  efficiency_h;
+      //~ base::H1handle  efficiency_h;
       base::H1handle  ref_counts_h;
       base::H1handle  dut_counts_h;
       
@@ -185,32 +186,32 @@ class SecondProc : public base::EventProc {
         Int_t nchan_coinc = 12;
         coinc_matrix = MakeH2("coinc_matrix","coinc_matrix", nchan_coinc, 0, 0+nchan_coinc,  nchan_coinc, 0, 0+nchan_coinc,"channel layer2; channel layer 3" );
         meta_fish =  MakeH2("meta_fish","meta_fish", 500, -250, 250, 500, -250, 250, "t1a + t1b (ns); t1a - t1b (ns) (ns)");
-        
+        potato_fish_h = MakeH2("potato_fish","potato_fish",2000,t1_L,t1_R,1000, tot_L, tot_R, "t1 (ns);tot (ns)");
       
-        //~ for( unsigned i=0; i<CHANNELS+1; i++ ) {
-          //~ char chno[16];
-          //~ sprintf(chno,"Ch%02d_t1",i);
-          //~ t1_h[i] = MakeH1(chno,chno, 1000, t1_L, t1_R, "ns");
-          //~ sprintf(chno,"Ch%02d_tot",i);
-          //~ tot_h[i] = MakeH1(chno,chno, 1000, tot_L, tot_R, "ns");
+        for( unsigned i=0; i<CHANNELS+1; i++ ) {
+          char chno[16];
+          sprintf(chno,"Ch%02d_t1",i);
+          t1_h[i] = MakeH1(chno,chno, 1000, t1_L, t1_R, "ns");
+          sprintf(chno,"Ch%02d_tot",i);
+          tot_h[i] = MakeH1(chno,chno, 1000, tot_L, tot_R, "ns");
           //~ sprintf(chno,"Ch%02d_tot_untrig",i);
           //~ tot_untrig_h[i] = MakeH1(chno,chno, 4000, tot_L, tot_R, "ns");
           //~ sprintf(chno,"Ch%02d_t1_untrig",i);
           //~ t1_untrig_h[i] = MakeH1(chno,chno, 4000, t1_L, t1_R, "ns");
           //~ sprintf(chno,"Ch%02d_t2_untrig",i);
           //~ t2_untrig_h[i] = MakeH1(chno,chno, 4000, t1_L, t1_R, "ns");
-          //~ sprintf(chno,"Ch%02d_potato",i);
-          //~ potato_h[i] = MakeH2(chno,chno,500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
-        //~ }
+          sprintf(chno,"Ch%02d_potato",i);
+          potato_h[i] = MakeH2(chno,chno,500,t1_L,t1_R,500, tot_L, tot_R, "t1 (ns);tot (ns)");
+        }
         
 
-        efficiency_h = MakeH1("efficiency","efficiency", CHANNELS -1, 0.5, CHANNELS-0.5, "channel #;kind:F");
-            ((TH1F*) efficiency_h)->SetDrawOption("P0");
-            ((TH1F*) efficiency_h)->SetMarkerStyle(22);
-            ((TH1F*) efficiency_h)->GetXaxis()->SetNdivisions(55);
+        //~ efficiency_h = MakeH1("efficiency","efficiency", CHANNELS -1, 0.5, CHANNELS-0.5, "channel #;kind:F");
+            //~ ((TH1F*) efficiency_h)->SetDrawOption("P0");
+            //~ ((TH1F*) efficiency_h)->SetMarkerStyle(22);
+            //~ ((TH1F*) efficiency_h)->GetXaxis()->SetNdivisions(55);
          
         //coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-2.5,9.5,10,15-0.5,24+0.5, "channels 0-7;channels 16-23");
-         coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-0.5,11.5,12,-0.5,11.5, "channels 0-10;channels 0-10");
+        // coinc_matrix = MakeH2("coinc_matrix","coinc_matrix",12,-0.5,11.5,12,-0.5,11.5, "channels 0-10;channels 0-10");
          
          // enable storing already in constructor
          SetStoreEnabled();
@@ -287,9 +288,9 @@ class SecondProc : public base::EventProc {
                   
                   if( candidate_tot_ns > effective_spike_rejection || (chid==REFCHAN && candidate_tot_ns > spike_rejection_refchan) ){
                     // hit is long enough not to be rejected
-                    t1[chid] = t1_candidate[chid];
-                    t2[chid] = t2_candidate[chid];
-                    tot[chid] = t2[chid] - t1[chid];
+                    t1[chid] = t1_candidate[chid]*1e9;
+                    t2[chid] = t2_candidate[chid]*1e9;
+                    tot[chid] = (t2[chid] - t1[chid]);
                     got_real_hit[chid] = true;
                     hits[chid][0] = chid; 
                     hits[chid][1] = t1[chid]; 
@@ -305,7 +306,7 @@ class SecondProc : public base::EventProc {
 						//~ FillH1(t2_untrig_h[CHANNELS],t2[chid]*1e9);
 					//~ }
                   }
-//                   printf("got hit, ch %d, tot = %f ns\n",(chid), tot[chid]*1e9);
+//                   printf("got hfHitsLay3[hit_no_b][0]it, ch %d, tot = %f ns\n",(chid), tot[chid]*1e9);
                 }
               }
             }
@@ -319,29 +320,29 @@ class SecondProc : public base::EventProc {
               
 //               if(got_real_hit[REFCHAN_A] || got_real_hit[REFCHAN_B] || REFCHAN_A == -1 || REFCHAN_B == -1){ // t1 information only makes sense if you have 
                 // a hit in the reference channel
-                double t1_vs_ref = (t1[i] -t1[REFCHAN])*1e9 ;
-                if( (t1_vs_ref > t1_cut_L) && (t1_vs_ref < t1_cut_R) && (tot[i]*1e9 < max_tot) )  {
+                double t1_vs_ref = (t1[i] -t1[REFCHAN])  ;
+                if( (t1_vs_ref > t1_cut_L) && (t1_vs_ref < t1_cut_R) && (tot[i]  < max_tot) )  {
                   
                   // fill histograms
-                  //~ FillH1(tot_h[i],tot[i]*1e9);
-                  //~ FillH2(potato_h[i],t1_vs_ref ,tot[i]*1e9); 
+                  FillH1(tot_h[i],tot[i] );
+                  FillH2(potato_h[i],t1_vs_ref ,tot[i] ); 
                   //~ FillH2(potato_h[CHANNELS],t1_vs_ref ,tot[i]*1e9); 
-                  //~ FillH1(t1_h[i],t1_vs_ref ); // without cuts
+                  FillH1(t1_h[i],t1_vs_ref ); // without cuts
 //                  if(t1_vs_ref < -200 && tot[i]*1e9 > 0 )	FillH1(t1_h[i],t1_vs_ref ); // with noise rejecting cuts
 		// if(  tot[i]*1e9 > 50 ) 	FillH1(t1_h[i],t1_vs_ref ); // with noise rejecting cuts
  
                   
                   if( i != 0 ) {
-                    FillH2(meta_potato_h,t1_vs_ref,tot[i]*1e9);
-                    FillH1(meta_tot_h,tot[i]*1e9);
+                    FillH2(meta_potato_h,t1_vs_ref,tot[i] );
+                    FillH1(meta_tot_h,tot[i] );
                     FillH1(meta_t1_h,t1_vs_ref );
-                    FillH1(meta_t2_h,(t2[i] -t1[REFCHAN])*1e9  );                   
-                    FillH2(meta_tot_2d,tot[i]*1e9,i);
-                    FillH2(meta_t2_t1_h,(t2[i] -t1[REFCHAN])*1e9 , t1_vs_ref);
+                    FillH1(meta_t2_h,(t2[i] -t1[REFCHAN])   );                   
+                    FillH2(meta_tot_2d,tot[i] ,i);
+                    FillH2(meta_t2_t1_h,(t2[i] -t1[REFCHAN])  , t1_vs_ref);
                     FillH2(meta_t1_2d,t1_vs_ref,i);
                     entry_chan = i;
                     entry_t1 = t1_vs_ref;
-                    entry_tot = tot[i]*1e9;
+                    entry_tot = tot[i] ;
                     //~ cout << fTdcId<< endl;
                     //FillH1(channelHits,((fTdcId-1800)*15 + i));
                     if(write_tree){
@@ -358,11 +359,11 @@ class SecondProc : public base::EventProc {
          
  
         
-        for (int i = 1 ; i<CHANNELS; i++) {
+        //~ for (int i = 1 ; i<CHANNELS; i++) {
       //  ((TH1F*) efficiency_h)->SetBinContent(i,((float) (((TH1F*) t1_h[i])->GetEntries()) )/((float) (((TH1F*) t1_h[0])->GetEntries())));
           //~ ((TH1F*) efficiency_h)->SetBinContent(i,((float) (((TH1F*) t1_h[i])->Integral()) )/ 600. ); // fixed numer of pulses sent for each channel 
        //   ((TH1F*) efficiency_h)->SetBinContent(i,((float) (((TH1F*) t1_h[i])->Integral()) )/((float) (((TH1F*) tot_h[i])->Integral())));   ; // normalize by number of signals in same channel without couts, as for almost each trigger a noise signal is measured
-        }
+        //~ }
         
         
         
@@ -427,13 +428,14 @@ class SecondProc : public base::EventProc {
 //          printf("### DEBUG ###\n");
          for (unsigned n=0;n<8;n++) fHits[n] = 0.;
 
-         hadaq::TdcSubEvent* sub =
-               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent(fTdcId));
+
           hadaq::TdcSubEvent* subLay2 =
-               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent("TDC_1813"));
+               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent("TDC_1812"));
           hadaq::TdcSubEvent* subLay3 =
-               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent("TDC_1806"));                      
-            
+               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent("TDC_1807"));                      
+          hadaq::TdcSubEvent* sub =
+               dynamic_cast<hadaq::TdcSubEvent*> (ev->GetSubEvent(fTdcId));
+                
         long num = 0;
         long num2 = 0;
         long num3 = 0;
@@ -441,28 +443,36 @@ class SecondProc : public base::EventProc {
 		    num =  Unpack(sub, fHitsTDC);
         num2 = Unpack(subLay2,  fHitsLay2);
         num3 = Unpack(subLay3,  fHitsLay3);     
-         
+        Float_t t1L = -5050;
+        Float_t t1R = 8000;   
+        Float_t tot_low = 60 ;
+        Float_t tot_high = 200 ;        
          
          // fish plot self tracking correlation of COSY beam 3.11.2021:
-        for (Int_t hit_no_a = 0; hit_no_a <  CHANNELS; hit_no_a++){
+        for (Int_t hit_no_a = 1; hit_no_a <  CHANNELS; hit_no_a++){
           Int_t hit_a_chan = fHitsLay2[hit_no_a][0];
           
-          for (Int_t hit_no_b = hit_no_a; hit_no_b < CHANNELS; hit_no_b++){
+          for (Int_t hit_no_b = 1; hit_no_b < CHANNELS; hit_no_b++){
             Int_t hit_b_chan = fHitsLay3[hit_no_b][0];
-    
-            FillH2(coinc_matrix,hit_a_chan,hit_b_chan);
- 
+            if(fHitsLay3[hit_no_b][3]  &&  fHitsLay2[hit_no_a][3] ){
+              
+               //~ //cout << hit_b_chan << "  ,  " << hit_a_chan << endl;
               Float_t t1_a = fHitsLay2[hit_no_a][1];
               Float_t t1_b = fHitsLay3[hit_no_b][1];
               Float_t tot_a = fHitsLay2[hit_no_a][2]-fHitsLay2[hit_no_a][1];
               Float_t tot_b = fHitsLay3[hit_no_b][2]-fHitsLay3[hit_no_b][1]; 
-              Float_t t1L = -550;
-              Float_t t1R = 800;   
-              Float_t tot_low = 100;
-  
-              if ( (hit_a_chan == 180607)   && (hit_b_chan < 1813080) && t1_a > t1L && t1_a < t1R && t1_b > t1L && t1_b < t1R && tot_a > tot_low &&  tot_b > tot_low){
-                 FillH2(meta_fish,(t1_a +t1_b), (t1_a -t1_b));
+              FillH2(potato_fish_h,t1_a,tot_a);
+              FillH2(coinc_matrix,hit_no_a,hit_no_b);
+ //~ // 
+  //~ // t1_a > t1L && t1_a < t1R && t1_b > t1L && t1_b < t1R && 
+              if ( tot_a > tot_low &&  tot_b > tot_low && tot_a < tot_high && tot_b < tot_high){
+                 Float_t tsum = (t1_a + t1_b)*1e9 ;
+                 Float_t tdiff = (t1_a - t1_b)*1e9 ;
+                 FillH2(meta_fish,tsum,tdiff );
+                 
+                 cout << t1_a-t1_b << "  t1  " << t1_b << endl;
                }
+             }
              }
             
           } 

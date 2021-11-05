@@ -314,6 +314,8 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
       spi(TDC,CONN,CHIP, [0x014])
     if(GAIN == 1):
       spi(TDC,CONN,CHIP, [0x018])
+    if(GAIN == 0):
+      spi(TDC,CONN,CHIP, [0x01C])
       
   if( pktime == 15 ):
     spi(TDC,CONN,CHIP,black_settings_pt15_g1_thr127)
@@ -323,7 +325,9 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
       spi(TDC,CONN,CHIP, [0x015])
     if(GAIN == 1):
       spi(TDC,CONN,CHIP, [0x019])
-      
+    if(GAIN == 0):
+      spi(TDC,CONN,CHIP, [0x01D])
+    
   if( pktime == 20 ):
     spi(TDC,CONN,CHIP,black_settings_pt20_g1_thr127)
     if(GAIN == 4):
@@ -332,7 +336,9 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
       spi(TDC,CONN,CHIP, [0x016])
     if(GAIN == 1):
       spi(TDC,CONN,CHIP, [0x01a])
-
+    if(GAIN == 0):
+      spi(TDC,CONN,CHIP, [0x01E])
+    
   #set_threshold(TDC,CONN,CHIP,thresh)
   
   board_info = db.find_board_by_tdc_connector(TDC,CONN)

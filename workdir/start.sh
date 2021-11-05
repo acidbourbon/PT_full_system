@@ -1,9 +1,11 @@
+
 #!/bin/bash
 
 # set home to workdir
 if [ $(whoami) != "root" ]; then export HOME=/workdir ;fi
 
 export PYTHONPATH=\$PYTHONPATH:/workdir/python_modules
+alias lt='ls -ltrh'
 
 echo "container started"
 

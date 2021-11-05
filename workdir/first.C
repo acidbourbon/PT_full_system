@@ -51,23 +51,23 @@ void first()
 
    //hadaq::T
    // [min..max] range for HUB ids
-    hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
-  //  hadaq::TrbProcessor::SetHUBRange(0x0350, 0x8400);
+    //hadaq::TrbProcessor::SetHUBRange(HUBRANGE_START, HUBRANGE_STOP);
+    hadaq::TrbProcessor::SetHUBRange(0x8000, 0x8400);
 
    // when first argument true - TRB/TDC will be created on-the-fly
    // second parameter is function name, called after elements are created
    hadaq::HldProcessor* hld = new hadaq::HldProcessor(true, "after_create");
    // create TRB processor which holds custom data
-   hadaq::TrbProcessor* trb = new hadaq::TrbProcessor(0xc035, hld);
-   trb->SetAutoCreate(true);
-//   trb->AddHadaqHUBId(0xc035);   
-   trb->AddHadaqHUBId(0x8352);
-   trb->AddHadaqHUBId(0x8353);
+   //hadaq::TrbProcessor* trb = new hadaq::TrbProcessor(0xc035, hld);
+   //trb->SetAutoCreate(true);
+   //trb->AddHadaqHUBId(0xc035);   
+   //trb->AddHadaqHUBId(0x8352);
+   //trb->AddHadaqHUBId(0x8353);
 
    
    // create custom processor
    //hadaq::MdcProcessor *mdc1 = new hadaq::MdcProcessor(trb, 0x1806);
-   // hadaq::MdcProcessor *mdc2 = new hadaq::MdcProcessor(trb, 0x0d31);
+   //hadaq::MdcProcessor *mdc2 = new hadaq::MdcProcessor(trb, 0x1807);
 
    const char* calname = getenv("CALNAME");
    if ((calname==0) || (*calname==0)) calname = "test_";
@@ -92,7 +92,7 @@ void first()
    //    0x3FFF - all kinds of trigger types will be used for calibration (excluding 0xE and 0xF)
    //   0x80000000 in mask enables usage of temperature correction
 //   hld->ConfigureCalibration(calname, cnt, /*(1 << trig) | use_temp*/ 0x3fff);
-   hld->ConfigureCalibration("test_", 0, (1 << 0xD));
+   hld->ConfigureCalibration(calname, cnt, (1 << trig));
 
 
    // only accept trigger type 0x1 when storing file
@@ -139,7 +139,7 @@ extern "C" void after_create(hadaq::HldProcessor* hld)
       //   tdc->SetRefChannel(0, 0, (0x70000 | firsttdc), 6000,  -20., 20.);
 
 // configure 0xD trigger width and hmin/hmax histogram range for 0xD trigger ToT
-      tdc->SetToTRange(20, 20., 80.);
+      tdc->SetToTRange(30, 20., 80.);
 
 
       tdc->SetUseLastHit(true);

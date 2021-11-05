@@ -34,7 +34,7 @@ def wait_for_spill(**kwargs):
  trigger_rate_threshold = kwargs.get("threshold_rate",4000)
  poll_acq_time = 1
  ### wait for spill start
- trig_chan = 49
+ trig_chan = 48
  while True:
    curr_rates = scalers.scaler_rate("0x0350",[trig_chan],poll_acq_time)
    scint_rate = curr_rates[0]
