@@ -3,6 +3,9 @@ import os
 import db
 import tdc_daq
 from time import sleep
+import numpy as np
+import matplotlib.pyplot as plt
+import warnings
 
 from trbnet import TrbNet
 
@@ -11,418 +14,594 @@ host = os.getenv("DAQOPSERVER")
 
 t = TrbNet(libtrbnet=lib, daqopserver=host)
 
-
 global_settings = db.get_global_settings()
 slow_control_log = 0
 if ("slow_control_log" in global_settings):
-  if (global_settings["slow_control_log"] == 1):
-    slow_control_log = 1
+	if (global_settings["slow_control_log"] == 1):
+		slow_control_log = 1
 
 slow_control_log_file = "./slow_control.log"
 
-
-
-
-black_settings_pt15_g1_thr127 = [
-  0x019,
-  0x11e,
-  0x215,
-  0x37f,
-  0x40f,
-  0x50f,
-  0x60f,
-  0x70f,
-  0x80f,
-  0x90f,
-  0xa0f,
-  0xb0f
-]
-
-black_settings_pt20_g1_thr127 = [
-  0x01a,
-  0x11e,
-  0x215,
-  0x37f,
-  0x40f,
-  0x50f,
-  0x60f,
-  0x70f,
-  0x80f,
-  0x90f,
-  0xa0f,
-  0xb0f
-]
-
-blue_settings_pt10_g1_thr127 = [
-  0x018,
-  0x11e,
-  0x215,
-  0x37f,
-  0x40f,
-  0x50f,
-  0x60f,
-  0x70f,
-  0x80f,
-  0x90f,
-  0xa0f,
-  0xb0f
-]
-
 spi_queue = 0
 spi_mem = {}
+gain_map = {0.67: 0b11, 1: 0b10, 2: 0b01, 4: 0b00}
+pt_map = {10: 0b00, 15: 0b01, 20: 0b10, 35: 0b11}
+
+class HelperFunctions:	
+	def getCHIPID(CONN,CHIP):
+		return (CONN -1) * 2 + CHIP
+	def init_queue(TDC,CONN,CHIP):
+		global spi_mem
+		if ( not( TDC in spi_mem ) ):
+			spi_mem[TDC] = {}
+		if ( not( CONN in spi_mem[TDC] ) ):
+			spi_mem[TDC][CONN] = {}
+		if ( not( CHIP in spi_mem[TDC][CONN] ) ):
+			spi_mem[TDC][CONN][CHIP] = []
 
 def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
-  f = ""
-  if (slow_control_log):
-    f = open(slow_control_log_file,"a")
+	""" 
+	Transmit data to a specific PASTTREC using old-style notation.
 
-  
-  TDC = int(TDC_str,16)
-  
-  
-  if ( not( TDC in spi_mem ) ):
-    spi_mem[TDC] = {}
-  if ( not( CONN in spi_mem[TDC] ) ):
-    spi_mem[TDC][CONN] = {}
-  if ( not( CHIP in spi_mem[TDC][CONN] ) ):
-    spi_mem[TDC][CONN][CHIP] = []
-  
-  if spi_queue:
-    
-    spi_mem[TDC][CONN][CHIP] += data_list
-  
-  else:
+	Parameters
+	TDC_str (str) + Address of associated TDC.
+
+	CONN (int) - Number of PASTTREC connection.
+
+	CHIP (int) - Number of PASTTREC inside a connection.
+
+	data_list (list(int)) - Data to be transmitted. Each entry should contain the address of the target register (bits from 11 to 8) and actual data (bits from 7 to 0)
+	"""
+	CHIP_ID = HelperFunctions.getCHIPID(CONN, CHIP)
+	f = ""
+	if (slow_control_log):
+		f = open(slow_control_log_file,"a")
+	TDC = int(TDC_str,16)	
+	HelperFunctions.init_queue(TDC,CONN,CHIP)
+	if spi_queue:
+		spi_mem[TDC][CONN][CHIP] += data_list
+	else:
+		my_data_list = spi_mem[TDC][CONN][CHIP] + data_list
+		spi_mem[TDC][CONN][CHIP].clear() # empty queue
+		for data in my_data_list:
+			# writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
+			address_past = (CHIP_ID << 4) + ((data & 0xF00) >> 8 )
+			data_past = data & 0xFF
+			t.trb_register_write(TDC, 0xA200 + address_past, data_past )
+			if (slow_control_log):
+				f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xA200 + address_past, data_past ))
+	if (slow_control_log):
+		f.close()
+
+def spi_mdc_mbo(TDC_str,ADDR, data):
+	""" 
+	Write data to a specific TDC register. Supports querying.
+
+	Parameters
+	TDC_str (str) - Address of associated TDC.
+
+	ADDR (int) - Address of target register.
+
+	data (int) - Data to be written.
+	"""
+	if (slow_control_log):
+		f = open(slow_control_log_file,"a")
+	TDC = int(TDC_str,16)
+	HelperFunctions.init_queue(TDC,"mdc_mbo","mdc_mbo")
+	if spi_queue:
+		spi_mem[TDC]["mdc_mbo"]["mdc_mbo"] += [(ADDR, data)]
+	else:
+		my_data_list = spi_mem[TDC]["mdc_mbo"]["mdc_mbo"] + [(ADDR, data)]
+		spi_mem[TDC]["mdc_mbo"]["mdc_mbo"].clear() # empty queue
+		for address, value in my_data_list:
+			t.trb_register_write(TDC, address, value )
+			if (slow_control_log):
+				f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, address, value ))
+	if (slow_control_log):
+		f.close()
+
+def spi_set_pasttrec_register(TDC_str,pasttrec,reg, data):
+	"""
+	Set a value to a specific PASTTREC register.
+
+	Parameters
+	TDC_str (str) - Address of associated TDC.
+
+	pasttrec (int) - Number of PASTTREC ASIC [0-3].
+
+	reg (int) - Address of PASTTREC register [0x0 - 0xD].
+
+	data (int) - Data to be written [0x00 - 0xFF].
+	"""
+	spi_mdc_mbo(TDC_str, 0xAA02 + ((0xF & pasttrec) << 4),(0xFF & data) + ((0xF & reg) << 8))
+
+def spi_set_pasttrecs_register(TDC_str,reg, data):
+	"""
+	The same as spi_set_pasttrec_register(), but for all associated with specific TDC PASTTRECs at once.
+
+	Parameters
+	TDC_str (str) - Address of associated TDC.
+
+	reg (int) - Address of PASTTREC register [0x0 - 0xD].
+
+	data (int) - Data to be written [0x00 - 0xFF].
+
+	"""
+	spi_mdc_mbo(TDC_str, 0xAA0A, (0xFF & data) + ((0xF & reg) << 8))
+
+def load_set_to_pasttrec(TDC_str, pasttrec, addr, len):
+	"""
+	Load set of commands from module memory to one PASTTREC.
+
+	Parameters
+	TDC_str (str) - TDC address.
+
+	pasttrec (int) - PASTTREC number
+
+	addr (int) - Address of the first command in module memory.
+
+	len (int) - Number of commands in a set.
+	"""
+	spi_mdc_mbo(TDC_str, 0xAA01 + (pasttrec<<4), ((0x3F & len) << 8) + (0xFF & addr))
+
+def load_set_to_pasttrecs(TDC_str, addr, len):
+	"""
+	The same as load_set_to_pasttrec(), but for all PASTTRECs associated the given TDC at once.
+
+	Parameters
+	TDC_str (str) - TDC address.
+
+	addr (int) - Address of the first command in module memory.
+
+	len (int) - Number of commands in a set.
+	"""
+	spi_mdc_mbo(TDC_str, 0xAA09, ((0x3F & len) << 8) + (0xFF & addr))
+
+def reset_board(TDC_str,CONN=0):
+	"""
+	Performs a soft reset of the PASTTREC FPGA module (without interruption of all other systems)
+
+	Parameters
+	TDC_str (str) - Address of associated TDC.
+
+	CONN (int) - Not used. For back-compatibility only.
+
+	"""
+	spi_mdc_mbo(TDC_str, 0xAA00,0)
  
-    my_data_list = spi_mem[TDC][CONN][CHIP] + data_list
-    spi_mem[TDC][CONN][CHIP].clear() # empty queue
- 
-    header = 0x52000
-    if( CHIP == 1 ):
-      header = 0x54000
-      
-    # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
-    t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
-    if (slow_control_log):
-      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, 0x0000FFFF))
+def reset_boards(TDC_strs,CONN=0):
+	"""
+	The same as reset_board(), but for a list of TDCs.
 
+	Parameters
+	TDC_strs (list(str)) - An array of associated TDC`s addresses.
 
-    # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
-    t.trb_register_write(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) )
-    if (slow_control_log):
-      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd410, 0xFFFF & ( 1<<(CONN-1) ) ))
+	CONN (int) - Not used. For back-compatibility only.
 
-    # override: (chip-) select all ports!!
-    #trbcmd w $TDC 0xd410 0xFFFF
-
-    # override: (chip-) select nothing !!
-    #trbcmd w $TDC 0xd410 0x0000
-
-    # disable all SDO outputs but output $CONN
-    t.trb_register_write(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) )
-    if (slow_control_log):
-      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd415, 0xFFFF & ~(1<<(CONN-1)) ))
-
-    # disable all SCK outputs but output $CONN
-    t.trb_register_write(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) )
-    if (slow_control_log):
-      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd416, 0xFFFF & ~(1<<(CONN-1)) ))
-
-    # override: disable all SDO and SCK lines
-    #trbcmd w $TDC 0xd415 0xFFFF
-    #trbcmd w $TDC 0xd416 0xFFFF
-
-    for data in my_data_list:
-      # writing one data word, append zero to the data word, the chip will get some more SCK clock cycles
-      t.trb_register_write(TDC, 0xd400, (header+data)<<4 )
-      if (slow_control_log):
-        f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd400, (header+data)<<4 ))
-      
-      # write 1 to length register to trigger sending
-      t.trb_register_write(TDC, 0xd411, 0x0001)
-      if (slow_control_log):
-        f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd411, 0x0001))
-
-  if (slow_control_log):
-    f.close()
-    
-
-def reset_board(TDC_str,CONN):
-  f = ""
-  if (slow_control_log):
-    f = open(slow_control_log_file,"a")
-  
-  TDC = int(TDC_str,16)
-
-  # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
-  # ergo enable CS, because we need it for the reset
-  #trbcmd w $TDC 0xd417 0x00000000
-
-  # make selection mask from $CONN 
-  sel_mask= 0xFFFF & (1<<(CONN-1))
-
-  # bring all CS (reset lines) in the default state (1) - upper four nibbles: invert CS, lower four nibbles: disable CS
-  t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
-  if (slow_control_log):
-    f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, 0x0000FFFF))
-
-  # (chip-)select output $CONN for i/o multiplexer reasons, remember CS lines are disabled
-  #trbcmd w $TDC 0xd410 0x0000$sel_mask
-
-  # bring CS low for sel mask, i.e. invert CS for sel mask, keep CS disabled
-  t.trb_register_write(TDC, 0xd417, (sel_mask<<16) + 0xFFFF)
-  if (slow_control_log):
-    f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, (sel_mask<<16) + 0xFFFF))
-
-  for i in range(1, 26):
-    # generate 25 clock cycles
-    # invert SCK for selection mask
-
-    # upper four nibbles: invert SCK, lower four nibbles disable SCK
-    t.trb_register_write(TDC, 0xd416, sel_mask<<16)
-    if (slow_control_log):
-      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd416, sel_mask<<16))
-
-    # restore SCK to default state
-    t.trb_register_write(TDC, 0xd416, 0x00000000)
-    if (slow_control_log):
-      f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd416, 0x00000000))
-
-  # bring CS to standard position (HI) again, keep CS disabled
-  t.trb_register_write(TDC, 0xd417, 0x0000FFFF)
-  if (slow_control_log):
-    f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xd417, 0x0000FFFF))
-
-  if (slow_control_log):
-    f.close()
- 
-
-
-def set_threshold(TDC,CONN,CHIP,THR):
-  spi(TDC,CONN,CHIP, [ 0x300 + (0xFF & THR)])
-
-
-
-def slow_control_test(board_name):
-  
-  scan_time = 0.2
-  
-  board_info = db.find_board_by_name(board_name)
-  channels   = board_info["channels"] # zero based 
-  TDC        = board_info["tdc_addr"]
-  connector  = board_info["tdc_connector"]
-
-  db.enable_board(board_name)
-  init_board_by_name(board_name)
-
-  
-  print( "slow control test of board "+board_name )
-  set_threshold_for_board(TDC,connector,0)
-  rates_lo_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
-
-  set_threshold_for_board(TDC,connector,127)
-  rates_hi_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
-  state_hi_thr = tdc_daq.read_ch_state(TDC,channels)
- 
-  print( "rates low thr" )
-  print( rates_lo_thr )
-  print( "rates high thr" )
-  print( rates_hi_thr )
-  print( "state high thr" )
-  print( state_hi_thr )
-
-
-  ## restore threshold again - a bit dirty but faster than complete init again
-  setup     = db.get_setup_json()
-
-  #pktime    = setup["asic_settings"]["default"]["pktime"]
-  #gain      = setup["asic_settings"]["default"]["gain"]
-  threshold = setup["asic_settings"]["default"]["threshold"]
-
-  #standby_pktime    = setup["asic_settings"]["standby"]["pktime"]
-  #standby_gain      = setup["asic_settings"]["standby"]["gain"]
-  standby_threshold = setup["asic_settings"]["standby"]["threshold"]
-
-  standby = False
-  if "standby" in board_info:
-    if board_info["standby"]:
-      standby=True
-
-  if standby:
-    set_threshold_for_board(TDC,connector,standby_threshold)
-  else:
-    set_threshold_for_board(TDC,connector,threshold)
-  ## end of restore threshold
-
-  if state_hi_thr == [1]*len(channels) and rates_hi_thr == [0]*len(channels) and rates_lo_thr != [0]*len(channels):
-    return 1
-  else:
-    return 0
-
-def set_baseline( TDC, channel,value):
-
-  chip = db.calc_chip_from_channel(channel)
-  conn = db.calc_connector_from_channel(channel)
-  chip_chan=channel%8
-
-  val  = value + 15 
-  chan = chip_chan + 4 
-
-  spi(TDC,conn, chip, [ ((0xF & chan)<<8) + val] )
-
-  return
-
-
-def set_threshold_for_board(TDC,conn,thresh):
-  set_threshold(TDC,conn,0,thresh)
-  set_threshold(TDC,conn,1,thresh)
-  
-
-def set_threshold_for_board_by_name(board_name,thresh):
-  
-  setup     = db.get_setup_json()
-
-  board_info = db.find_board_by_name(board_name)
-  conn = board_info["tdc_connector"]
-  tdc_addr = board_info["tdc_addr"]
-  set_threshold_for_board(tdc_addr,conn,thresh)
-
-  return
-
-
-def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
-  #print("set baselines of the following channels")
-  #print( channels )
-  #print("to the following values")
-  #print( values )
-  index=0
-  for i in channels:
-    set_baseline(TDC,i,int(values[index]))
-    index+=1
-    
-  return
-
-
-def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh):
-  # begin queueing
-  spi_queue = 1
-  
-  if( pktime == 10 ):
-    spi(TDC,CONN,CHIP,blue_settings_pt10_g1_thr127)
-    if(GAIN == 4):
-      spi(TDC,CONN,CHIP, [0x010])
-    if(GAIN == 2):
-      spi(TDC,CONN,CHIP, [0x014])
-    if(GAIN == 1):
-      spi(TDC,CONN,CHIP, [0x018])
-    if(GAIN == 0):
-      spi(TDC,CONN,CHIP, [0x01C])
-      
-  if( pktime == 15 ):
-    spi(TDC,CONN,CHIP,black_settings_pt15_g1_thr127)
-    if(GAIN == 4):
-      spi(TDC,CONN,CHIP, [0x011])
-    if(GAIN == 2):
-      spi(TDC,CONN,CHIP, [0x015])
-    if(GAIN == 1):
-      spi(TDC,CONN,CHIP, [0x019])
-    if(GAIN == 0):
-      spi(TDC,CONN,CHIP, [0x01D])
-    
-  if( pktime == 20 ):
-    spi(TDC,CONN,CHIP,black_settings_pt20_g1_thr127)
-    if(GAIN == 4):
-      spi(TDC,CONN,CHIP, [0x012])
-    if(GAIN == 2):
-      spi(TDC,CONN,CHIP, [0x016])
-    if(GAIN == 1):
-      spi(TDC,CONN,CHIP, [0x01a])
-    if(GAIN == 0):
-      spi(TDC,CONN,CHIP, [0x01E])
-    
-  #set_threshold(TDC,CONN,CHIP,thresh)
-  
-  board_info = db.find_board_by_tdc_connector(TDC,CONN)
-  board_name = board_info["name"] 
-  board_channels = board_info["channels"] 
-  calib = db.get_calib_json_by_name(board_name)
-  
-  if ("baselines" in calib):
-    board_baselines = calib["baselines"]
-    channels = board_channels[0:9]
-    values   = board_baselines[0:9]
-    if CHIP == 1:
-      channels = board_channels[8:17]
-      values   = board_baselines[8:17]
-    set_all_baselines(TDC,channels,values)
-  set_threshold(TDC,CONN,CHIP,thresh)
-  return
-
-  # send all at once
-  spi_queue = 0
-  spi(TDC,CONN,CHIP,[])
-  
+	"""
+	for TDC_str in TDC_strs:
+		spi_mdc_mbo(TDC_str, 0xAA00,0)
 
 def reset_board_by_name(board_name):
-  board_info = db.find_board_by_name(board_name)
-  conn = board_info["tdc_connector"]
-  tdc_addr = board_info["tdc_addr"]
-  if tdc_addr[0:2].lower() == "0x":
-    reset_board(tdc_addr,conn)
+	"""
+	The same as reset_board().
 
+	Parameters
+	board_name (str) - Board name.
 
-def init_board(TDC,conn,pktime,gain,thresh):
-  reset_board(TDC,conn)
-  init_chip(TDC,conn,0,pktime,gain,thresh)
-  init_chip(TDC,conn,1,pktime,gain,thresh)
-  return
- 
+	"""
+	board_info = db.find_board_by_name(board_name)
+	tdc_addr = board_info["tdc_addr"]
+	if tdc_addr[0:2].lower() == "0x":
+		reset_board(tdc_addr)
+
+def set_threshold(TDC,CONN,CHIP,THR):
+	"""
+	Set a threshold value of specific PASTTREC
+
+	Parameters
+	TDC (str) - Address of associated TDC.
+
+	CONN (int) - PASTTREC connection number.
+
+	CHIP (int) - PASTTREC chip number.
+
+	THR (int) - New threshold value.
+
+	"""
+
+	spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(CONN,CHIP), 0x3, 0xFF & THR)
+
+def set_threshold_for_board(TDC,conn,thresh, new_style = False):
+	"""
+	The same as set_threshold(), but for all PASTTRECs associated with specific TDC.
+
+	Parameters
+	TDC (str) - Address of associated TDC.
+
+	CONN (int) - PASTTREC connection number. Not used if the new style is used.
+
+	thresh (int) - New threshold value
+
+	new_style (boolean) - If false, only PASTTRECs, associated with the specific connection, are affected. (for back compatibility only). If true, all PASTTRECs associated with specific TDC are affected.
+	"""
+	if not new_style:
+		spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(conn,0), 0x3, 0xFF & thresh)
+		spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(conn,1), 0x3, 0xFF & thresh)
+	else:
+		spi_set_pasttrecs_register(TDC, 0x3, 0xFF & thresh)
+
+def set_threshold_for_board_by_name(board_name,thresh, new_style = False):
+	"""
+	The same as set_threshold_for_board().
+
+	Parameters
+	board_name (str) - Name of the associated board.
+
+	thresh (int) - New threshold value.
+
+	new_style (boolean) - If false, only PASTTRECs, associated with the specific connection, are affected. (for back compatibility only). If true, all PASTTRECs associated with specific TDC are affected.
+	"""
+	board_info = db.find_board_by_name(board_name)
+	conn = board_info["tdc_connector"]
+	tdc_addr = board_info["tdc_addr"]
+	set_threshold_for_board(tdc_addr,conn,thresh, new_style)
+
+def slow_control_test(board_name): 
+	"""
+	Performs a slow control test for the specified board.
+
+	Parameters
+	board_name (str) - Name of the target board.
+
+	"""
+
+	scan_time = 0.2
+	board_info = db.find_board_by_name(board_name)
+	channels	 = board_info["channels"] # zero based 
+	TDC				= board_info["tdc_addr"]
+	connector	= board_info["tdc_connector"]
+	db.enable_board(board_name)
+	init_board_by_name(board_name)
+	print( "slow control test of board "+board_name )
+	set_threshold_for_board(TDC,connector,0)
+	rates_lo_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
+	set_threshold_for_board(TDC,connector,0xFF)
+	rates_hi_thr = tdc_daq.scaler_rate(TDC,channels,scan_time)
+	state_hi_thr = tdc_daq.read_ch_state(TDC,channels)
+	print( "rates low thr" )
+	print( rates_lo_thr )
+	print( "rates high thr" )
+	print( rates_hi_thr )
+	print( "state high thr" )
+	print( state_hi_thr )
+	## restore threshold again - a bit dirty but faster than complete init again
+	setup		 = db.get_setup_json()
+	#pktime		= setup["asic_settings"]["default"]["pktime"]
+	#gain			= setup["asic_settings"]["default"]["gain"]
+	threshold = setup["asic_settings"]["default"]["threshold"]
+	#standby_pktime		= setup["asic_settings"]["standby"]["pktime"]
+	#standby_gain			= setup["asic_settings"]["standby"]["gain"]
+	standby_threshold = setup["asic_settings"]["standby"]["threshold"]
+	standby = False
+	if "standby" in board_info:
+		if board_info["standby"]:
+			standby=True
+	if standby:
+		set_threshold_for_board(TDC,connector,standby_threshold)
+	else:
+		set_threshold_for_board(TDC,connector,threshold)
+	## end of restore threshold
+	if state_hi_thr == [1]*len(channels) and rates_hi_thr == [0]*len(channels) and rates_lo_thr != [0]*len(channels):
+		return 1
+	else:
+		return 0
 
 def slow_control_test_boards(board_list): 
-  test_results = {}
-  for board_name in board_list:
-    answer = slow_control_test(board_name)
-    test_results[board_name] = answer
+	"""
+	Performs a slow control test for specified boards.
 
-  print( test_results )
-  return test_results
+	Parameters
+	board_list (list(str)) – Names of target boards.
+	"""
+	test_results = {}
+	for board_name in board_list:
+		test_results[board_name] = slow_control_test(board_name)
+	print( test_results )
+	return test_results
+
+def set_baseline( TDC, channel,value): 
+	"""
+	Set a baseline level for one of the TDC channels.
+
+	Parameters
+	TDC (str) - A TDC address.
+
+	channel (int) - Number of the channel [0 - 31].
+
+	value (int) - New value of baseline level [-15,15].
+
+	"""
+	spi_set_pasttrec_register(TDC, channel // 8, 0x4 + channel%8, 0xFF & (15 + value))
+
+def set_all_baselines( TDC, channels, values): # channels and values have to have same dimensions
+	"""
+	Set baseline levels for an array of TDC channels.
+
+	Parameters
+	TDC (str) - A TDC address.
+
+	channels (list(int)) - Array of channel numbers.
+
+	values (list(int)) - Array of new values of baseline levels.
+	"""
+	for i, ch in enumerate(channels):
+		set_baseline(TDC,ch,int(values[i]))
+
+def set_all_baselines_to_same_value( TDC, value): # channels and values have to have same dimensions
+	"""
+	Set the same baseline level for all channels of specified TDC.
+
+	Parameters
+	TDC (str) - A TDC address.
+
+	value (int) - New value of baseline levels..
+	"""
+	for ch_n in range(8):
+		spi_set_pasttrecs_register(TDC, 0x4 + ch_n, 0xFF & (value + 15))
+
+def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh, baseline_sel=0b1):
+	""" 
+	Performs an initialization of specific PASTTREC:
+
+	Send a soft reset command
+
+	Apply the specified peaking time, gain, and threshold.
+
+	Parameters
+	TDC (str) - An associated TDC.
+
+	CONN (int) - A PASTTRECs connection number.
+
+	CHIP (int) - A PASTTRECs chip number.
+
+	pktime (int) - A value of peaking time, that will be applied.
+
+	GAIN (int) - A value of gain, that will be applied.
+
+	thresh (int) - A value of the threshold, that will be applied.
+
+	baseline_sel (int) - A baseline selection option. For details see the PASTTREC documentation. Usually, should be the same as the default value.
+	"""
+	global spi_queue
+	spi_queue = 1
+	reset_board(TDC)
+	set_threshold(TDC,CONN,CHIP,thresh)
+	spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(CONN,CHIP), 0x0, ((baseline_sel & 1) << 4) + (gain_map[GAIN] << 2) + (pt_map[pktime]))
+	board_info = db.find_board_by_tdc_connector(TDC,CONN)
+	board_name = board_info["name"] 
+	board_channels = board_info["channels"] 
+	calib = db.get_calib_json_by_name(board_name)
+	if ("baselines" in calib):
+		board_baselines = calib["baselines"]
+		channels = board_channels[0 + 8*CHIP:9 + 8*CHIP]
+		values	 = board_baselines[0 + 8*CHIP:9 + 8*CHIP]
+		set_all_baselines(TDC,channels,values)
+	spi_queue = 0
+	set_threshold(TDC,CONN,CHIP,thresh)
+
+def init_board(TDC,conn,pktime,gain,thresh, new_style=False, baseline_sel=0b1):
+	""" 
+	The same as init_chip(), but for several PASTTRECs at once.
+
+	Parameters
+	TDC (str) - An associated TDC.
+
+	conn (int) - A PASTTRECs connection number.
+
+	pktime (int) - A value of peaking time, that will be applied.
+
+	gain (int) - A value of gain, that will be applied.
+
+	thresh (int) - A value of the threshold, that will be applied.
+
+	new_style (boolean) - If false, only PASTTRECs, associated with the specific connection, are affected. (for back compatibility only). If true, all PASTTRECs associated with specific TDC are affected.
+
+	baseline_sel (int) - A baseline selection option. For details see the PASTTREC documentation. Usually, should be the same as the default value.
+	"""
+	global spi_queue
+	spi_queue = 1
+	reset_board(TDC)
+	if (not new_style):
+		spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(conn,0), 0x0, ((baseline_sel & 1) << 4) + (gain_map[gain] << 2) + (pt_map[pktime]))
+		spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(conn,1), 0x0, ((baseline_sel & 1) << 4) + (gain_map[gain] << 2) + (pt_map[pktime]))
+	else:
+		spi_set_pasttrecs_register(TDC, 0x0, ((baseline_sel & 1) << 4) + (gain_map[gain] << 2) + (pt_map[pktime]))
+	spi_queue = 0
+	set_threshold_for_board(TDC, conn, thresh, new_style=new_style) 
 
 def init_active_boards(pktime=-1,gain=-1,threshold=-1):
-  return init_boards_by_name(db.active_board_list(),pktime,gain,threshold)
+	"""
+	The same as init_board(), but for all active boards.
+
+	Parameters
+	pktime (int) - A value of peaking time, that will be applied.
+
+	gain (int) - A value of gain, that will be applied.
+
+	threshold (int) - A value of the threshold, that will be applied.
+	"""
+	init_boards_by_name(db.active_board_list(),pktime,gain,threshold)
 
 def init_boards_by_name(board_list,pktime=-1,gain=-1,threshold=-1):
-  
-  setup     = db.get_setup_json()
-   
-  if(pktime == -1): 
-    pktime    = setup["asic_settings"]["default"]["pktime"]
-  if(gain == -1):
-    gain      = setup["asic_settings"]["default"]["gain"]
-  if(threshold == -1):
-    threshold = setup["asic_settings"]["default"]["threshold"]
+	"""
+	The same as init_board(), but for a specified list of boards.
 
-  standby_pktime    = setup["asic_settings"]["standby"]["pktime"]
-  standby_gain      = setup["asic_settings"]["standby"]["gain"]
-  standby_threshold = setup["asic_settings"]["standby"]["threshold"]
+	Parameters
+	board_list (list(str)) - A list of target board`s names.
 
-  
+	pktime (int) - A value of peaking time, that will be applied.
 
-  for board_name in board_list:
-    #print("init board "+board_name)
-    board_info = db.find_board_by_name(board_name)
-    conn = board_info["tdc_connector"]
-    tdc_addr = board_info["tdc_addr"]
+	gain (int) - A value of gain, that will be applied.
 
-    standby = False
-    if "standby" in board_info:
-      if board_info["standby"]:
-        standby=True
-
-    if tdc_addr[0:2].lower() == "0x":
-      if standby:
-        init_board(tdc_addr,conn,standby_pktime,standby_gain,standby_threshold)
-      else:
-        init_board(tdc_addr,conn,pktime,gain,threshold)
-  return
+	threshold (int) - A value of the threshold, that will be applied.
+	"""
+	setup		 = db.get_setup_json()
+	if(pktime == -1): 
+		pktime		= setup["asic_settings"]["default"]["pktime"]
+	if(gain == -1):
+		gain			= setup["asic_settings"]["default"]["gain"]
+	if(threshold == -1):
+		threshold = setup["asic_settings"]["default"]["threshold"]
+	standby_pktime		= setup["asic_settings"]["standby"]["pktime"]
+	standby_gain			= setup["asic_settings"]["standby"]["gain"]
+	standby_threshold = setup["asic_settings"]["standby"]["threshold"]
+	for board_name in board_list:
+		#print("init board "+board_name)
+		board_info = db.find_board_by_name(board_name)
+		conn = board_info["tdc_connector"]
+		tdc_addr = board_info["tdc_addr"]
+		standby = False
+		if "standby" in board_info:
+			if board_info["standby"]:
+				standby=True
+		if tdc_addr[0:2].lower() == "0x":
+			if standby:
+				init_board(tdc_addr,conn,standby_pktime,standby_gain,standby_threshold)
+			else:
+				init_board(tdc_addr,conn,pktime,gain,threshold)
 
 def init_board_by_name(board,pktime=-1,gain=-1,threshold=-1):
-  return init_boards_by_name([ board ],pktime,gain,threshold)
+	""" 
+	The same as init_boards_by_name(), but for one board.
+
+	Parameters
+	board (str) - A target board name.
+
+	pktime (int) - A value of peaking time, that will be applied.
+
+	gain (int) - A value of gain, that will be applied.
+
+	threshold (int) - A value of the threshold, that will be applied.
+	"""
+	return init_boards_by_name([ board ],pktime,gain,threshold)
+
+def found_baselines_for_board(board, scanning_time = 0.2, plot=False, apply_res=False):
+	"""
+	Found a baseline level for all channels of a specific board with a noise method.
+
+	Parameters
+	board (str) - A TDC address.
+
+	scanning_time (float) - Duration of each step during data acquisition
+
+	plot (boolean) - if true, plot the noise level versus baseline for each channel.
+
+	apply_res (boolean) - if true, apply each baseline level to an estimated value.
+
+	"""
+	return found_baselines_for_boards([board], scanning_time, plot, apply_res)[board]
+
+def found_baselines_for_boards(boards, scanning_time = 0.2, plot=False, apply_res=False):
+	"""
+	The same as found_baselines_for_board() but for a list of boards.
+
+	Parameters
+	boards (list(str)) - A list of TDC`s addresses.
+
+	scanning_time (float) - Duration of each step during data acquisition.
+
+	plot (boolean) - if true, plot the noise level versus baseline for each channel.
+
+	apply_res (boolean) - if true, apply each baseline level to an estimated value.
+	"""
+	
+	channels = list(range(32))
+	for board in boards:
+		set_threshold_for_board(board,0,0, new_style=True)
+	scalers = np.empty((len(boards), len(channels), 31))
+	for baseline in range(-15,15 + 1):
+		for nboard, board in enumerate(boards):
+			set_all_baselines_to_same_value(board,baseline)
+			scalers[nboard, :, baseline + 15] = - np.array(tdc_daq.read_scalers(board,channels))
+		sleep(scanning_time)
+		for nboard, board in enumerate(boards):
+			scalers[nboard, :, baseline + 15] += np.array(tdc_daq.read_scalers(board,channels))
+		scalers[:, :, baseline + 15] += (scalers[:, :, baseline + 15] < 0) * (2**24)
+		scalers[:, :, baseline + 15] /= scanning_time
+	if plot:
+		fig, ax = plt.subplots(7 * len(boards),5)
+		fig.set_size_inches(18.5, 18.5 * len(boards))
+		plt.tight_layout()
+	res = {}
+	baselinearr = np.arange(-15, 15+1)# np.array(list(range(-15,15+1)))
+	for nboard,board in enumerate(boards):
+		res[board] = {}
+		for nch,ch in enumerate(channels):
+			values = scalers[nboard, nch, :]
+			if np.all(values == 0):
+				mean, rms = 16, -1
+				warnings.warn("No data from channel {} of board {}".format(ch,board))
+				if plot:
+					ax[nboard * 7 + nch // 5, nch % 5].set_title("Board {} ch {}".format(board, ch))
+					ax[nboard * 7 + nch // 5, nch % 5].set_ylim([0, 1])
+					ax[nboard * 7 + nch // 5, nch % 5].plot(np.linspace(0,1,100),np.linspace(0,1,100), color="r")
+					ax[nboard * 7 + nch // 5, nch % 5].text(0,0.7,"DEAD")
+			else:
+				mean = np.dot(values, baselinearr)/np.sum(values)
+				rms = np.sqrt(np.dot(np.power(baselinearr-mean,2), values)/np.sum(values))
+				if plot:
+					ax[nboard * 7 + nch // 5, nch % 5].scatter(baselinearr,values)
+					ax[nboard * 7 + nch // 5, nch % 5].set_yscale("log")
+					ax[nboard * 7 + nch // 5, nch % 5].set_ylim([0.5, np.amax(values)])
+					ax[nboard * 7 + nch // 5, nch % 5].set_title("Board {} ch {}".format(board, ch))
+					ax[nboard * 7 + nch // 5, nch % 5].axvline(x = mean, c="r")
+					ax[nboard * 7 + nch // 5, nch % 5].axvline(x = mean-3*rms, c="g")
+					ax[nboard * 7 + nch // 5, nch % 5].axvline(x = mean+3*rms, c="g")
+			res[board][ch] = {"mean": mean, "rms": rms}
+		if apply_res:
+			values = [int(res[board][ch]["mean"]) for ch in channels ]
+			set_all_baselines(board, channels, values)
+	return res
+	
+def read_PASTTREC_regs(TDC_str, pasttrec):
+	"""
+	Read the values of PASTTREC registers.
+
+	Parameters
+	TDC_str (str) - A TDC address.
+
+	pasttrec (int) - PASTTREC number.
+	"""
+	def read_reg(TDC_str, reg):
+		return "{0:#010x}".format(t.trb_register_read(int(TDC_str,16), reg)[1])
+	def read_multibyte(TDC_str, reg):
+		raw_data = read_reg(TDC_str, reg)
+		return ["0x{}".format(raw_data[i:i+2]) for i in [2,4,6,8]]
+	last_byte = read_reg(TDC_str, 0xA0FF)
+	if last_byte == "0x00051f00":
+		# fast mode is availible
+		data = []
+		for start_addr in range(0,0xf,4):
+			if start_addr != 0xc:
+				load_set_to_pasttrec(TDC_str=TDC_str, pasttrec=pasttrec, addr=0xF0 + start_addr, len=4)
+				data = data + read_multibyte(TDC_str, 0xA10B)
+			else:
+				load_set_to_pasttrec(TDC_str=TDC_str, pasttrec=pasttrec, addr=0xFC, len=2)
+				data = data + read_multibyte(TDC_str, 0xA10B)[2:4]
+		assert len(data) == 14, "Something wrong.."
+		return dict(zip(["{0:#3x}".format(el) for el in range(14)], data))
+	else:
+		# fast mode is not availible
+		data = []
+		for start_addr in range(0,0xf,4):
+			if start_addr != 0xc:
+				for offset in range(4):
+					t.trb_register_read(int(TDC_str,16), 0xA200 + (pasttrec << 4) + start_addr + offset)
+				data = data + read_multibyte(TDC_str, 0xA10B)
+			else:
+				for offset in range(2):
+					t.trb_register_read(int(TDC_str,16), 0xA200 + (pasttrec << 4) + start_addr + offset)
+				data = data + read_multibyte(TDC_str, 0xA10B)[2:4]
+		assert len(data) == 14, "Something wrong.."
+		return dict(zip(["{0:#3x}".format(el) for el in range(14)], data))

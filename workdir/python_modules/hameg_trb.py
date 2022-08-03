@@ -24,7 +24,7 @@ def all_on():
   send_cmd("OUTPUT:GENERAL ON")
 
 def get_volt(channel):
-  return float(send_cmd("INST OUT{:d}\nMEAS:VOLT?".format(channel)))
+  return (send_cmd("INST OUT{:d}\nMEAS:VOLT?".format(channel)))
 
 def set_volt(channel,volt):
   send_cmd("INST OUT{:d}\nVOLT {:3.3f}".format(channel,volt))
@@ -32,11 +32,11 @@ def set_volt(channel,volt):
 def set_curr(channel,curr):
   send_cmd("INST OUT{:d}\nCURR {:3.3f}".format(channel,curr))
 
-def get_curr(channel):
-  return float(send_cmd("INST OUT{:d}\nMEAS:CURR?".format(channel)))
+def get_curr(channel): 
+  return (send_cmd("INST OUT{:d}\nMEAS:CURR?".format(channel)))
 
 def get_state(channel):
-  return int(send_cmd("INST OUT{:d}\nOUTP:STATE?".format(channel)))
+  return  (send_cmd("INST OUT{:d}\nOUTP:STATE?".format(channel)))
 
 def set_state(channel,state):
   send_cmd("INST OUT{:d}\nOUTP:STATE {:d}".format(channel,state))
@@ -44,7 +44,7 @@ def set_state(channel,state):
 def report():
   print("device: {:s}".format(device))
   for i in range(1,5):
-    print("volt {:f} curr {:f} state {:d}".format( get_volt(i), get_curr(i), get_state(i))) 
+    print("volt {:s} curr {:s} state {:s}".format( get_volt(i), get_curr(i), get_state(i))) 
     
     
 from IPython.display import display, Markdown, clear_output
