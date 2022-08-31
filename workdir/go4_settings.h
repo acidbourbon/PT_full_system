@@ -21,5 +21,5 @@
 
 
 // second processes in second.C:
-#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_1800", "TDC_1800");new SecondProc("Sec_1801", "TDC_1801");new SecondProc("Sec_1802", "TDC_1802");new SecondProc("Sec_1803", "TDC_1803");new SecondProc("Sec_1806", "TDC_1806");new SecondProc("Sec_1807", "TDC_1807");new SecondProc("Sec_1808", "TDC_1808");new SecondProc("Sec_1809", "TDC_1809");new SecondProc("Sec_1810", "TDC_1810");new SecondProc("Sec_1811", "TDC_1811");new SecondProc("Sec_1814", "TDC_1814");new SecondProc("Sec_1815", "TDC_1815");new SecondProc("Sec_1816", "TDC_1816");new SecondProc("Sec_1817", "TDC_1817");new SecondProc("Sec_1818", "TDC_1818");new SecondProc("Sec_1819", "TDC_1819");new SecondProc("Sec_1820", "TDC_1820");new SecondProc("Sec_1821", "TDC_1821");
+#define SECOND_PROCESS_TDCs new SecondProc("Sec_0350", "TDC_0350");new SecondProc("Sec_1800", "TDC_1800");new SecondProc("Sec_1813", "TDC_1813");new SecondProc("Sec_1818", "TDC_1818");new SecondProc("Sec_1819", "TDC_1819");new SecondProc("Sec_1820", "TDC_1820");new SecondProc("Sec_1821", "TDC_1821");
 

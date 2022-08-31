@@ -68,7 +68,6 @@ def spi(TDC_str,CONN,CHIP, data_list, **kwargs):
 			address_past = (CHIP_ID << 4) + ((data & 0xF00) >> 8 )
 			data_past = data & 0xFF
 			t.trb_register_write(TDC, 0xA200 + address_past, data_past )
-			sleep(1E-4)
 			if (slow_control_log):
 				f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, 0xA200 + address_past, data_past ))
 	if (slow_control_log):
@@ -96,15 +95,10 @@ def spi_mdc_mbo(TDC_str,ADDR, data):
 		spi_mem[TDC]["mdc_mbo"]["mdc_mbo"].clear() # empty queue
 		for address, value in my_data_list:
 			t.trb_register_write(TDC, address, value )
-			print("T: %04x %04x %08x" % (TDC, address,value))
 			if (slow_control_log):
 				f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, address, value ))
 	if (slow_control_log):
 		f.close()
-        #activate written registers:
-	#t.trb_register_write(TDC, 0xAA00, 1 )
-
-   
 
 def spi_set_pasttrec_register(TDC_str,pasttrec,reg, data):
 	"""
@@ -119,8 +113,7 @@ def spi_set_pasttrec_register(TDC_str,pasttrec,reg, data):
 
 	data (int) - Data to be written [0x00 - 0xFF].
 	"""
-	spi_mdc_mbo(TDC_str, 0xA200 + ((0xF & pasttrec) << 4) + (0xF & reg),(0xFF & data))
-	#spi_mdc_mbo(TDC_str, 0xAA02 + ((0xF & pasttrec) << 4),(0xFF & data) + ((0xF & reg) << 8))
+	spi_mdc_mbo(TDC_str, 0xAA02 + ((0xF & pasttrec) << 4),(0xFF & data) + ((0xF & reg) << 8))
 
 def spi_set_pasttrecs_register(TDC_str,reg, data):
 	"""
@@ -134,12 +127,7 @@ def spi_set_pasttrecs_register(TDC_str,reg, data):
 	data (int) - Data to be written [0x00 - 0xFF].
 
 	"""
-	#spi_mdc_mbo(TDC_str, 0xAA0A, (0xFF & data) + ((0xF & reg) << 8))
-	spi_mdc_mbo(TDC_str, 0xA200 + (0xF & reg),(0xFF & data))
-	spi_mdc_mbo(TDC_str, 0xA210 + (0xF & reg),(0xFF & data))
-	spi_mdc_mbo(TDC_str, 0xA220 + (0xF & reg),(0xFF & data))
-	spi_mdc_mbo(TDC_str, 0xA230 + (0xF & reg),(0xFF & data))
-	
+	spi_mdc_mbo(TDC_str, 0xAA0A, (0xFF & data) + ((0xF & reg) << 8))
 
 def load_set_to_pasttrec(TDC_str, pasttrec, addr, len):
 	"""
@@ -242,7 +230,7 @@ def set_threshold_for_board(TDC,conn,thresh, new_style = False):
 		spi_set_pasttrec_register(TDC, HelperFunctions.getCHIPID(conn,1), 0x3, 0xFF & thresh)
 	else:
 		spi_set_pasttrecs_register(TDC, 0x3, 0xFF & thresh)
-   
+
 def set_threshold_for_board_by_name(board_name,thresh, new_style = False):
 	"""
 	The same as set_threshold_for_board().
@@ -361,7 +349,6 @@ def set_all_baselines_to_same_value( TDC, value): # channels and values have to 
 	"""
 	for ch_n in range(8):
 		spi_set_pasttrecs_register(TDC, 0x4 + ch_n, 0xFF & (value + 15))
-		#t.trb_register_write(int(TDC,16), 0xA200 + ch_n%8 + 4 + (int(ch_n/8) << 4), value + 15 )
 
 def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh, baseline_sel=0b1):
 	""" 
@@ -403,7 +390,7 @@ def init_chip(TDC,CONN,CHIP,pktime,GAIN,thresh, baseline_sel=0b1):
 	spi_queue = 0
 	set_threshold(TDC,CONN,CHIP,thresh)
 
-def init_board(TDC,conn,pktime,gain,thresh, new_style=True, baseline_sel=0b1):
+def init_board(TDC,conn,pktime,gain,thresh, new_style=False, baseline_sel=0b1):
 	""" 
 	The same as init_chip(), but for several PASTTRECs at once.
 
@@ -499,7 +486,7 @@ def init_board_by_name(board,pktime=-1,gain=-1,threshold=-1):
 	"""
 	return init_boards_by_name([ board ],pktime,gain,threshold)
 
-def found_baselines_for_board(board, scanning_time = 0.2, plot=False, apply_res=False, thresh=0):
+def found_baselines_for_board(board, scanning_time = 0.2, plot=False, apply_res=False):
 	"""
 	Found a baseline level for all channels of a specific board with a noise method.
 
@@ -513,9 +500,9 @@ def found_baselines_for_board(board, scanning_time = 0.2, plot=False, apply_res=
 	apply_res (boolean) - if true, apply each baseline level to an estimated value.
 
 	"""
-	return found_baselines_for_boards([board], scanning_time, plot, apply_res, thresh)[board]
+	return found_baselines_for_boards([board], scanning_time, plot, apply_res)[board]
 
-def found_baselines_for_boards(boards, scanning_time = 0.2, plot=False, apply_res=False, thresh=0):
+def found_baselines_for_boards(boards, scanning_time = 0.2, plot=False, apply_res=False):
 	"""
 	The same as found_baselines_for_board() but for a list of boards.
 
@@ -528,26 +515,18 @@ def found_baselines_for_boards(boards, scanning_time = 0.2, plot=False, apply_re
 
 	apply_res (boolean) - if true, apply each baseline level to an estimated value.
 	"""
-
+	
 	channels = list(range(32))
 	for board in boards:
-		set_threshold_for_board_by_name(board, thresh, new_style=True)
+		set_threshold_for_board(board,0,0, new_style=True)
 	scalers = np.empty((len(boards), len(channels), 31))
 	for baseline in range(-15,15 + 1):
 		for nboard, board in enumerate(boards):
-			board_info = db.find_board_by_name(board)
-			tdc_addr = board_info["tdc_addr"]
-			set_all_baselines_to_same_value(tdc_addr,baseline)
-			print(baseline)
-			sleep(1)
-
-			
-			scalers[nboard, :, baseline + 15] = - np.array(tdc_daq.read_spikes(tdc_addr,channels))
+			set_all_baselines_to_same_value(board,baseline)
+			scalers[nboard, :, baseline + 15] = - np.array(tdc_daq.read_scalers(board,channels))
 		sleep(scanning_time)
 		for nboard, board in enumerate(boards):
-			board_info = db.find_board_by_name(board)
-			tdc_addr = board_info["tdc_addr"]
-			scalers[nboard, :, baseline + 15] += np.array(tdc_daq.read_spikes(tdc_addr,channels))
+			scalers[nboard, :, baseline + 15] += np.array(tdc_daq.read_scalers(board,channels))
 		scalers[:, :, baseline + 15] += (scalers[:, :, baseline + 15] < 0) * (2**24)
 		scalers[:, :, baseline + 15] /= scanning_time
 	if plot:

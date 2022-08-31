@@ -64,7 +64,8 @@ while True:
                ("28","set max threshold"),
                ("29","set threshold"),
                ("50","set threshold of single board"),
-               ("54","reset + reconfigure entire TRB")
+               ("54","reset + reconfigure entire TRB"),
+               ("56","ping of death to TRB")
               ])
   if mm_tag == "m2":
     code, tag = d.menu("calibration", height="30", menu_height="28",
@@ -147,6 +148,10 @@ while True:
     ## reset + reconfigure trb ##
     if tag == "54":
       td.reset_trb()
+
+    ## kill trb, ping of death ##
+    if tag == "56":
+      os.system('ping -c3 -W2 -pf3c0 $TRB3_SERVER')
 
     ## enable/disable boards ##
     if tag == "1":
