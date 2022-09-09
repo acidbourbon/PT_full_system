@@ -1,0 +1,38 @@
+source ~/trb/userscripts/set_exports_04.sh 
+cd ~/trb/userscripts
+sudo ./start_trbnet_04.sh
+
+trbcmd i 0xffff - check communication with TRB. Expected result:
+    0x8000  0x96000002e2ccfb28  0x05 - master FPGA
+    0x6441  0xac000002e2eb5128  0x01 - 4 slave FPGA (one is not working here)
+    0x6442  0xfc000002e2ccdf28  0x02
+    0x6443  0x69000002e303a528  0x03
+
+./start_daq_04.sh &
+    Sets the FPGA IDs (address). If first column of trbcmd i 0xffff is different, it should be set to proper values after DAQ start
+
+Browser: http://localhost:1234/
+	-> Panda straw
+		-> TDC addr: 6441
+		-> Load from TrbNet
+Trigger: -> CTS Control
+		-> Enable Periodical Pulser 0
+		-> Periodical Pulsers -> #0 -> Low-Period = 1kHz
+
+Reset ASICs:
+reset_asic.py 0x6441
+
+Check communication:
+communication_test.py 0x6441:1 (TRB address [:cable number] )
+	If communication fail: Browser -> Panda straw -> Reset
+	Or reset via commad line (see above)
+
+Baseline scan:
+./baseline_single-lowTp1.sh
+Output:
+20200805_113549_cfg.sh -> sends all baselines to board
+Or: browser -> Panda straw -> Configuration file: Browse 20200805_113549_bl.json -> Send settings to ASIC
+
+Show baseline scan:
+draw_baseline_scan.py 20200805_113549_scan.json
+
