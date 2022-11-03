@@ -96,7 +96,7 @@ def spi_mdc_mbo(TDC_str,ADDR, data):
 		spi_mem[TDC]["mdc_mbo"]["mdc_mbo"].clear() # empty queue
 		for address, value in my_data_list:
 			t.trb_register_write(TDC, address, value )
-			print("T: %04x %04x %08x" % (TDC, address,value))
+			#print("T: %04x %04x %08x" % (TDC, address,value))
 			if (slow_control_log):
 				f.write("0x{:04X} 0x{:04X} 0x{:08X}\n".format(TDC, address, value ))
 	if (slow_control_log):

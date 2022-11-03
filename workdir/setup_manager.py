@@ -52,6 +52,7 @@ while True:
   if mm_tag == "m1":
     code, tag = d.menu("operation", height="30", menu_height="28",
     choices = [
+	       ("54","reset + reconfigure entire TRB"),
                ("1","view boards - enable/disable boards"),
                ("53","... enable only selected boards"),
                ("35","set boards to standby"),
@@ -64,7 +65,6 @@ while True:
                ("28","set max threshold"),
                ("29","set threshold"),
                ("50","set threshold of single board"),
-               ("54","reset + reconfigure entire TRB"),
                ("56","ping of death to TRB")
               ])
   if mm_tag == "m2":
@@ -151,7 +151,7 @@ while True:
 
     ## kill trb, ping of death ##
     if tag == "56":
-      os.system('ping -c3 -W2 -pf3c0 $TRB3_SERVER')
+      os.system('ping -c3 -W2 -pc035 $TRB3_SERVER')
 
     ## enable/disable boards ##
     if tag == "1":
