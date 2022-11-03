@@ -14,9 +14,14 @@ import tdc_daq as td
 import pasttrec_ctrl as ptc
 import numpy as np
 
+def list_rms(x):
+  mean = sum(x)/len(x)
+  deviations =  np.asarray(x) -  np.asarray(mean)
+  return np.sqrt(sum(deviations**2) /len(x))
 
-
-
+def fround(pfl):
+    np.round(pfl,2)
+    return pfl
 
 
 
@@ -37,15 +42,18 @@ while True:
   if mm_tag == "":
     code, tag = d.menu("main menu", height="30", menu_height="28",
       choices = [
+				 ("55","PASTTREC socket QA"),
                  ("m1","---    operation     ---"),
                  ("m2","---   calibration    ---"),
                  ("m3","--- config/view/edit ---"),
                  ("m4","---   housekeeping   ---"),
                  ("m5","--- test procedures  ---"),
                  ("m6","---   export data    ---"),
-                 ("z","exit")] )
+                 ("z","exit")
+                 ] )
     if code == d.OK:
       mm_tag = tag
+
 
 
 
@@ -64,7 +72,8 @@ while True:
                ("28","set max threshold"),
                ("29","set threshold"),
                ("50","set threshold of single board"),
-               ("54","reset + reconfigure entire TRB")
+               ("54","reset + reconfigure entire TRB"),
+               ("56","ping of death to TRB")
               ])
   if mm_tag == "m2":
     code, tag = d.menu("calibration", height="30", menu_height="28",
@@ -147,6 +156,9 @@ while True:
     ## reset + reconfigure trb ##
     if tag == "54":
       td.reset_trb()
+    ## kill trb, ping of death ##
+    if tag == "56":
+      os.system('ping -c3 -W2 -pf3c0 $TRB3_SERVER')
 
     ## enable/disable boards ##
     if tag == "1":
@@ -667,19 +679,29 @@ via AC coupling and 10k resistor.".format(board_name) )
         result = pasttrec_socket_test_pyfit.scurve_scan(str)
         np.set_printoptions(precision=2)
         #text =  " ------------------------ baseline means: {}      units [LSB = 2mV]".format(result[0]) 
+        text = " \n 8 channels passed test?: \n {}  \n".format(result[4])  
         baselines = np.array(result[0])
         np.round(baselines,2)
-        text =  " \n baseline means:   units [LSB = 2mV] \n {}   \n  ".format(baselines) 
+        text +=  " \n baseline means: units [LSB = 2mV]\n {} \n mean of 8 channels: {:.2f} +- RMS = {:.2f}      ".format(baselines, fround(sum(baselines)/len(baselines)),fround(list_rms(baselines)) )
         scurve = np.array(result[1])
         np.round(scurve,2)
-        text += " \n Fit s-curve half-max at threshold:   units [LSB = 2mV] \n {} \n  ".format(scurve)         
-        scurve = np.array(result[2])
-        np.round(scurve,2)
-        text += " \n Fit s-curve sigmas:   units [LSB = 2mV] \n {} \n  ".format(scurve) 
+        text += " \n Fit s-curve half-max at threshold:   units [LSB = 2mV]| \n {}  \n mean of 8 channels: {:.2f} +- RMS = {:.2f}  ".format(scurve,sum(scurve)/len(scurve),list_rms(scurve))         
+        sigcurve = np.array(result[2])
+        np.round(sigcurve,2)
+        text += " \n Fit s-curve sigmas:   units [LSB = 2mV] \n {} \n mean of 8 channels: {:.2f} +- RMS = {:.2f}   ".format(sigcurve, sum(sigcurve)/len(sigcurve),list_rms(sigcurve)) 
         formatted_list =["%.2f"%item for item in result[3]]                
-        text += " \n Fit s-curve chi2/ndf:   \n {}  \n ".format(formatted_list)
-        text += " \n channels passed test?: \n {}  ".format(result[4])               
-        d.msgbox("PT serial {} baseline & s-curve scan finished, results for 8 channels: ".format(str) + text, width=60, height=30)
+        text += " \n Fit s-curve chi2/ndf:   \n {}   ".format(formatted_list)
+        
+        text += " \n  mean ToT deviation between channels: \n {:.2f} ns +- RMS = {:.2f} ns".format(result[5][0],result[5][1]) 
+        text += " \n  ToT fit of 8 channels, RMS of slopes: \n {:.2f} ns/ke-, RMS of offests = {:.2f} ns".format(result[5][2],result[5][3])        
+        tot_coeff = np.array(result[5][4])
+        np.round(tot_coeff,2)
+        text += " \n ToT fit slope of 8 channels (ns / ke- ): \n {} ".format(tot_coeff)
+        tot_coeff = np.array(result[5][5])
+        np.round(tot_coeff,2)        
+        text += " \n ToT fit offset of 8 channels (ns): \n {} ".format(tot_coeff)        
+        text += " \n  time lapsed: {:.2f} seconds".format(result[6])
+        d.msgbox("PT serial {} test scan finished, results:".format(str) + text, width=60, height=30)
         
         # 
         # 

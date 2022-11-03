@@ -104,7 +104,7 @@ class measTOTs():
 
 		#Setting generator, starting amplitude and frequency
 		self.gen.set_amplitude((1,2),StartAmp)
-		self.gen.set_frequency((1,2),10000) #50Hz
+		self.gen.set_frequency((1,2),1000) #50Hz
 		self.gen.set_output_state((1,2),True)
 
 		self.DataReader.setTriggerEnabled(True)

@@ -95,11 +95,11 @@ When starting analysis from the go4 gui, one should specify stream server with p
 
     <Module name="Combiner" class="hadaq::CombinerModule">    
         <!-- these parameters will force to create inputs/outputs of module -->
-       <NumInputs value="2"/>
+       <NumInputs value="1"/>
        <NumOutputs value="2"/>
 
-       <InputPort name="Input0" url="hadaq://host:50002" urlopt1=""/>
-       <InputPort name="Input1" url="hadaq://host:50003" urlopt1=""/> 
+       <InputPort name="Input0" url="hadaq://host:50001" urlopt1=""/>
+<!--       <InputPort name="Input1" url="hadaq://host:50003" urlopt1=""/> -->
 
 <!--       <InputPort name="Input0" url="hadaq://host:50061" urlopt1=""/> -->
  <!--       <InputPort name="Input2" url="hadaq://host:50084" urlopt1=""/> -->

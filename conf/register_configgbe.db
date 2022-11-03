@@ -12,8 +12,9 @@
 #                    SubEvtId    UseGbE      MultiQueue   Trig. Num. InclTrgType   
 # Hub    #  Type  #     C0     #   C1     #     C2     #     C3     #     C4     #
 ##################################################################################
-  0xc035      0       0xc035        1            0        0xffffff         1
-  0x8150      0       0x8150        1            0        0xffffff         1
+#  0xc035      0       0xc035        1            0        0xffffff         1
+#  0x8150      0       0x8150        1            0        0xffffff         1
+   0xc001      0       0xc000        1            1        0xffffff         1
 
   
 
